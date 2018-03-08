@@ -11,15 +11,27 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
 using Microsoft.Owin.Security;
 using EnquiryRequest3.Models;
+using System.Net.Mail;
+using System.Configuration;
 
 namespace EnquiryRequest3
 {
     public class EmailService : IIdentityMessageService
     {
-        public Task SendAsync(IdentityMessage message)
+        public async Task SendAsync(IdentityMessage message)
         {
             // Plug in your email service here to send an email.
-            return Task.FromResult(0);
+            await Execute(message);
+        }
+        static async Task Execute(IdentityMessage message)
+        {
+
+            SmtpClient client = new SmtpClient(ConfigurationManager.AppSettings["SmtpHost"]);
+            client.Credentials = new System.Net.NetworkCredential(ConfigurationManager.AppSettings["SmtpUser"], ConfigurationManager.AppSettings["SmtpPassword"]);
+            await client.SendMailAsync("no_reply@record-lrc.co.uk",
+                                        message.Destination,
+                                        message.Subject,
+                                        message.Body);
         }
     }
 
