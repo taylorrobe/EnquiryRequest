@@ -1,8 +1,9 @@
-﻿using System;
+﻿using EnquiryRequest3.Models;
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace EnquiryRequest.Models
+namespace EnquiryRequest3.Models
 {
     [MetadataType(typeof(ContactMetaData))]
     public class Contact

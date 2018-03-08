@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace EnquiryRequest.Models
+namespace EnquiryRequest3.Models
 {
     public class Quote
     {

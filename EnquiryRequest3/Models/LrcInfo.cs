@@ -6,7 +6,7 @@ using System.Data.Entity.Spatial;
 using System.Linq;
 using System.Web;
 
-namespace EnquiryRequest.Models
+namespace EnquiryRequest3.Models
 {
     [MetadataType(typeof(AddressMetaData))]
     public class LrcInfo

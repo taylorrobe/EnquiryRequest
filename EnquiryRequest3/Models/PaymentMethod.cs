@@ -1,4 +1,4 @@
-﻿namespace EnquiryRequest.Models
+﻿namespace EnquiryRequest3.Models
 {
     public enum PaymentMethod
     {

@@ -196,11 +196,26 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\BoundariesController.cs" />
+    <Compile Include="Controllers\ContactsController.cs" />
+    <Compile Include="Controllers\EnquiriesController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\InvoiceRemindersController.cs" />
+    <Compile Include="Controllers\InvoiceReminderTypesController.cs" />
+    <Compile Include="Controllers\InvoicesController.cs" />
+    <Compile Include="Controllers\LrcInfoesController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="Controllers\OrganisationsController.cs" />
+    <Compile Include="Controllers\QuotesController.cs" />
+    <Compile Include="Controllers\SearchTypesController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201803081639040_initial.cs" />
+    <Compile Include="Migrations\201803081639040_initial.Designer.cs">
+      <DependentUpon>201803081639040_initial.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Boundary.cs" />
     <Compile Include="Models\Contact.cs" />
@@ -279,6 +294,56 @@
     <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Views\Shared\Info.cshtml" />
+    <Content Include="Views\Boundaries\Create.cshtml" />
+    <Content Include="Views\Boundaries\Delete.cshtml" />
+    <Content Include="Views\Boundaries\Details.cshtml" />
+    <Content Include="Views\Boundaries\Edit.cshtml" />
+    <Content Include="Views\Boundaries\Index.cshtml" />
+    <Content Include="Views\Contacts\Create.cshtml" />
+    <Content Include="Views\Contacts\Delete.cshtml" />
+    <Content Include="Views\Contacts\Details.cshtml" />
+    <Content Include="Views\Contacts\Edit.cshtml" />
+    <Content Include="Views\Contacts\Index.cshtml" />
+    <Content Include="Views\Enquiries\Create.cshtml" />
+    <Content Include="Views\Enquiries\Delete.cshtml" />
+    <Content Include="Views\Enquiries\Details.cshtml" />
+    <Content Include="Views\Enquiries\Edit.cshtml" />
+    <Content Include="Views\Enquiries\Index.cshtml" />
+    <Content Include="Views\Invoices\Create.cshtml" />
+    <Content Include="Views\Invoices\Delete.cshtml" />
+    <Content Include="Views\Invoices\Details.cshtml" />
+    <Content Include="Views\Invoices\Edit.cshtml" />
+    <Content Include="Views\Invoices\Index.cshtml" />
+    <Content Include="Views\InvoiceReminders\Create.cshtml" />
+    <Content Include="Views\InvoiceReminders\Delete.cshtml" />
+    <Content Include="Views\InvoiceReminders\Details.cshtml" />
+    <Content Include="Views\InvoiceReminders\Edit.cshtml" />
+    <Content Include="Views\InvoiceReminders\Index.cshtml" />
+    <Content Include="Views\InvoiceReminderTypes\Create.cshtml" />
+    <Content Include="Views\InvoiceReminderTypes\Delete.cshtml" />
+    <Content Include="Views\InvoiceReminderTypes\Details.cshtml" />
+    <Content Include="Views\InvoiceReminderTypes\Edit.cshtml" />
+    <Content Include="Views\InvoiceReminderTypes\Index.cshtml" />
+    <Content Include="Views\LrcInfoes\Create.cshtml" />
+    <Content Include="Views\LrcInfoes\Delete.cshtml" />
+    <Content Include="Views\LrcInfoes\Details.cshtml" />
+    <Content Include="Views\LrcInfoes\Edit.cshtml" />
+    <Content Include="Views\LrcInfoes\Index.cshtml" />
+    <Content Include="Views\Organisations\Create.cshtml" />
+    <Content Include="Views\Organisations\Delete.cshtml" />
+    <Content Include="Views\Organisations\Details.cshtml" />
+    <Content Include="Views\Organisations\Edit.cshtml" />
+    <Content Include="Views\Organisations\Index.cshtml" />
+    <Content Include="Views\Quotes\Create.cshtml" />
+    <Content Include="Views\Quotes\Delete.cshtml" />
+    <Content Include="Views\Quotes\Details.cshtml" />
+    <Content Include="Views\Quotes\Edit.cshtml" />
+    <Content Include="Views\Quotes\Index.cshtml" />
+    <Content Include="Views\SearchTypes\Create.cshtml" />
+    <Content Include="Views\SearchTypes\Delete.cshtml" />
+    <Content Include="Views\SearchTypes\Details.cshtml" />
+    <Content Include="Views\SearchTypes\Edit.cshtml" />
+    <Content Include="Views\SearchTypes\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -295,6 +360,11 @@
   <ItemGroup>
     <None Include="packages.config" />
     <Content Include="Scripts\jquery-1.10.2.min.map" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201803081639040_initial.resx">
+      <DependentUpon>201803081639040_initial.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

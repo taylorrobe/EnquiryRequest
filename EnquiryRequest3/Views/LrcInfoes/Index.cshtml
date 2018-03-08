@@ -1,0 +1,129 @@
+﻿@model IEnumerable<EnquiryRequest3.Models.LrcInfo>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Area)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.CompanyNumber)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.CharityNumber)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Address1)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Address2)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Address3)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.PostCode)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Phone)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Email)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Website)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.PaymentTerms)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.BankAccountName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.BankAccountSortCode)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.BankAccountNumber)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.InformationRequested)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Declaration)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Area)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.CompanyNumber)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.CharityNumber)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Address1)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Address2)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Address3)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.PostCode)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Phone)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Email)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Website)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.PaymentTerms)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.BankAccountName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.BankAccountSortCode)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.BankAccountNumber)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.InformationRequested)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Declaration)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.LrcInfoId }) |
+            @Html.ActionLink("Details", "Details", new { id=item.LrcInfoId }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.LrcInfoId })
+        </td>
+    </tr>
+}
+
+</table>

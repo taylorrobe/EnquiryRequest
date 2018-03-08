@@ -1,0 +1,50 @@
+﻿@model EnquiryRequest3.Models.Quote
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Quote</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Enquiry.Code)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Enquiry.Code)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Amount)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Amount)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.QuotedDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.QuotedDate)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.AcceptedDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.AcceptedDate)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.QuoteId }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

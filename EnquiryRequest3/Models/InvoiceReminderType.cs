@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace EnquiryRequest.Models
+namespace EnquiryRequest3.Models
 {
     public class InvoiceReminderType
     {

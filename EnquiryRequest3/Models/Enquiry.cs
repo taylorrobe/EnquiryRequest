@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace EnquiryRequest.Models
+namespace EnquiryRequest3.Models
 {
     public class Enquiry
     {
