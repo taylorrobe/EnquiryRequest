@@ -9,6 +9,7 @@ namespace EnquiryRequest3.Models
     // You can add profile data for the user by adding more properties to your ApplicationUser class, please visit https://go.microsoft.com/fwlink/?LinkID=317594 to learn more.
     public class ApplicationUser : IdentityUser
     {
+        //public virtual Contact Contact { get; set; }
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser> manager)
         {
             // Note the authenticationType must match the one defined in CookieAuthenticationOptions.AuthenticationType
@@ -50,5 +51,16 @@ namespace EnquiryRequest3.Models
         public System.Data.Entity.DbSet<EnquiryRequest3.Models.Quote> Quotes { get; set; }
 
         public System.Data.Entity.DbSet<EnquiryRequest3.Models.SearchType> SearchTypes { get; set; }
+
+        protected override void OnModelCreating(DbModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            // one-to-zero or one relationship between ApplicationUser and Customer
+            // UserId column in Customers table will be foreign key
+            //modelBuilder.Entity<ApplicationUser>()
+            //    .HasOptional(m => m.Contact)
+            //    .WithRequired(m => m.ApplicationUser);
+        }
     }
 }

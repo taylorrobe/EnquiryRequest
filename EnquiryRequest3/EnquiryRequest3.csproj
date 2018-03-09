@@ -215,10 +215,19 @@
     <Compile Include="Migrations\201803081639040_initial.Designer.cs">
       <DependentUpon>201803081639040_initial.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201803092246141_changes to references.cs" />
+    <Compile Include="Migrations\201803092246141_changes to references.Designer.cs">
+      <DependentUpon>201803092246141_changes to references.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201803092253104_changes to references2.cs" />
+    <Compile Include="Migrations\201803092253104_changes to references2.Designer.cs">
+      <DependentUpon>201803092253104_changes to references2.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Boundary.cs" />
     <Compile Include="Models\Contact.cs" />
+    <Compile Include="Models\ContactViewModels.cs" />
     <Compile Include="Models\Enquiry.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\Invoice.cs" />
@@ -364,6 +373,12 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201803081639040_initial.resx">
       <DependentUpon>201803081639040_initial.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201803092246141_changes to references.resx">
+      <DependentUpon>201803092246141_changes to references.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201803092253104_changes to references2.resx">
+      <DependentUpon>201803092253104_changes to references2.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

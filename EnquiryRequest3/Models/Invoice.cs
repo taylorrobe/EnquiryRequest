@@ -29,8 +29,7 @@ namespace EnquiryRequest3.Models
 
         public DateTime PaidDate { get; set; }
 
-        public int? PaymentMethodId { get; set; }
-        public virtual PaymentMethod PaymentMethod { get; set; }
+        public PaymentMethod PaymentMethod { get; set; }
 
         [RequiredIf("PaymentMethod == PaymentMethod.CHEQUE", ErrorMessage = "Must enter a Cheque number")]
         [StringLength(100, ErrorMessage = "The {0} cannot be more than {1} characters long.")]

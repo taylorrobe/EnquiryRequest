@@ -12,6 +12,9 @@ namespace EnquiryRequest3.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public DateTime InvoiceReminderDate { get; set; }
 
+        public int InvoiceId { get; set; }
+        public virtual Invoice Invoice { get; set; }
+
         [Required]
         public int InvoiceReminderTypeId { get; set; }
         public virtual  InvoiceReminderType InvoiceReminderType { get; set; }

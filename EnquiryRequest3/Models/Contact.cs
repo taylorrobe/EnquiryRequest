@@ -11,7 +11,6 @@ namespace EnquiryRequest3.Models
         //[Key, ForeignKey("ApplicationUser")]
         [Key]
         public int ContactId { get; set; }
-
         //public virtual ApplicationUser ApplicationUser { get; set; }
 
         [Required]

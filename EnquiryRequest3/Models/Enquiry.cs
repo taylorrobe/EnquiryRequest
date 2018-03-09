@@ -23,6 +23,7 @@ namespace EnquiryRequest3.Models
         [StringLength(100, ErrorMessage = "The {0} cannot be more than {1} characters long.")]
         public string Name { get; set; }
 
+        public int ContactId { get; set; }
         [Required]
         public virtual  Contact Contact { get; set; }
 
@@ -34,6 +35,7 @@ namespace EnquiryRequest3.Models
         [Required]
         public DbGeometry SearchArea { get; set; }
 
+        public int SearchTypeId { get; set; }
         [Required]
         public virtual SearchType SearchType { get; set; }
 
