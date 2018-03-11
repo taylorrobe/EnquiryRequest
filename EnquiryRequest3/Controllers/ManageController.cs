@@ -70,25 +70,20 @@ namespace EnquiryRequest3.Controllers
                 : "";
 
             var userId = User.Identity.GetUserId();
-            
-            //Get the User object
-            var currentUser = UserManager.FindById(User.Identity.GetUserId<int>());
-
+            var currentUser = await UserManager.FindByIdAsync(User.Identity.GetUserId<int>());
+            var unConfirmedEmail = "";
+            if (!String.IsNullOrWhiteSpace(currentUser.UnConfirmedEmail))
+            {
+                unConfirmedEmail = currentUser.UnConfirmedEmail;
+            }
             var model = new IndexViewModel
             {
                 HasPassword = HasPassword(),
-                Forename = currentUser.Forename,
-                Surname = currentUser.Surname,
-                Address1 = currentUser.Address1,
-                Address2 = currentUser.Address2,
-                Address3 = currentUser.Address3,
-                PostCode = currentUser.PostCode,
-                OrganisationId = currentUser.OrganisationId,
-                DefaultInvoicingEmail = currentUser.DefaultInvoicingEmail,
-                PhoneNumber = await UserManager.GetPhoneNumberAsync(User.Identity.GetUserId<int>()),
                 TwoFactor = await UserManager.GetTwoFactorEnabledAsync(User.Identity.GetUserId<int>()),
                 Logins = await UserManager.GetLoginsAsync(User.Identity.GetUserId<int>()),
-                BrowserRemembered = await AuthenticationManager.TwoFactorBrowserRememberedAsync(userId)
+                BrowserRemembered = await AuthenticationManager.TwoFactorBrowserRememberedAsync(userId),
+                ConfirmedEmail = currentUser.Email,
+                UnConfirmedEmail = unConfirmedEmail
             };
             return View(model);
         }
@@ -231,37 +226,7 @@ namespace EnquiryRequest3.Controllers
             return RedirectToAction("Index", new { Message = ManageMessageId.RemovePhoneSuccess });
         }
 
-        //
-        // GET: /Manage/ChangePassword
-        public ActionResult ChangePassword()
-        {
-            return View();
-        }
-
-        //
-        // POST: /Manage/ChangePassword
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> ChangePassword(ChangePasswordViewModel model)
-        {
-            if (!ModelState.IsValid)
-            {
-                return View(model);
-            }
-            var result = await UserManager.ChangePasswordAsync(User.Identity.GetUserId<int>(), model.OldPassword, model.NewPassword);
-            if (result.Succeeded)
-            {
-                var user = await UserManager.FindByIdAsync(User.Identity.GetUserId<int>());
-                if (user != null)
-                {
-                    await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
-                }
-                return RedirectToAction("Index", new { Message = ManageMessageId.ChangePasswordSuccess });
-            }
-            AddErrors(result);
-            return View(model);
-        }
-
+        
         //
         // GET: /Manage/SetPassword
         public ActionResult SetPassword()
@@ -403,7 +368,7 @@ namespace EnquiryRequest3.Controllers
         }
 
         //
-        // GET: /Manage/ChangePassword
+        // GET: /Manage/EditContactInfo
         public async Task<ActionResult> EditContactInfo()
         {
             var user = await UserManager.FindByIdAsync(User.Identity.GetUserId<int>());
@@ -429,7 +394,7 @@ namespace EnquiryRequest3.Controllers
         }
 
         //
-        // POST: /Manage/ChangePassword
+        // POST: /Manage/EditContactInfo
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult EditContactInfo(EditContactInfoViewModel model)
@@ -470,6 +435,39 @@ namespace EnquiryRequest3.Controllers
             }
             return View(model);
         }
+
+
+        //
+        // GET: /Manage/ChangePassword
+        public ActionResult ChangePassword()
+        {
+            return View();
+        }
+
+        //
+        // POST: /Manage/ChangePassword
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> ChangePassword(ChangePasswordViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+            var result = await UserManager.ChangePasswordAsync(User.Identity.GetUserId<int>(), model.OldPassword, model.NewPassword);
+            if (result.Succeeded)
+            {
+                var user = await UserManager.FindByIdAsync(User.Identity.GetUserId<int>());
+                if (user != null)
+                {
+                    await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+                }
+                return RedirectToAction("Index", new { Message = ManageMessageId.ChangePasswordSuccess });
+            }
+            AddErrors(result);
+            return View(model);
+        }
+
 
         #endregion
     }

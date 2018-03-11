@@ -130,4 +130,14 @@ namespace EnquiryRequest3.Models
         [Display(Name = "Email")]
         public string Email { get; set; }
     }
+
+    public class ChangeEmailViewModel
+    {
+        public string ConfirmedEmail { get; set; }
+        [Required]
+        [EmailAddress]
+        [Display(Name = "Email")]
+        [DataType(DataType.EmailAddress)]
+        public string UnConfirmedEmail { get; set; }
+    }
 }

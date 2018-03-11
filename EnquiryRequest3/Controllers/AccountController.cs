@@ -73,8 +73,19 @@ namespace EnquiryRequest3.Controllers
             {
                 return View(model);
             }
+
+            var allowPassOnEmailVerfication = false;
+            var user = await UserManager.FindByEmailAsync(model.Email);
+            if (user != null)
+            {
+                if (!string.IsNullOrWhiteSpace(user.UnConfirmedEmail))
+                {
+                    allowPassOnEmailVerfication = true;
+                }
+            }
+
             // Require the user to have a confirmed email before they can log on.
-            var user = await UserManager.FindByNameAsync(model.Email);
+
             if (user != null)
             {
                 if (!await UserManager.IsEmailConfirmedAsync(user.Id))
@@ -94,7 +105,9 @@ namespace EnquiryRequest3.Controllers
                 case SignInStatus.LockedOut:
                     return View("Lockout");
                 case SignInStatus.RequiresVerification:
-                    return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
+                    return allowPassOnEmailVerfication ? RedirectToLocal(returnUrl) : RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
+                //case SignInStatus.RequiresVerification:
+                //    return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
                 case SignInStatus.Failure:
                 default:
                     ModelState.AddModelError("", "Invalid login attempt.");
@@ -216,6 +229,19 @@ namespace EnquiryRequest3.Controllers
                 return View("Error");
             }
             var result = await UserManager.ConfirmEmailAsync(userId, code);
+            if (result.Succeeded)
+            {
+
+                var user = await UserManager.FindByIdAsync(userId);
+                if (!string.IsNullOrWhiteSpace(user.UnConfirmedEmail))
+                {
+                    user.Email = user.UnConfirmedEmail;
+                    user.UserName = user.UnConfirmedEmail;
+                    user.UnConfirmedEmail = "";
+
+                    await UserManager.UpdateAsync(user);
+                }
+            }
             return View(result.Succeeded ? "ConfirmEmail" : "Error");
         }
 
@@ -522,6 +548,104 @@ namespace EnquiryRequest3.Controllers
             await UserManager.SendEmailAsync(userID, subject,
                "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
             return callbackUrl;
+        }
+
+        private async Task<string> SendEmailConfirmationWarningAsync(int userID, string subject)
+        {
+            //string code = await UserManager.GenerateEmailConfirmationTokenAsync(userID);
+            var callbackUrl = Url.Action("ConfirmEmail", "Account",
+               new { userId = userID}, protocol: Request.Url.Scheme);
+            await UserManager.SendEmailAsync(userID, subject, "");
+            return callbackUrl;
+        }
+
+        public async Task<ActionResult> CancelUnconfirmedEmail(string email)
+        {
+
+                var user = UserManager.FindById(User.Identity.GetUserId<int>());
+
+                if (user != null)
+                {
+                    user.UnConfirmedEmail = null;
+                    //user.EmailConfirmed = true;
+                    var result = await UserManager.UpdateAsync(user);
+                    if (result.Succeeded)
+                    {
+                        ViewBag.Message = "Email address change cancelled";
+                        return View("Info");
+                    }
+                    
+                }
+
+            ViewBag.ErrorMessage = "Unable to cancel email change, please try again or contact us for help";
+            return View("Error");
+
+        }
+
+
+        public ActionResult ChangeEmail()
+        {
+            var user = UserManager.FindById(User.Identity.GetUserId<int>());
+            var model = new ChangeEmailViewModel()
+            {
+                ConfirmedEmail = user.Email
+            };
+
+            return View(model);
+        }
+
+
+        [HttpPost]
+        public async Task<ActionResult> ChangeEmail(ChangeEmailViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return RedirectToAction("ChangeEmail", "Account");
+            }
+            
+
+            var user = await UserManager.FindByEmailAsync(model.ConfirmedEmail);
+            if (!user.EmailConfirmed)
+            {
+                ViewBag.ErrorMessage = "Your previous email address has not yet been verified";
+                return View("Error");
+            }
+            var userId = user.Id;
+            if (user != null)
+            {
+                //doing a quick swap so we can send the appropriate confirmation email
+                user.UnConfirmedEmail = user.Email;
+                user.Email = model.UnConfirmedEmail;
+                var result = await UserManager.UpdateAsync(user);
+
+                if (result.Succeeded)
+                {
+                    string callbackUrl =
+                    await SendEmailConfirmationTokenAsync(userId, "Confirm your new email");
+
+                    var tempUnconfirmed = user.Email;
+                    user.Email = user.UnConfirmedEmail;
+                    user.UnConfirmedEmail = tempUnconfirmed;
+                    result = await UserManager.UpdateAsync(user);
+                    if (result.Succeeded)
+                    {
+                        callbackUrl = await SendEmailConfirmationWarningAsync(userId, "Your email has been updated to: " + user.UnConfirmedEmail);
+                        ViewBag.Message = "Your email has been updated to: " + user.UnConfirmedEmail + ", a verification email has been sent, please click the link in the email to complete the process";
+                        return View("Info");
+                    }
+                    else
+                    {
+                        ViewBag.ErrorMessage = result.Errors.ToString();
+                        return View("Error");
+                    }
+                }
+                else
+                {
+                    ViewBag.ErrorMessage = result.Errors.ToString();
+                    return View("Error");
+                }
+            }
+            return RedirectToAction("Index", "Manage");
         }
 
         #endregion

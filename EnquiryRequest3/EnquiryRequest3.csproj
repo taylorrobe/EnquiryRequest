@@ -252,6 +252,10 @@
     <Compile Include="Migrations\201803111137452_moving contact to appuser.Designer.cs">
       <DependentUpon>201803111137452_moving contact to appuser.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201803111525120_updating email.cs" />
+    <Compile Include="Migrations\201803111525120_updating email.Designer.cs">
+      <DependentUpon>201803111525120_updating email.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Boundary.cs" />
@@ -384,6 +388,7 @@
     <Content Include="Views\SearchTypes\Index.cshtml" />
     <Content Include="Views\Contacts\Create.cshtml" />
     <Content Include="Views\Manage\EditContactInfo.cshtml" />
+    <Content Include="Views\Account\ChangeEmail.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -431,6 +436,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201803111137452_moving contact to appuser.resx">
       <DependentUpon>201803111137452_moving contact to appuser.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201803111525120_updating email.resx">
+      <DependentUpon>201803111525120_updating email.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

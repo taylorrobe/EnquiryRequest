@@ -31,6 +31,9 @@ namespace EnquiryRequest3.Models
 
         public string DefaultInvoicingEmail { get; set; }
 
+        [MaxLength(256)]
+        public string UnConfirmedEmail { get; set; }
+
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser, int> manager)
         {
             // Note the authenticationType must match the one defined in CookieAuthenticationOptions.AuthenticationType
