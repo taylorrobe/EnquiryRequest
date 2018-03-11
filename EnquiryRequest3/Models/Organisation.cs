@@ -11,6 +11,7 @@ namespace EnquiryRequest3.Models
 
         [Required]
         [StringLength(100, ErrorMessage = "The {0} cannot be more than {1} characters long.")]
+        [Display(Name = "Organisation Name")]
         public string Name { get; set; }
 
         public virtual ICollection<Contact> Contacts { get; set; }

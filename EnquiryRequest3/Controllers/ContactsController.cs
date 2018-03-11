@@ -2,14 +2,18 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
+using System.Data.Entity.Validation;
 using System.Linq;
 using System.Net;
+using System.Security.Principal;
 using System.Web;
 using System.Web.Mvc;
 using EnquiryRequest3.Models;
+using Microsoft.AspNet.Identity;
 
 namespace EnquiryRequest3.Controllers
-{
+{ 
+    [Authorize]
     public class ContactsController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
@@ -48,17 +52,49 @@ namespace EnquiryRequest3.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "ContactId,Forename,Surname,Address1,Address2,Address3,PostCode,Email,PhoneNumber,OrganisationId,DefaultInvoicingEmail")] Contact contact)
+        public ActionResult Create([Bind(Include = "ContactId,Forename,Surname,Address1,Address2,Address3,PostCode,Email,PhoneNumber,OrganisationId,DefaultInvoicingEmail")] ContactForUserViewModel contactForUserViewModel)
         {
             if (ModelState.IsValid)
             {
+                ViewBag.OrganisationId = new SelectList(db.Organisations, "OrganisationId", "Name", contactForUserViewModel.OrganisationId);
+                //get the user id to use in the one-one relation between user and contact
+                int userId = User.Identity.GetUserId<int>();
+                //use extension class method to get the email address from user
+                string userEmail = IdentityExtensions.GetUserEmailAdress(User.Identity);
+                string defaultEmail = null;
+                if(contactForUserViewModel.DefaultInvoicingEmail == null || contactForUserViewModel.DefaultInvoicingEmail == String.Empty)
+                {
+                    defaultEmail = userEmail;
+                }
+                var contact = new Contact()
+                {
+                    ContactId = userId,
+                    Forename = contactForUserViewModel.Forename,
+                    Surname = contactForUserViewModel.Surname,
+                    Address1 = contactForUserViewModel.Address1,
+                    Address2 = contactForUserViewModel.Address2,
+                    Address3 = contactForUserViewModel.Address3,
+                    PostCode = contactForUserViewModel.PostCode,
+                    Email = userEmail,
+                    PhoneNumber = contactForUserViewModel.PhoneNumber,
+                    OrganisationId = contactForUserViewModel.OrganisationId,
+                    DefaultInvoicingEmail = defaultEmail
+                };
                 db.Contacts.Add(contact);
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                try
+                {
+                    db.SaveChanges();
+                    return RedirectToAction("Index");
+                }
+                catch(DbEntityValidationException ex)
+                {
+                    foreach (var result in ex.EntityValidationErrors)
+                        foreach (var error in result.ValidationErrors)
+                            ModelState.AddModelError(error.PropertyName, error.ErrorMessage);
+                    return View(contactForUserViewModel);
+                }
             }
-
-            ViewBag.OrganisationId = new SelectList(db.Organisations, "OrganisationId", "Name", contact.OrganisationId);
-            return View(contact);
+            return View(contactForUserViewModel);
         }
 
         // GET: Contacts/Edit/5
@@ -129,4 +165,5 @@ namespace EnquiryRequest3.Controllers
             base.Dispose(disposing);
         }
     }
+
 }

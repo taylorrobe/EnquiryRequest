@@ -200,6 +200,7 @@
     <Compile Include="Controllers\ContactsController.cs" />
     <Compile Include="Controllers\EnquiriesController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\IdentityExtensions.cs" />
     <Compile Include="Controllers\InvoiceRemindersController.cs" />
     <Compile Include="Controllers\InvoiceReminderTypesController.cs" />
     <Compile Include="Controllers\InvoicesController.cs" />
@@ -226,6 +227,26 @@
     <Compile Include="Migrations\201803092320096_identity from string to int.cs" />
     <Compile Include="Migrations\201803092320096_identity from string to int.Designer.cs">
       <DependentUpon>201803092320096_identity from string to int.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201803092327588_link reference user to contact.cs" />
+    <Compile Include="Migrations\201803092327588_link reference user to contact.Designer.cs">
+      <DependentUpon>201803092327588_link reference user to contact.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201803100021243_contactviewmodel.cs" />
+    <Compile Include="Migrations\201803100021243_contactviewmodel.Designer.cs">
+      <DependentUpon>201803100021243_contactviewmodel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201803111004386_remove validation on contact.cs" />
+    <Compile Include="Migrations\201803111004386_remove validation on contact.Designer.cs">
+      <DependentUpon>201803111004386_remove validation on contact.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201803111016295_contact fluent api.cs" />
+    <Compile Include="Migrations\201803111016295_contact fluent api.Designer.cs">
+      <DependentUpon>201803111016295_contact fluent api.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201803111036117_moving validation to meta data.cs" />
+    <Compile Include="Migrations\201803111036117_moving validation to meta data.Designer.cs">
+      <DependentUpon>201803111036117_moving validation to meta data.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -312,7 +333,7 @@
     <Content Include="Views\Boundaries\Details.cshtml" />
     <Content Include="Views\Boundaries\Edit.cshtml" />
     <Content Include="Views\Boundaries\Index.cshtml" />
-    <Content Include="Views\Contacts\Create.cshtml" />
+    <None Include="Views\Contacts\Create.cshtml.old" />
     <Content Include="Views\Contacts\Delete.cshtml" />
     <Content Include="Views\Contacts\Details.cshtml" />
     <Content Include="Views\Contacts\Edit.cshtml" />
@@ -357,6 +378,7 @@
     <Content Include="Views\SearchTypes\Details.cshtml" />
     <Content Include="Views\SearchTypes\Edit.cshtml" />
     <Content Include="Views\SearchTypes\Index.cshtml" />
+    <Content Include="Views\Contacts\Create.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -386,6 +408,21 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201803092320096_identity from string to int.resx">
       <DependentUpon>201803092320096_identity from string to int.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201803092327588_link reference user to contact.resx">
+      <DependentUpon>201803092327588_link reference user to contact.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201803100021243_contactviewmodel.resx">
+      <DependentUpon>201803100021243_contactviewmodel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201803111004386_remove validation on contact.resx">
+      <DependentUpon>201803111004386_remove validation on contact.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201803111016295_contact fluent api.resx">
+      <DependentUpon>201803111016295_contact fluent api.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201803111036117_moving validation to meta data.resx">
+      <DependentUpon>201803111036117_moving validation to meta data.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

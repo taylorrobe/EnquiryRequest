@@ -10,7 +10,7 @@ namespace EnquiryRequest3.Models
     public class ApplicationUser : IdentityUser<int, CustomUserLogin, CustomUserRole,
     CustomUserClaim>
     {
-        //public virtual Contact Contact { get; set; }
+        public virtual Contact Contact { get; set; }
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser, int> manager)
         {
             // Note the authenticationType must match the one defined in CookieAuthenticationOptions.AuthenticationType
@@ -63,7 +63,12 @@ namespace EnquiryRequest3.Models
             //modelBuilder.Entity<ApplicationUser>()
             //    .HasOptional(m => m.Contact)
             //    .WithRequired(m => m.ApplicationUser);
+            modelBuilder.Entity<Contact>()
+                .HasRequired(t => t.ApplicationUser)
+                .WithOptional(t => t.Contact)
+                .WillCascadeOnDelete(false);
         }
+
     }
     public class CustomRole : IdentityRole<int, CustomUserRole>
     {
