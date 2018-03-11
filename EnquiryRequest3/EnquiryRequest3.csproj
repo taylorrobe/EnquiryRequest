@@ -248,6 +248,10 @@
     <Compile Include="Migrations\201803111036117_moving validation to meta data.Designer.cs">
       <DependentUpon>201803111036117_moving validation to meta data.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201803111137452_moving contact to appuser.cs" />
+    <Compile Include="Migrations\201803111137452_moving contact to appuser.Designer.cs">
+      <DependentUpon>201803111137452_moving contact to appuser.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Boundary.cs" />
@@ -379,6 +383,7 @@
     <Content Include="Views\SearchTypes\Edit.cshtml" />
     <Content Include="Views\SearchTypes\Index.cshtml" />
     <Content Include="Views\Contacts\Create.cshtml" />
+    <Content Include="Views\Manage\EditContactInfo.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -423,6 +428,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201803111036117_moving validation to meta data.resx">
       <DependentUpon>201803111036117_moving validation to meta data.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201803111137452_moving contact to appuser.resx">
+      <DependentUpon>201803111137452_moving contact to appuser.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

@@ -5,13 +5,59 @@ using Microsoft.Owin.Security;
 
 namespace EnquiryRequest3.Models
 {
+    [MetadataType(typeof(ContactMetaData))]
     public class IndexViewModel
     {
+        public int Id { get; set; }
         public bool HasPassword { get; set; }
         public IList<UserLoginInfo> Logins { get; set; }
+        public string Forename { get; set; }
+
+        public string Surname { get; set; }
+
+        public string Address1 { get; set; }
+
+        public string Address2 { get; set; }
+
+        public string Address3 { get; set; }
+
+        public string PostCode { get; set; }
+
         public string PhoneNumber { get; set; }
+
+        public int? OrganisationId { get; set; }
+
+        public virtual Organisation Organisation { get; set; }
+
+        public string DefaultInvoicingEmail { get; set; }
         public bool TwoFactor { get; set; }
         public bool BrowserRemembered { get; set; }
+    }
+
+    [MetadataType(typeof(ContactMetaData))]
+    public class EditContactInfoViewModel
+    {
+        public int Id { get; set; }
+
+        public string Forename { get; set; }
+
+        public string Surname { get; set; }
+
+        public string Address1 { get; set; }
+
+        public string Address2 { get; set; }
+
+        public string Address3 { get; set; }
+
+        public string PostCode { get; set; }
+
+        public string PhoneNumber { get; set; }
+
+        public int? OrganisationId { get; set; }
+
+        public virtual Organisation Organisation { get; set; }
+
+        public string DefaultInvoicingEmail { get; set; }
     }
 
     public class ManageLoginsViewModel

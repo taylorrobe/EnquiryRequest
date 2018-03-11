@@ -62,6 +62,7 @@ namespace EnquiryRequest3.Models
         public bool RememberMe { get; set; }
     }
 
+    [MetadataType(typeof(ContactMetaData))]
     public class RegisterViewModel
     {
         [Required]
@@ -79,6 +80,26 @@ namespace EnquiryRequest3.Models
         [Display(Name = "Confirm password")]
         [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; }
+
+        public string Forename { get; set; }
+
+        public string Surname { get; set; }
+
+        public string Address1 { get; set; }
+
+        public string Address2 { get; set; }
+
+        public string Address3 { get; set; }
+
+        public string PostCode { get; set; }
+
+        public string PhoneNumber { get; set; }
+
+        public int? OrganisationId { get; set; }
+
+        public virtual Organisation Organisation { get; set; }
+
+        public string DefaultInvoicingEmail { get; set; }
     }
 
     public class ResetPasswordViewModel

@@ -7,12 +7,18 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using EnquiryRequest3.Models;
+using Microsoft.AspNet.Identity.EntityFramework;
+using System.Data.Entity;
+using System.Net;
+using System.Security.Principal;
+using System.Data.Entity.Validation;
 
 namespace EnquiryRequest3.Controllers
 {
     [Authorize]
     public class ManageController : Controller
     {
+        private ApplicationDbContext db = new ApplicationDbContext();
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
 
@@ -64,9 +70,21 @@ namespace EnquiryRequest3.Controllers
                 : "";
 
             var userId = User.Identity.GetUserId();
+            
+            //Get the User object
+            var currentUser = UserManager.FindById(User.Identity.GetUserId<int>());
+
             var model = new IndexViewModel
             {
                 HasPassword = HasPassword(),
+                Forename = currentUser.Forename,
+                Surname = currentUser.Surname,
+                Address1 = currentUser.Address1,
+                Address2 = currentUser.Address2,
+                Address3 = currentUser.Address3,
+                PostCode = currentUser.PostCode,
+                OrganisationId = currentUser.OrganisationId,
+                DefaultInvoicingEmail = currentUser.DefaultInvoicingEmail,
                 PhoneNumber = await UserManager.GetPhoneNumberAsync(User.Identity.GetUserId<int>()),
                 TwoFactor = await UserManager.GetTwoFactorEnabledAsync(User.Identity.GetUserId<int>()),
                 Logins = await UserManager.GetLoginsAsync(User.Identity.GetUserId<int>()),
@@ -384,6 +402,75 @@ namespace EnquiryRequest3.Controllers
             Error
         }
 
-#endregion
+        //
+        // GET: /Manage/ChangePassword
+        public async Task<ActionResult> EditContactInfo()
+        {
+            var user = await UserManager.FindByIdAsync(User.Identity.GetUserId<int>());
+            if (user == null)
+            {
+                return HttpNotFound();
+            }
+            EditContactInfoViewModel model = new EditContactInfoViewModel
+            {
+                Id = user.Id,
+                Forename = user.Forename,
+                Surname = user.Surname,
+                Address1 = user.Address1,
+                Address2 = user.Address2,
+                Address3 = user.Address3,
+                OrganisationId = user.OrganisationId,
+                DefaultInvoicingEmail = user.DefaultInvoicingEmail,
+                PhoneNumber = user.PhoneNumber,
+                PostCode = user.PostCode
+            };
+            ViewBag.OrganisationId = new SelectList(db.Organisations, "OrganisationId", "Name", model.OrganisationId);
+            return View(model);
+        }
+
+        //
+        // POST: /Manage/ChangePassword
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult EditContactInfo(EditContactInfoViewModel model)
+        {
+            ViewBag.OrganisationId = new SelectList(db.Organisations, "OrganisationId", "Name", model.OrganisationId);
+
+            if (ModelState.IsValid)
+            {
+                string username = User.Identity.Name;
+                // Get the userprofile
+                ApplicationUser user = db.Users.FirstOrDefault(u => u.UserName.Equals(username));
+
+                // Update fields
+                user.Forename = model.Forename;
+                user.Surname = model.Surname;
+                user.Address1 = model.Address1;
+                user.Address2 = model.Address2;
+                user.Address3 = model.Address3;
+                user.PostCode = model.PostCode;
+                user.OrganisationId = model.OrganisationId;
+                user.PhoneNumber = model.PhoneNumber;
+                user.DefaultInvoicingEmail = model.DefaultInvoicingEmail;
+
+                db.Entry(user).State = EntityState.Modified;
+
+                try
+                {
+                    db.SaveChanges();
+                    return RedirectToAction("Index");
+                }
+                catch (DbEntityValidationException ex)
+                {
+                    foreach (var result in ex.EntityValidationErrors)
+                        foreach (var error in result.ValidationErrors)
+                            ModelState.AddModelError(error.PropertyName, error.ErrorMessage);
+                    return View(model);
+                }
+            }
+            return View(model);
+        }
+
+        #endregion
     }
 }

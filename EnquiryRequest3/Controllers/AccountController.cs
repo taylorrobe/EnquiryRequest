@@ -18,7 +18,7 @@ namespace EnquiryRequest3.Controllers
     {
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
-
+        private ApplicationDbContext db = new ApplicationDbContext();
         public AccountController()
         {
         }
@@ -150,6 +150,7 @@ namespace EnquiryRequest3.Controllers
         [AllowAnonymous]
         public ActionResult Register()
         {
+            ViewBag.OrganisationId = new SelectList(db.Organisations, "OrganisationId", "Name");
             return View();
         }
 
@@ -158,11 +159,30 @@ namespace EnquiryRequest3.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Register(RegisterViewModel model)
+        public async Task<ActionResult> Register([Bind(Include = "Email,Password, ConfirmPassword,Forename,Surname,Address1,Address2,Address3,PostCode,PhoneNumber,OrganisationId,DefaultInvoicingEmail")] RegisterViewModel model)
         {
+            ViewBag.OrganisationId = new SelectList(db.Organisations, "OrganisationId", "Name", model.OrganisationId);
+
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+                string defaultEmail = null;
+                if (model.DefaultInvoicingEmail == null || model.DefaultInvoicingEmail == String.Empty)
+                {
+                    defaultEmail = model.Email;
+                }
+                var user = new ApplicationUser {
+                    UserName = model.Email,
+                    Email = model.Email,
+                    Forename = model.Forename,
+                    Surname = model.Surname,
+                    Address1 = model.Address1,
+                    Address2 = model.Address2,
+                    Address3 = model.Address3,
+                    PostCode = model.PostCode,
+                    PhoneNumber = model.PhoneNumber,
+                    OrganisationId = model.OrganisationId,
+                    DefaultInvoicingEmail = defaultEmail
+                };
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {

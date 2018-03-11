@@ -61,18 +61,6 @@ namespace EnquiryRequest3.Models
          ErrorMessage = "Special Characters are not allowed.")]
         public object Surname;
 
-        [Required]
-        [EmailAddress]
-        [StringLength(100, ErrorMessage = "The {0} cannot be more than {1} characters long.")]
-        [Display(Name = "Email Address")]
-        public string Email;
-
-        [Required]
-        [Phone]
-        [StringLength(20, ErrorMessage = "The {0} cannot be more than {1} characters long.")]
-        [Display(Name = "Phone Number")]
-        public string PhoneNumber;
-
         [Display(Name = "Organisation")]
         public Organisation Organisation;
 
