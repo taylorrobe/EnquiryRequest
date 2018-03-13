@@ -197,7 +197,6 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\BoundariesController.cs" />
-    <Compile Include="Controllers\ContactsController.cs" />
     <Compile Include="Controllers\EnquiriesController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\IdentityExtensions.cs" />
@@ -256,11 +255,13 @@
     <Compile Include="Migrations\201803111525120_updating email.Designer.cs">
       <DependentUpon>201803111525120_updating email.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201803131128115_deleted contact.cs" />
+    <Compile Include="Migrations\201803131128115_deleted contact.Designer.cs">
+      <DependentUpon>201803131128115_deleted contact.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Boundary.cs" />
-    <Compile Include="Models\Contact.cs" />
-    <Compile Include="Models\ContactViewModels.cs" />
     <Compile Include="Models\Enquiry.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\Invoice.cs" />
@@ -341,11 +342,6 @@
     <Content Include="Views\Boundaries\Details.cshtml" />
     <Content Include="Views\Boundaries\Edit.cshtml" />
     <Content Include="Views\Boundaries\Index.cshtml" />
-    <None Include="Views\Contacts\Create.cshtml.old" />
-    <Content Include="Views\Contacts\Delete.cshtml" />
-    <Content Include="Views\Contacts\Details.cshtml" />
-    <Content Include="Views\Contacts\Edit.cshtml" />
-    <Content Include="Views\Contacts\Index.cshtml" />
     <Content Include="Views\Enquiries\Create.cshtml" />
     <Content Include="Views\Enquiries\Delete.cshtml" />
     <Content Include="Views\Enquiries\Details.cshtml" />
@@ -386,7 +382,6 @@
     <Content Include="Views\SearchTypes\Details.cshtml" />
     <Content Include="Views\SearchTypes\Edit.cshtml" />
     <Content Include="Views\SearchTypes\Index.cshtml" />
-    <Content Include="Views\Contacts\Create.cshtml" />
     <Content Include="Views\Manage\EditContactInfo.cshtml" />
     <Content Include="Views\Account\ChangeEmail.cshtml" />
   </ItemGroup>
@@ -439,6 +434,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201803111525120_updating email.resx">
       <DependentUpon>201803111525120_updating email.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201803131128115_deleted contact.resx">
+      <DependentUpon>201803131128115_deleted contact.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

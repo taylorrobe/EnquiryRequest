@@ -14,6 +14,6 @@ namespace EnquiryRequest3.Models
         [Display(Name = "Organisation Name")]
         public string Name { get; set; }
 
-        public virtual ICollection<Contact> Contacts { get; set; }
+        public virtual ICollection<ApplicationUser> ApplicationUsers { get; set; }
     }
 }

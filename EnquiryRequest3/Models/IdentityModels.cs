@@ -58,9 +58,7 @@ namespace EnquiryRequest3.Models
         }
 
         public System.Data.Entity.DbSet<EnquiryRequest3.Models.Boundary> Boundaries { get; set; }
-
-        public System.Data.Entity.DbSet<EnquiryRequest3.Models.Contact> Contacts { get; set; }
-
+        
         public System.Data.Entity.DbSet<EnquiryRequest3.Models.Organisation> Organisations { get; set; }
 
         public System.Data.Entity.DbSet<EnquiryRequest3.Models.Enquiry> Enquiries { get; set; }

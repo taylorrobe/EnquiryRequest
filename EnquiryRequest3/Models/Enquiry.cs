@@ -23,9 +23,9 @@ namespace EnquiryRequest3.Models
         [StringLength(100, ErrorMessage = "The {0} cannot be more than {1} characters long.")]
         public string Name { get; set; }
 
-        public int ContactId { get; set; }
+        public int ApplicationUserId { get; set; }
         [Required]
-        public virtual  Contact Contact { get; set; }
+        public virtual  ApplicationUser ApplicationUser { get; set; }
 
         [Required]
         [EmailAddress]
