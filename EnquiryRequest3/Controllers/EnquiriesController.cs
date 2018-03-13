@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
+﻿using EnquiryRequest3.Models;
+using System;
 using System.Data.Entity;
+using System.Data.Entity.Spatial;
+using System.Data.Entity.Validation;
 using System.Linq;
 using System.Net;
-using System.Web;
 using System.Web.Mvc;
-using EnquiryRequest3.Models;
 
 namespace EnquiryRequest3.Controllers
 {
@@ -39,7 +38,8 @@ namespace EnquiryRequest3.Controllers
         // GET: Enquiries/Create
         public ActionResult Create()
         {
-            ViewBag.InvoiceId = new SelectList(db.Invoices, "InvoiceId", "Code");
+            ViewBag.DefaultInvoiceEmail = User.Identity.GetUserDefaultInvoicingEmail();
+            ViewBag.SearchTypeId = new SelectList(db.SearchTypes, "SearchTypeId", "Name");
             return View();
         }
 
@@ -48,17 +48,55 @@ namespace EnquiryRequest3.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "EnquiryId,Code,Name,InvoiceEmail,SearchArea,NoOfYears,JobNumber,Agency,AgencyContact,DataUsedFor,Citations,GisKml,Express,EnquiryDate,Comment,AddedToRersDate,DataCleanedDate,ReporCompleteDate,DocumentsCleanedDate,EnquiryDeliveredDate,AdminComment,InvoiceId")] Enquiry enquiry)
+        public ActionResult Create([Bind(Include = "EnquiryId,Name,InvoiceEmail,SearchAreaWkt,SearchTypeId,NoOfYears,JobNumber,Agency,AgencyContact,DataUsedFor,Citations,GisKml,Express,EnquiryDate,Comment")] UserCreateEditEnquiryViewModel model)
         {
             if (ModelState.IsValid)
             {
+                DbGeometry geom = DbGeometry.FromText(model.SearchAreaWkt, 3857); //27700 is OSGB, 3857 is google maps
+                var defaultInvoiceEmail = User.Identity.GetUserDefaultInvoicingEmail();
+                var user = User.Identity.GetAppUser();
+                var userId = User.Identity.GetIntUserId();
+                if (model.InvoiceEmail != null)
+                {
+                    defaultInvoiceEmail = model.InvoiceEmail;
+                }
+                Enquiry enquiry = new Enquiry
+                {
+                    ApplicationUserId = userId,
+                    Name = model.Name,
+                    InvoiceEmail = defaultInvoiceEmail,
+                    SearchArea = geom,
+                    SearchTypeId = model.SearchTypeId,
+                    NoOfYears = model.NoOfYears,
+                    JobNumber = model.JobNumber,
+                    Agency = model.Agency,
+                    AgencyContact = model.AgencyContact,
+                    DataUsedFor = model.DataUsedFor,
+                    Citations = model.Citations,
+                    GisKml = model.GisKml,
+                    Express = model.Express,
+                    Comment = model.Comment,
+                };
+                
                 db.Enquiries.Add(enquiry);
-                db.SaveChanges();
-                return RedirectToAction("Index");
+
+                try
+                {
+                    db.SaveChanges();
+                    return RedirectToAction("Index");
+                }
+                catch (DbEntityValidationException ex)
+                {
+                    foreach (var result in ex.EntityValidationErrors)
+                        foreach (var error in result.ValidationErrors)
+                            ModelState.AddModelError(error.PropertyName, error.ErrorMessage);
+                    return View(model);
+                }
             }
 
-            ViewBag.InvoiceId = new SelectList(db.Invoices, "InvoiceId", "Code", enquiry.InvoiceId);
-            return View(enquiry);
+            ViewBag.DefaultInvoiceEmail = User.Identity.GetUserDefaultInvoicingEmail();
+            ViewBag.SearchTypeId = new SelectList(db.SearchTypes, "SearchTypeId", "Name", model.SearchTypeId);
+            return View(model);
         }
 
         // GET: Enquiries/Edit/5

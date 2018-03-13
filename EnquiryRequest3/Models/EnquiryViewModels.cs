@@ -1,34 +1,24 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.Spatial;
 
 namespace EnquiryRequest3.Models
 {
-    public class Enquiry
+    public class UserCreateEditEnquiryViewModel
     {
         [Key]
         public int EnquiryId { get; set; }
-
-        [StringLength(100, ErrorMessage = "The {0} cannot be more than {1} characters long.")]
-        public string Code { get; set; }
 
         [Required]
         [StringLength(100, ErrorMessage = "The {0} cannot be more than {1} characters long.")]
         public string Name { get; set; }
 
         [Required]
-        public int ApplicationUserId { get; set; }
-        public virtual  ApplicationUser ApplicationUser { get; set; }
-
-        [Required]
         [EmailAddress]
         [StringLength(100, ErrorMessage = "The {0} cannot be more than {1} characters long.")]
         public string InvoiceEmail { get; set; }
-
+        
         [Required]
-        public DbGeometry SearchArea { get; set; }
+        public string SearchAreaWkt { get; set; }
 
         [Required]
         public int SearchTypeId { get; set; }
@@ -66,35 +56,9 @@ namespace EnquiryRequest3.Models
         [Display(Name = "Express", Prompt = "Require express service", Description = "Select if you require express service")]
         public Boolean Express { get; set; }
 
-        //should be non editable, automatically timestamped and show up in details
-        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
-        public DateTime EnquiryDate { get; set; }
-
         [DataType(DataType.MultilineText)]
+        [Display(Name = "Comment", Prompt = "Enter Comments", Description = "Write here if there is anything else we should know about the request")]
         public string Comment { get; set; }
-
-        //should be non createable, automatically timestamped on user click and show up in details
-        public DateTime? AddedToRersDate { get; set; }
-
-        //should be non createable, automatically timestamped on user click and show up in details
-        public DateTime? DataCleanedDate { get; set; }
-
-        //should be non createable, automatically timestamped on user click and show up in details
-        public DateTime? ReporCompleteDate { get; set; }
-
-        //should be non createable, automatically timestamped on user click and show up in details
-        public DateTime? DocumentsCleanedDate { get; set; }
-
-        //should be non createable, automatically timestamped on user click and show up in details
-        public DateTime? EnquiryDeliveredDate { get; set; }
-
-        [DataType(DataType.MultilineText)]
-        public string AdminComment { get; set; }
-
-        public virtual ICollection<Quote> Quotes { get; set; }
-
-        public int? InvoiceId { get; set; }
-        public virtual Invoice Invoice { get; set; }
 
     }
 }

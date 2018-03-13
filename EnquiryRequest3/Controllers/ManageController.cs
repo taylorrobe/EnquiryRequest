@@ -1,17 +1,14 @@
-﻿using System;
+﻿using EnquiryRequest3.Models;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.Owin;
+using Microsoft.Owin.Security;
+using System;
+using System.Data.Entity;
+using System.Data.Entity.Validation;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
-using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.Owin;
-using Microsoft.Owin.Security;
-using EnquiryRequest3.Models;
-using Microsoft.AspNet.Identity.EntityFramework;
-using System.Data.Entity;
-using System.Net;
-using System.Security.Principal;
-using System.Data.Entity.Validation;
 
 namespace EnquiryRequest3.Controllers
 {
