@@ -1,5 +1,4 @@
 ﻿using EnquiryRequest3.Models;
-using System;
 using System.Data.Entity;
 using System.Data.Entity.Spatial;
 using System.Data.Entity.Validation;
@@ -9,6 +8,7 @@ using System.Web.Mvc;
 
 namespace EnquiryRequest3.Controllers
 {
+    [Authorize]
     public class EnquiriesController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
@@ -38,6 +38,11 @@ namespace EnquiryRequest3.Controllers
         // GET: Enquiries/Create
         public ActionResult Create()
         {
+            if (ViewBag.ValidationRepost == null)
+            {
+                ViewBag.ValidationRepost = "false";
+            }
+
             ViewBag.DefaultInvoiceEmail = User.Identity.GetUserDefaultInvoicingEmail();
             ViewBag.SearchTypeId = new SelectList(db.SearchTypes, "SearchTypeId", "Name");
             return View();
@@ -52,7 +57,8 @@ namespace EnquiryRequest3.Controllers
         {
             if (ModelState.IsValid)
             {
-                DbGeometry geom = DbGeometry.FromText(model.SearchAreaWkt, 3857); //27700 is OSGB, 3857 is google maps
+                DbGeometry geom = DbGeometry.FromText(model.SearchAreaWkt, 3857); //(EPSG:27700) is OSGB, (EPSG:3857) google maps geometric, wgs84 (EPSG:4326) google geographic
+                //transform geom
                 var defaultInvoiceEmail = User.Identity.GetUserDefaultInvoicingEmail();
                 var user = User.Identity.GetAppUser();
                 var userId = User.Identity.GetIntUserId();
@@ -90,12 +96,14 @@ namespace EnquiryRequest3.Controllers
                     foreach (var result in ex.EntityValidationErrors)
                         foreach (var error in result.ValidationErrors)
                             ModelState.AddModelError(error.PropertyName, error.ErrorMessage);
+                    ViewBag.ValidationRepost = "true";
                     return View(model);
                 }
             }
 
             ViewBag.DefaultInvoiceEmail = User.Identity.GetUserDefaultInvoicingEmail();
             ViewBag.SearchTypeId = new SelectList(db.SearchTypes, "SearchTypeId", "Name", model.SearchTypeId);
+            ViewBag.ValidationRepost = "true";
             return View(model);
         }
 

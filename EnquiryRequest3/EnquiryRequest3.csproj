@@ -48,23 +48,20 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="DotSpatial.Data, Version=0.11.9.6, Culture=neutral, PublicKeyToken=c29dbf30e059ca9d, processorArchitecture=MSIL">
-      <HintPath>..\packages\DotSpatial.Data.1.0.0.0\lib\net40-Client\DotSpatial.Data.dll</HintPath>
+    <Reference Include="DotSpatial.Data, Version=1.9.0.0, Culture=neutral, PublicKeyToken=c29dbf30e059ca9d, processorArchitecture=MSIL">
+      <HintPath>..\packages\DotSpatial.Data.1.9\lib\net40-Client\DotSpatial.Data.dll</HintPath>
     </Reference>
-    <Reference Include="DotSpatial.Data.Forms, Version=0.11.9.6, Culture=neutral, PublicKeyToken=53ab5a198378d4c1, processorArchitecture=MSIL">
-      <HintPath>..\packages\DotSpatial.Data.1.0.0.0\lib\net40-Client\DotSpatial.Data.Forms.dll</HintPath>
+    <Reference Include="DotSpatial.Mono, Version=1.9.0.0, Culture=neutral, PublicKeyToken=425ba4de41127026, processorArchitecture=MSIL">
+      <HintPath>..\packages\DotSpatial.Mono.1.9\lib\net40-Client\DotSpatial.Mono.dll</HintPath>
     </Reference>
-    <Reference Include="DotSpatial.Projections, Version=0.11.9.6, Culture=neutral, PublicKeyToken=272632bddd08a38b, processorArchitecture=MSIL">
-      <HintPath>..\packages\DotSpatial.Projections.1.0.0.0\lib\net40-Client\DotSpatial.Projections.dll</HintPath>
+    <Reference Include="DotSpatial.Projections, Version=1.9.0.0, Culture=neutral, PublicKeyToken=272632bddd08a38b, processorArchitecture=MSIL">
+      <HintPath>..\packages\DotSpatial.Projections.1.9\lib\net40-Client\DotSpatial.Projections.dll</HintPath>
     </Reference>
-    <Reference Include="DotSpatial.Projections.Forms, Version=0.11.9.6, Culture=neutral, PublicKeyToken=52099474f11b7ff0, processorArchitecture=MSIL">
-      <HintPath>..\packages\DotSpatial.Projections.1.0.0.0\lib\net40-Client\DotSpatial.Projections.Forms.dll</HintPath>
+    <Reference Include="DotSpatial.Serialization, Version=1.9.0.0, Culture=neutral, PublicKeyToken=441f200f827611e7, processorArchitecture=MSIL">
+      <HintPath>..\packages\DotSpatial.Serialization.1.9\lib\net40-Client\DotSpatial.Serialization.dll</HintPath>
     </Reference>
-    <Reference Include="DotSpatial.Serialization, Version=0.11.9.6, Culture=neutral, PublicKeyToken=441f200f827611e7, processorArchitecture=MSIL">
-      <HintPath>..\packages\DotSpatial.Serialization.1.0.0.0\lib\net40-Client\DotSpatial.Serialization.dll</HintPath>
-    </Reference>
-    <Reference Include="DotSpatial.Topology, Version=0.11.9.6, Culture=neutral, PublicKeyToken=a66b5e9434ca3671, processorArchitecture=MSIL">
-      <HintPath>..\packages\DotSpatial.Topology.1.0.0.0\lib\net40-Client\DotSpatial.Topology.dll</HintPath>
+    <Reference Include="DotSpatial.Topology, Version=1.9.0.0, Culture=neutral, PublicKeyToken=a66b5e9434ca3671, processorArchitecture=MSIL">
+      <HintPath>..\packages\DotSpatial.Topology.1.9\lib\net40-Client\DotSpatial.Topology.dll</HintPath>
     </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
@@ -117,6 +114,9 @@
     </Reference>
     <Reference Include="PowerCollections, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\NetTopologySuite.1.13.2\lib\net403-client\PowerCollections.dll</HintPath>
+    </Reference>
+    <Reference Include="Proj4Net, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Proj4Net.1.0.0\lib\Proj4Net.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -247,6 +247,7 @@
     <Compile Include="Controllers\OrganisationsController.cs" />
     <Compile Include="Controllers\QuotesController.cs" />
     <Compile Include="Controllers\SearchTypesController.cs" />
+    <Compile Include="Controllers\Utilities\Spatial.cs" />
     <Compile Include="ErrorHandler\AiHandleErrorAttribute.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -336,12 +337,273 @@
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
+    <Content Include="Images\CustomMapMarkers\blue_MarkerA.png" />
+    <Content Include="Images\CustomMapMarkers\blue_MarkerB.png" />
+    <Content Include="Images\CustomMapMarkers\blue_MarkerC.png" />
+    <Content Include="Images\CustomMapMarkers\blue_MarkerD.png" />
+    <Content Include="Images\CustomMapMarkers\blue_MarkerE.png" />
+    <Content Include="Images\CustomMapMarkers\blue_MarkerF.png" />
+    <Content Include="Images\CustomMapMarkers\blue_MarkerG.png" />
+    <Content Include="Images\CustomMapMarkers\blue_MarkerH.png" />
+    <Content Include="Images\CustomMapMarkers\blue_MarkerI.png" />
+    <Content Include="Images\CustomMapMarkers\blue_MarkerJ.png" />
+    <Content Include="Images\CustomMapMarkers\blue_MarkerK.png" />
+    <Content Include="Images\CustomMapMarkers\blue_MarkerL.png" />
+    <Content Include="Images\CustomMapMarkers\blue_MarkerM.png" />
+    <Content Include="Images\CustomMapMarkers\blue_MarkerN.png" />
+    <Content Include="Images\CustomMapMarkers\blue_MarkerO.png" />
+    <Content Include="Images\CustomMapMarkers\blue_MarkerP.png" />
+    <Content Include="Images\CustomMapMarkers\blue_MarkerQ.png" />
+    <Content Include="Images\CustomMapMarkers\blue_MarkerR.png" />
+    <Content Include="Images\CustomMapMarkers\blue_MarkerS.png" />
+    <Content Include="Images\CustomMapMarkers\blue_MarkerT.png" />
+    <Content Include="Images\CustomMapMarkers\blue_MarkerU.png" />
+    <Content Include="Images\CustomMapMarkers\blue_MarkerV.png" />
+    <Content Include="Images\CustomMapMarkers\blue_MarkerW.png" />
+    <Content Include="Images\CustomMapMarkers\blue_MarkerX.png" />
+    <Content Include="Images\CustomMapMarkers\blue_MarkerY.png" />
+    <Content Include="Images\CustomMapMarkers\blue_MarkerZ.png" />
+    <Content Include="Images\CustomMapMarkers\brown_MarkerA.png" />
+    <Content Include="Images\CustomMapMarkers\brown_MarkerB.png" />
+    <Content Include="Images\CustomMapMarkers\brown_MarkerC.png" />
+    <Content Include="Images\CustomMapMarkers\brown_MarkerD.png" />
+    <Content Include="Images\CustomMapMarkers\brown_MarkerE.png" />
+    <Content Include="Images\CustomMapMarkers\brown_MarkerF.png" />
+    <Content Include="Images\CustomMapMarkers\brown_MarkerG.png" />
+    <Content Include="Images\CustomMapMarkers\brown_MarkerH.png" />
+    <Content Include="Images\CustomMapMarkers\brown_MarkerI.png" />
+    <Content Include="Images\CustomMapMarkers\brown_MarkerJ.png" />
+    <Content Include="Images\CustomMapMarkers\brown_MarkerK.png" />
+    <Content Include="Images\CustomMapMarkers\brown_MarkerL.png" />
+    <Content Include="Images\CustomMapMarkers\brown_MarkerM.png" />
+    <Content Include="Images\CustomMapMarkers\brown_MarkerN.png" />
+    <Content Include="Images\CustomMapMarkers\brown_MarkerO.png" />
+    <Content Include="Images\CustomMapMarkers\brown_MarkerP.png" />
+    <Content Include="Images\CustomMapMarkers\brown_MarkerQ.png" />
+    <Content Include="Images\CustomMapMarkers\brown_MarkerR.png" />
+    <Content Include="Images\CustomMapMarkers\brown_MarkerS.png" />
+    <Content Include="Images\CustomMapMarkers\brown_MarkerT.png" />
+    <Content Include="Images\CustomMapMarkers\brown_MarkerU.png" />
+    <Content Include="Images\CustomMapMarkers\brown_MarkerV.png" />
+    <Content Include="Images\CustomMapMarkers\brown_MarkerW.png" />
+    <Content Include="Images\CustomMapMarkers\brown_MarkerX.png" />
+    <Content Include="Images\CustomMapMarkers\brown_MarkerY.png" />
+    <Content Include="Images\CustomMapMarkers\brown_MarkerZ.png" />
+    <Content Include="Images\CustomMapMarkers\darkgreen_MarkerA.png" />
+    <Content Include="Images\CustomMapMarkers\darkgreen_MarkerB.png" />
+    <Content Include="Images\CustomMapMarkers\darkgreen_MarkerC.png" />
+    <Content Include="Images\CustomMapMarkers\darkgreen_MarkerD.png" />
+    <Content Include="Images\CustomMapMarkers\darkgreen_MarkerE.png" />
+    <Content Include="Images\CustomMapMarkers\darkgreen_MarkerF.png" />
+    <Content Include="Images\CustomMapMarkers\darkgreen_MarkerG.png" />
+    <Content Include="Images\CustomMapMarkers\darkgreen_MarkerH.png" />
+    <Content Include="Images\CustomMapMarkers\darkgreen_MarkerI.png" />
+    <Content Include="Images\CustomMapMarkers\darkgreen_MarkerJ.png" />
+    <Content Include="Images\CustomMapMarkers\darkgreen_MarkerK.png" />
+    <Content Include="Images\CustomMapMarkers\darkgreen_MarkerL.png" />
+    <Content Include="Images\CustomMapMarkers\darkgreen_MarkerM.png" />
+    <Content Include="Images\CustomMapMarkers\darkgreen_MarkerN.png" />
+    <Content Include="Images\CustomMapMarkers\darkgreen_MarkerO.png" />
+    <Content Include="Images\CustomMapMarkers\darkgreen_MarkerP.png" />
+    <Content Include="Images\CustomMapMarkers\darkgreen_MarkerQ.png" />
+    <Content Include="Images\CustomMapMarkers\darkgreen_MarkerR.png" />
+    <Content Include="Images\CustomMapMarkers\darkgreen_MarkerS.png" />
+    <Content Include="Images\CustomMapMarkers\darkgreen_MarkerT.png" />
+    <Content Include="Images\CustomMapMarkers\darkgreen_MarkerU.png" />
+    <Content Include="Images\CustomMapMarkers\darkgreen_MarkerV.png" />
+    <Content Include="Images\CustomMapMarkers\darkgreen_MarkerW.png" />
+    <Content Include="Images\CustomMapMarkers\darkgreen_MarkerX.png" />
+    <Content Include="Images\CustomMapMarkers\darkgreen_MarkerY.png" />
+    <Content Include="Images\CustomMapMarkers\darkgreen_MarkerZ.png" />
+    <Content Include="Images\CustomMapMarkers\green_MarkerA.png" />
+    <Content Include="Images\CustomMapMarkers\green_MarkerB.png" />
+    <Content Include="Images\CustomMapMarkers\green_MarkerC.png" />
+    <Content Include="Images\CustomMapMarkers\green_MarkerD.png" />
+    <Content Include="Images\CustomMapMarkers\green_MarkerE.png" />
+    <Content Include="Images\CustomMapMarkers\green_MarkerF.png" />
+    <Content Include="Images\CustomMapMarkers\green_MarkerG.png" />
+    <Content Include="Images\CustomMapMarkers\green_MarkerH.png" />
+    <Content Include="Images\CustomMapMarkers\green_MarkerI.png" />
+    <Content Include="Images\CustomMapMarkers\green_MarkerJ.png" />
+    <Content Include="Images\CustomMapMarkers\green_MarkerK.png" />
+    <Content Include="Images\CustomMapMarkers\green_MarkerL.png" />
+    <Content Include="Images\CustomMapMarkers\green_MarkerM.png" />
+    <Content Include="Images\CustomMapMarkers\green_MarkerN.png" />
+    <Content Include="Images\CustomMapMarkers\green_MarkerO.png" />
+    <Content Include="Images\CustomMapMarkers\green_MarkerP.png" />
+    <Content Include="Images\CustomMapMarkers\green_MarkerQ.png" />
+    <Content Include="Images\CustomMapMarkers\green_MarkerR.png" />
+    <Content Include="Images\CustomMapMarkers\green_MarkerS.png" />
+    <Content Include="Images\CustomMapMarkers\green_MarkerT.png" />
+    <Content Include="Images\CustomMapMarkers\green_MarkerU.png" />
+    <Content Include="Images\CustomMapMarkers\green_MarkerV.png" />
+    <Content Include="Images\CustomMapMarkers\green_MarkerW.png" />
+    <Content Include="Images\CustomMapMarkers\green_MarkerX.png" />
+    <Content Include="Images\CustomMapMarkers\green_MarkerY.png" />
+    <Content Include="Images\CustomMapMarkers\green_MarkerZ.png" />
+    <Content Include="Images\CustomMapMarkers\orange_MarkerA.png" />
+    <Content Include="Images\CustomMapMarkers\orange_MarkerB.png" />
+    <Content Include="Images\CustomMapMarkers\orange_MarkerC.png" />
+    <Content Include="Images\CustomMapMarkers\orange_MarkerD.png" />
+    <Content Include="Images\CustomMapMarkers\orange_MarkerE.png" />
+    <Content Include="Images\CustomMapMarkers\orange_MarkerF.png" />
+    <Content Include="Images\CustomMapMarkers\orange_MarkerG.png" />
+    <Content Include="Images\CustomMapMarkers\orange_MarkerH.png" />
+    <Content Include="Images\CustomMapMarkers\orange_MarkerI.png" />
+    <Content Include="Images\CustomMapMarkers\orange_MarkerJ.png" />
+    <Content Include="Images\CustomMapMarkers\orange_MarkerK.png" />
+    <Content Include="Images\CustomMapMarkers\orange_MarkerL.png" />
+    <Content Include="Images\CustomMapMarkers\orange_MarkerM.png" />
+    <Content Include="Images\CustomMapMarkers\orange_MarkerN.png" />
+    <Content Include="Images\CustomMapMarkers\orange_MarkerO.png" />
+    <Content Include="Images\CustomMapMarkers\orange_MarkerP.png" />
+    <Content Include="Images\CustomMapMarkers\orange_MarkerQ.png" />
+    <Content Include="Images\CustomMapMarkers\orange_MarkerR.png" />
+    <Content Include="Images\CustomMapMarkers\orange_MarkerS.png" />
+    <Content Include="Images\CustomMapMarkers\orange_MarkerT.png" />
+    <Content Include="Images\CustomMapMarkers\orange_MarkerU.png" />
+    <Content Include="Images\CustomMapMarkers\orange_MarkerV.png" />
+    <Content Include="Images\CustomMapMarkers\orange_MarkerW.png" />
+    <Content Include="Images\CustomMapMarkers\orange_MarkerX.png" />
+    <Content Include="Images\CustomMapMarkers\orange_MarkerY.png" />
+    <Content Include="Images\CustomMapMarkers\orange_MarkerZ.png" />
+    <Content Include="Images\CustomMapMarkers\paleblue_MarkerA.png" />
+    <Content Include="Images\CustomMapMarkers\paleblue_MarkerB.png" />
+    <Content Include="Images\CustomMapMarkers\paleblue_MarkerC.png" />
+    <Content Include="Images\CustomMapMarkers\paleblue_MarkerD.png" />
+    <Content Include="Images\CustomMapMarkers\paleblue_MarkerE.png" />
+    <Content Include="Images\CustomMapMarkers\paleblue_MarkerF.png" />
+    <Content Include="Images\CustomMapMarkers\paleblue_MarkerG.png" />
+    <Content Include="Images\CustomMapMarkers\paleblue_MarkerH.png" />
+    <Content Include="Images\CustomMapMarkers\paleblue_MarkerI.png" />
+    <Content Include="Images\CustomMapMarkers\paleblue_MarkerJ.png" />
+    <Content Include="Images\CustomMapMarkers\paleblue_MarkerK.png" />
+    <Content Include="Images\CustomMapMarkers\paleblue_MarkerL.png" />
+    <Content Include="Images\CustomMapMarkers\paleblue_MarkerM.png" />
+    <Content Include="Images\CustomMapMarkers\paleblue_MarkerN.png" />
+    <Content Include="Images\CustomMapMarkers\paleblue_MarkerO.png" />
+    <Content Include="Images\CustomMapMarkers\paleblue_MarkerP.png" />
+    <Content Include="Images\CustomMapMarkers\paleblue_MarkerQ.png" />
+    <Content Include="Images\CustomMapMarkers\paleblue_MarkerR.png" />
+    <Content Include="Images\CustomMapMarkers\paleblue_MarkerS.png" />
+    <Content Include="Images\CustomMapMarkers\paleblue_MarkerT.png" />
+    <Content Include="Images\CustomMapMarkers\paleblue_MarkerU.png" />
+    <Content Include="Images\CustomMapMarkers\paleblue_MarkerV.png" />
+    <Content Include="Images\CustomMapMarkers\paleblue_MarkerW.png" />
+    <Content Include="Images\CustomMapMarkers\paleblue_MarkerX.png" />
+    <Content Include="Images\CustomMapMarkers\paleblue_MarkerY.png" />
+    <Content Include="Images\CustomMapMarkers\paleblue_MarkerZ.png" />
+    <Content Include="Images\CustomMapMarkers\pink_MarkerA.png" />
+    <Content Include="Images\CustomMapMarkers\pink_MarkerB.png" />
+    <Content Include="Images\CustomMapMarkers\pink_MarkerC.png" />
+    <Content Include="Images\CustomMapMarkers\pink_MarkerD.png" />
+    <Content Include="Images\CustomMapMarkers\pink_MarkerE.png" />
+    <Content Include="Images\CustomMapMarkers\pink_MarkerF.png" />
+    <Content Include="Images\CustomMapMarkers\pink_MarkerG.png" />
+    <Content Include="Images\CustomMapMarkers\pink_MarkerH.png" />
+    <Content Include="Images\CustomMapMarkers\pink_MarkerI.png" />
+    <Content Include="Images\CustomMapMarkers\pink_MarkerJ.png" />
+    <Content Include="Images\CustomMapMarkers\pink_MarkerK.png" />
+    <Content Include="Images\CustomMapMarkers\pink_MarkerL.png" />
+    <Content Include="Images\CustomMapMarkers\pink_MarkerM.png" />
+    <Content Include="Images\CustomMapMarkers\pink_MarkerN.png" />
+    <Content Include="Images\CustomMapMarkers\pink_MarkerO.png" />
+    <Content Include="Images\CustomMapMarkers\pink_MarkerP.png" />
+    <Content Include="Images\CustomMapMarkers\pink_MarkerQ.png" />
+    <Content Include="Images\CustomMapMarkers\pink_MarkerR.png" />
+    <Content Include="Images\CustomMapMarkers\pink_MarkerS.png" />
+    <Content Include="Images\CustomMapMarkers\pink_MarkerT.png" />
+    <Content Include="Images\CustomMapMarkers\pink_MarkerU.png" />
+    <Content Include="Images\CustomMapMarkers\pink_MarkerV.png" />
+    <Content Include="Images\CustomMapMarkers\pink_MarkerW.png" />
+    <Content Include="Images\CustomMapMarkers\pink_MarkerX.png" />
+    <Content Include="Images\CustomMapMarkers\pink_MarkerY.png" />
+    <Content Include="Images\CustomMapMarkers\pink_MarkerZ.png" />
+    <Content Include="Images\CustomMapMarkers\purple_MarkerA.png" />
+    <Content Include="Images\CustomMapMarkers\purple_MarkerB.png" />
+    <Content Include="Images\CustomMapMarkers\purple_MarkerC.png" />
+    <Content Include="Images\CustomMapMarkers\purple_MarkerD.png" />
+    <Content Include="Images\CustomMapMarkers\purple_MarkerE.png" />
+    <Content Include="Images\CustomMapMarkers\purple_MarkerF.png" />
+    <Content Include="Images\CustomMapMarkers\purple_MarkerG.png" />
+    <Content Include="Images\CustomMapMarkers\purple_MarkerH.png" />
+    <Content Include="Images\CustomMapMarkers\purple_MarkerI.png" />
+    <Content Include="Images\CustomMapMarkers\purple_MarkerJ.png" />
+    <Content Include="Images\CustomMapMarkers\purple_MarkerK.png" />
+    <Content Include="Images\CustomMapMarkers\purple_MarkerL.png" />
+    <Content Include="Images\CustomMapMarkers\purple_MarkerM.png" />
+    <Content Include="Images\CustomMapMarkers\purple_MarkerN.png" />
+    <Content Include="Images\CustomMapMarkers\purple_MarkerO.png" />
+    <Content Include="Images\CustomMapMarkers\purple_MarkerP.png" />
+    <Content Include="Images\CustomMapMarkers\purple_MarkerQ.png" />
+    <Content Include="Images\CustomMapMarkers\purple_MarkerR.png" />
+    <Content Include="Images\CustomMapMarkers\purple_MarkerS.png" />
+    <Content Include="Images\CustomMapMarkers\purple_MarkerT.png" />
+    <Content Include="Images\CustomMapMarkers\purple_MarkerU.png" />
+    <Content Include="Images\CustomMapMarkers\purple_MarkerV.png" />
+    <Content Include="Images\CustomMapMarkers\purple_MarkerW.png" />
+    <Content Include="Images\CustomMapMarkers\purple_MarkerX.png" />
+    <Content Include="Images\CustomMapMarkers\purple_MarkerY.png" />
+    <Content Include="Images\CustomMapMarkers\purple_MarkerZ.png" />
+    <Content Include="Images\CustomMapMarkers\red_MarkerA.png" />
+    <Content Include="Images\CustomMapMarkers\red_MarkerB.png" />
+    <Content Include="Images\CustomMapMarkers\red_MarkerC.png" />
+    <Content Include="Images\CustomMapMarkers\red_MarkerD.png" />
+    <Content Include="Images\CustomMapMarkers\red_MarkerE.png" />
+    <Content Include="Images\CustomMapMarkers\red_MarkerF.png" />
+    <Content Include="Images\CustomMapMarkers\red_MarkerG.png" />
+    <Content Include="Images\CustomMapMarkers\red_MarkerH.png" />
+    <Content Include="Images\CustomMapMarkers\red_MarkerI.png" />
+    <Content Include="Images\CustomMapMarkers\red_MarkerJ.png" />
+    <Content Include="Images\CustomMapMarkers\red_MarkerK.png" />
+    <Content Include="Images\CustomMapMarkers\red_MarkerL.png" />
+    <Content Include="Images\CustomMapMarkers\red_MarkerM.png" />
+    <Content Include="Images\CustomMapMarkers\red_MarkerN.png" />
+    <Content Include="Images\CustomMapMarkers\red_MarkerO.png" />
+    <Content Include="Images\CustomMapMarkers\red_MarkerP.png" />
+    <Content Include="Images\CustomMapMarkers\red_MarkerQ.png" />
+    <Content Include="Images\CustomMapMarkers\red_MarkerR.png" />
+    <Content Include="Images\CustomMapMarkers\red_MarkerS.png" />
+    <Content Include="Images\CustomMapMarkers\red_MarkerT.png" />
+    <Content Include="Images\CustomMapMarkers\red_MarkerU.png" />
+    <Content Include="Images\CustomMapMarkers\red_MarkerV.png" />
+    <Content Include="Images\CustomMapMarkers\red_MarkerW.png" />
+    <Content Include="Images\CustomMapMarkers\red_MarkerX.png" />
+    <Content Include="Images\CustomMapMarkers\red_MarkerY.png" />
+    <Content Include="Images\CustomMapMarkers\red_MarkerZ.png" />
+    <Content Include="Images\CustomMapMarkers\yellow_MarkerA.png" />
+    <Content Include="Images\CustomMapMarkers\yellow_MarkerB.png" />
+    <Content Include="Images\CustomMapMarkers\yellow_MarkerC.png" />
+    <Content Include="Images\CustomMapMarkers\yellow_MarkerD.png" />
+    <Content Include="Images\CustomMapMarkers\yellow_MarkerE.png" />
+    <Content Include="Images\CustomMapMarkers\yellow_MarkerF.png" />
+    <Content Include="Images\CustomMapMarkers\yellow_MarkerG.png" />
+    <Content Include="Images\CustomMapMarkers\yellow_MarkerH.png" />
+    <Content Include="Images\CustomMapMarkers\yellow_MarkerI.png" />
+    <Content Include="Images\CustomMapMarkers\yellow_MarkerJ.png" />
+    <Content Include="Images\CustomMapMarkers\yellow_MarkerK.png" />
+    <Content Include="Images\CustomMapMarkers\yellow_MarkerL.png" />
+    <Content Include="Images\CustomMapMarkers\yellow_MarkerM.png" />
+    <Content Include="Images\CustomMapMarkers\yellow_MarkerN.png" />
+    <Content Include="Images\CustomMapMarkers\yellow_MarkerO.png" />
+    <Content Include="Images\CustomMapMarkers\yellow_MarkerP.png" />
+    <Content Include="Images\CustomMapMarkers\yellow_MarkerQ.png" />
+    <Content Include="Images\CustomMapMarkers\yellow_MarkerR.png" />
+    <Content Include="Images\CustomMapMarkers\yellow_MarkerS.png" />
+    <Content Include="Images\CustomMapMarkers\yellow_MarkerT.png" />
+    <Content Include="Images\CustomMapMarkers\yellow_MarkerU.png" />
+    <Content Include="Images\CustomMapMarkers\yellow_MarkerV.png" />
+    <Content Include="Images\CustomMapMarkers\yellow_MarkerW.png" />
+    <Content Include="Images\CustomMapMarkers\yellow_MarkerX.png" />
+    <Content Include="Images\CustomMapMarkers\yellow_MarkerY.png" />
+    <Content Include="Images\CustomMapMarkers\yellow_MarkerZ.png" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Connected Services\Application Insights\ConnectedService.json" />
+    <Content Include="Images\CustomMapMarkers\markers.psd" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\EnquiryRequest.js" />
     <Content Include="Scripts\expressive.annotations.validate.js" />

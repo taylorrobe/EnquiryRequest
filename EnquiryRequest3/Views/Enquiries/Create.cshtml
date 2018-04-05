@@ -9,282 +9,160 @@
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
+    @section scripts {
+<script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD9ieUIp9TK9KVQeoGIbs27lCoGwE_q6Yc&libraries=drawing,geometry&callback=initMap">
+    
+</script>
+    }
+@*<input id="validationRepost" type="text" value="@ViewBag.ValidationRepost" />*@
+<div class="form-horizontal">
+    <h4>Enquiry</h4>
+    <hr />
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
-    <div class="form-horizontal">
-        <h4>Enquiry</h4>
-        <hr />
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    <div class="form-group">
+        @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+        </div>
+    </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
-            </div>
+    <div class="form-group">
+        @Html.LabelFor(model => model.InvoiceEmail, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.InvoiceEmail, new { htmlAttributes = new { @class = "form-control", @Value = ViewBag.DefaultInvoiceEmail } })
+            @Html.ValidationMessageFor(model => model.InvoiceEmail, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    <div id="map" style="width: 640px; height: 480px;">
+    </div>
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <label title="Show info"></label><input id="checkBoxShowInfo" type="checkbox" class="checkbox" />
+            <input id="SetArea" type="button" value="Set Area" class="btn btn-default" onclick="setAreaButtonClick()" />
+            <input id="ClearSelectedShape" type="button" value="Clear selected shape" class="btn btn-default" onclick="ClearSelectedShapeButtonClick()" />
+            <input id="ResetMapAndWkt" type="button" value="Reset Map and WKT" class="btn btn-default" onclick="ResetMapAndWktClick()" />
+
+
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.SearchAreaWkt, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.SearchAreaWkt, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.SearchAreaWkt, "", new { @class = "text-danger" })
+
         </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.InvoiceEmail, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.InvoiceEmail, new { htmlAttributes = new { @class = "form-control", @Value = ViewBag.DefaultInvoiceEmail } })
-                @Html.ValidationMessageFor(model => model.InvoiceEmail, "", new { @class = "text-danger" })
-            </div>
-        </div>
-        <div id="map" style="width: 640px; height: 480px;">
-        </div>
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input id="SetArea" type="button" value="Set Area" class="btn btn-default" onclick="setAreaButtonClick()" />
-                <input id="ClearSelectedShape" type="button" value="Clear selected shape" class="btn btn-default" onclick="ClearSelectedShapeButtonClick()" />
-            </div>
+    </div>
+    <div class="form-group">
+        <label for="Buffer" class="control-label col-md-2">Buffer</label>
+        <div class="col-md-10">
+            <input id="Buffer" type="text" value="1000" class="form-control" />
+            @*<input id="ApplyBufferToSelected" type="button" value="Apply buffer to selected shape" class="btn btn-default" onclick="ApplyBufferToSelectedButtonClick()" />*@
         </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.SearchAreaWkt, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.SearchAreaWkt, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.SearchAreaWkt, "", new { @class = "text-danger" })
-            </div>
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(model => model.SearchTypeId, "Search Type", htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.DropDownList("SearchTypeId", null, htmlAttributes: new { @class = "form-control" })
+            @Html.ValidationMessageFor(model => model.SearchTypeId, "", new { @class = "text-danger" })
         </div>
+    </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.SearchTypeId, "Search Type", htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DropDownList("SearchTypeId", null, htmlAttributes: new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.SearchTypeId, "", new { @class = "text-danger" })
-            </div>
+    <div class="form-group">
+        @Html.LabelFor(model => model.NoOfYears, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.NoOfYears, new { htmlAttributes = new { @class = "form-control", @value = "10" } })
+            @Html.ValidationMessageFor(model => model.NoOfYears, "", new { @class = "text-danger" })
         </div>
+    </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.NoOfYears, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.NoOfYears, new { htmlAttributes = new { @class = "form-control", @value = "10"} })
-                @Html.ValidationMessageFor(model => model.NoOfYears, "", new { @class = "text-danger" })
-            </div>
+    <div class="form-group">
+        @Html.LabelFor(model => model.JobNumber, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.JobNumber, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.JobNumber, "", new { @class = "text-danger" })
         </div>
+    </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.JobNumber, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.JobNumber, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.JobNumber, "", new { @class = "text-danger" })
-            </div>
+    <div class="form-group">
+        @Html.LabelFor(model => model.Agency, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.Agency, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.Agency, "", new { @class = "text-danger" })
         </div>
+    </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.Agency, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Agency, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Agency, "", new { @class = "text-danger" })
-            </div>
+    <div class="form-group">
+        @Html.LabelFor(model => model.AgencyContact, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.AgencyContact, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.AgencyContact, "", new { @class = "text-danger" })
         </div>
+    </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.AgencyContact, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.AgencyContact, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.AgencyContact, "", new { @class = "text-danger" })
-            </div>
+    <div class="form-group">
+        @Html.LabelFor(model => model.DataUsedFor, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.DataUsedFor, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.DataUsedFor, "", new { @class = "text-danger" })
         </div>
+    </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.DataUsedFor, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.DataUsedFor, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.DataUsedFor, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.Citations, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                <div class="checkbox">
-                    @Html.EditorFor(model => model.Citations)
-                    @Html.ValidationMessageFor(model => model.Citations, "", new { @class = "text-danger" })
-                </div>
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.GisKml, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                <div class="checkbox">
-                    @Html.EditorFor(model => model.GisKml)
-                    @Html.ValidationMessageFor(model => model.GisKml, "", new { @class = "text-danger" })
-                </div>
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.Express, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                <div class="checkbox">
-                    @Html.EditorFor(model => model.Express)
-                    @Html.ValidationMessageFor(model => model.Express, "", new { @class = "text-danger" })
-                </div>
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.Comment, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Comment, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Comment, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Create" class="btn btn-default" />
+    <div class="form-group">
+        @Html.LabelFor(model => model.Citations, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            <div class="checkbox">
+                @Html.EditorFor(model => model.Citations)
+                @Html.ValidationMessageFor(model => model.Citations, "", new { @class = "text-danger" })
             </div>
         </div>
     </div>
-}
 
-<div>
-    @Html.ActionLink("Back to List", "Index")
+    <div class="form-group">
+        @Html.LabelFor(model => model.GisKml, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            <div class="checkbox">
+                @Html.EditorFor(model => model.GisKml)
+                @Html.ValidationMessageFor(model => model.GisKml, "", new { @class = "text-danger" })
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.Express, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            <div class="checkbox">
+                @Html.EditorFor(model => model.Express)
+                @Html.ValidationMessageFor(model => model.Express, "", new { @class = "text-danger" })
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.Comment, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.Comment, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.Comment, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" value="Create" class="btn btn-default" />
+        </div>
+    </div>
 </div>
-
-<script>
-    var selectedShape;
-    //var numberOfShapes = 0;
-    var allShapes;
-    var drawingManager;
-    function getDrawingManager() {
-        drawingManager = new google.maps.drawing.DrawingManager({
-            drawingMode: google.maps.drawing.OverlayType.MARKER,
-            drawingControl: true,
-            drawingControlOptions: {
-                position: google.maps.ControlPosition.TOP_CENTER,
-                drawingModes: ['marker', 'circle', 'polygon', 'polyline', 'rectangle']
-            },
-            markerOptions: { icon: 'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png' },
-            circleOptions: {
-                fillColor: '#ffff00',
-                fillOpacity: 1,
-                strokeWeight: 5,
-                clickable: false,
-                editable: true,
-                zIndex: 1
-            }
-        });
-        allShapes = [];
-        return drawingManager;
-    }
-    function clearSelection() {
-        if (selectedShape) {
-            console.log("clearSelection");
-
-            selectedShape.setEditable(false);
-            selectedShape = null;
-            //numberOfShapes--;
         }
-    }
 
-    function setSelection(shape) {
-        console.log("setSelection");
-        
-        clearSelection();
-        selectedShape = shape;
-        shape.setEditable(true);
-        shape.draggable = true;
-        //numberOfShapes++;
-        //getInformation(shape);
-    }
+        <div>
+            @Html.ActionLink("Back to List", "Index")
+        </div>
 
-    function deleteSelectedShape() {
-        if (selectedShape) {
-            selectedShape.setMap(null);
-            var index = allShapes.indexOf(selectedShape);
-            if (index !== -1) allShapes.splice(index, 1);
-        }
-    }
 
-    function getWktFromshapes() {
-        var wkt = "";
-        var mvcArray;
-        if (allShapes.length > 1) { //make multipolygon wkt
-            wkt = "MULTIPOLYGON("
-            allShapes.forEach((shape) => {
-                wkt += "("
-                paths = shape.getPath();
-
-                paths.forEach((latlng) => {
-                    wkt += latlng.lat() + " "
-                    wkt += latlng.lng() + " , "
-                });
-                wkt += paths.getAt(0).lat() + " " + paths.getAt(0).lng() + "),";
-                
-            });
-            wkt = wkt.substring(0, wkt.length - 1) + ")";
-        } else if (allShapes.length == 1) { //make polygon wkt
-            wkt = "POLYGON("
-            allShapes.forEach((shape) => {
-                wkt += "("
-                paths = shape.getPath();
-
-                paths.forEach((latlng) => {
-                    wkt += latlng.lat() + " "
-                    wkt += latlng.lng() + " , "
-                });
-                wkt += paths.getAt(0).lat() + " " + paths.getAt(0).lng() + "),";
-
-            });
-            wkt = wkt.substring(0, wkt.length - 1) + ")";
-        } 
-        return wkt;
-    }
-
-    function setAreaButtonClick() {
-        //do something
-        var wkt = getWktFromshapes();
-        document.getElementById("SearchAreaWkt").value = wkt;
-    }
-    function ClearSelectedShapeButtonClick() {
-        //do something
-        deleteSelectedShape();
-    }
-    // This example requires the Drawing library. Include the libraries=drawing
-    // parameter when you first load the API. For example:
-    // <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=drawing">
-
-    function initMap() {
-        var map = new google.maps.Map(document.getElementById('map'), {
-            center: { lat: -34.397, lng: 150.644 },
-            zoom: 8
-        });
-
-        drawingManager = getDrawingManager();
-        drawingManager.setMap(map);
-
-        //google.maps.event.addListener(drawingManager, 'overlaycomplete', function (polygon) {
-        //    $.each(polygon.overlay.latLngs.b[0].b, function (key, latlng) {
-        //        var lat = latlng.d;
-        //        var lon = latlng.e;
-        //        console.log(lat, lon); //do something with the coordinates
-        //    });
-        //});
-        google.maps.event.addListener(drawingManager, 'overlaycomplete', function (e) {
-            if (e.type != google.maps.drawing.OverlayType.MARKER) {
-                // Switch back to non-drawing mode after drawing a shape.
-                drawingManager.setDrawingMode(null);
-
-                // Add an event listener that selects the newly-drawn shape when the user
-                // mouses down on it.
-                var newShape = e.overlay;
-                newShape.type = e.type;
-                
-                allShapes.push(newShape);
-                google.maps.event.addListener(newShape, 'click', function () {
-                    setSelection(newShape);
-                });
-                setSelection(newShape);
-            }
-        });
-    }
-</script>
-
-<script async defer
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD9ieUIp9TK9KVQeoGIbs27lCoGwE_q6Yc&libraries=drawing&callback=initMap">
-</script>
