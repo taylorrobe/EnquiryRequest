@@ -1,4 +1,5 @@
 ﻿using EnquiryRequest3.Models;
+using Microsoft.AspNet.Identity;
 using System.Data.Entity;
 using System.Data.Entity.Spatial;
 using System.Data.Entity.Validation;
@@ -16,7 +17,10 @@ namespace EnquiryRequest3.Controllers
         // GET: Enquiries
         public ActionResult Index()
         {
-            var enquiries = db.Enquiries.Include(e => e.Invoice);
+            var userId = User.Identity.GetUserId<int>();
+            var enquiries = db.Enquiries.Include(e => e.Invoice)
+                .Where(a => a.ApplicationUserId == userId);
+                //.Where(a => a.ApplicationUser == User);
             return View(enquiries.ToList());
         }
 
@@ -27,12 +31,24 @@ namespace EnquiryRequest3.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+            var currentUser = db.Users.Single(user => user.UserName == User.Identity.Name);
             Enquiry enquiry = db.Enquiries.Find(id);
-            if (enquiry == null)
+            if (currentUser.Id == enquiry.ApplicationUserId)
             {
-                return HttpNotFound();
+                //let user view the details
+                
+                if (enquiry == null)
+                {
+                    return HttpNotFound();
+                }
+                return View(enquiry);
             }
-            return View(enquiry);
+            else
+            {
+                // send him back to the post or do something else.
+                return RedirectToAction("Index", "Enquiries");
+            }
+
         }
 
         // GET: Enquiries/Create

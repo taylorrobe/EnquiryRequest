@@ -2,6 +2,7 @@
 var map;
 var selectedShape;
 var allShapes = [];
+var shapeEventListeners = [];
 var shapeId = 0;
 var drawingManager;
 
@@ -32,14 +33,6 @@ function getDrawingManager() {
             icon: '../../images/CustomMapMarkers/red_MarkerA.png',
             draggable: true
         }
-        //circleOptions: {
-        //    fillColor: '#ffff00',
-        //    fillOpacity: 1,
-        //    strokeWeight: 5,
-        //    clickable: false,
-        //    editable: true,
-        //    zIndex: 1
-        //}
     });
     return drawingManager;
 }
@@ -80,8 +73,12 @@ function setSelection(shape) {
 function deleteShape(shape) {
     shape.setMap(null);
     var index = allShapes.indexOf(shape);
-    if (index != -1) allShapes.splice(index, 1);
+    if (index != -1) {
+        allShapes.splice(index, 1);
+        shapeEventListeners.splice(index, 1);
+    }
     selectedShape = null;
+
 }
 
 function deleteSelectedShape() {
@@ -94,11 +91,11 @@ function addNewShape(event) {
     var newShape = event.overlay;
     newShape.type = event.type;
     shapeId++;
-    allShapes.push(newShape);
-    google.maps.event.addListener(newShape, 'click', function shapeClickListener(event) {
+    var allShapesSize = allShapes.push(newShape);
+    var eventListener = google.maps.event.addListener(newShape, 'click', function shapeClickListener(event) {
         setSelection(newShape, event);
     });
-
+    shapeEventListeners.splice(allShapesSize - 1, 0, eventListener);
     setSelection(newShape, event);
 }
 
@@ -106,11 +103,11 @@ function addNewMarker(event) {
     var newMarker = event.overlay;
     newMarker.type = event.type;
     shapeId++;
-    allShapes.push(newMarker);
-    google.maps.event.addListener(newMarker, 'click', function shapeClickListener(event) {
+    var allShapesSize = allShapes.push(newMarker);
+    var eventListener = google.maps.event.addListener(newMarker, 'click', function shapeClickListener(event) {
         setSelection(newMarker, event);
     });
-
+    shapeEventListeners.splice(allShapesSize - 1, 0, eventListener);
     setSelection(newMarker, event);
 }
 
@@ -210,14 +207,14 @@ function getWktFromShape(shape) {
     }
     else if (shape.type == google.maps.drawing.OverlayType.MARKER) {
         wkt = "POINT(";
-        wkt += "(";
         var latlng = shape.getPosition();
 
         wkt += latlng.lng()
         wkt += " "
         wkt += latlng.lat()
-        wkt += "))";
+        wkt += ")";
     }
+
     return wkt
 }
 
@@ -233,7 +230,7 @@ function getWktFromShapes() {
         })
     }
     if (allShapes.length > 1 && allShapesArePolygons) { //if more than 1 shape make multipolygon wkt
-        wkt = "MULTIPOLYGON("
+        wkt = "MULTIPOLYGON(("
         allShapes.forEach((shape) => {
             wkt += "("
             paths = shape.getPath();
@@ -245,7 +242,7 @@ function getWktFromShapes() {
             wkt += paths.getAt(0).lng() + " " + paths.getAt(0).lat() + "),";
 
         });
-        wkt = wkt.substring(0, wkt.length - 1) + ")";
+        wkt = wkt.substring(0, wkt.length - 1) + "))";
     } else if (allShapes.length === 1) { //make single marker or polygon wkt
         var shape = allShapes[0];
         wkt = getWktFromShape(shape);
@@ -255,8 +252,14 @@ function getWktFromShapes() {
     else {
         throw new UserException('Invalid shapes, please use only one marker or draw polygons without markers');
     }
-
+    var geoJson = getGeoJsonFromWkt(wkt);
+    alert(JSON.stringify(geoJson), "geoJSON");
     return wkt;
+}
+
+//this function requires terraformer-wkt-parser.js
+function getGeoJsonFromWkt(wkt) {
+    return Terraformer.WKT.parse(wkt);
 }
 
 /** @this {google.maps.Polygon} */
@@ -290,17 +293,23 @@ function showInfo(event) {
     infoWindow.open(map);
 }
 
+function removeShapeClickListenerFromShapes() {
+    shapeEventListeners.forEach((eventListener) => {
+        google.maps.event.removeListener(eventListener);
+    });
+    shapeEventListeners = [];
+}
+
 function setAreaButtonClick() {
     //do something
     try {
         var wkt = getWktFromShapes();
         document.getElementById("SearchAreaWkt").value = wkt;
         disableDrawing();
+        removeShapeClickListenerFromShapes();
     } catch (e) {
         alert(e.message, e.name);
     }
-
-
 }
 function ClearSelectedShapeButtonClick() {
     deleteSelectedShape();
@@ -324,6 +333,8 @@ function ApplyBufferToSelectedButtonClick() {
 // parameter when you first load the API. For example:
 // <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=drawing">
 
+
+
 function initMap() {
     //var isPostBack = document.getElementById("validationRepost").value;
     //if (isPostBack === "false") {
@@ -335,7 +346,7 @@ function initMap() {
         drawingManager = getDrawingManager();
         drawingManager.setMap(map);
 
-        google.maps.event.addListener(drawingManager, 'overlaycomplete', function shapeComplete(e) {
+        var eventListener = google.maps.event.addListener(drawingManager, 'overlaycomplete', function shapeComplete(e) {
             // Switch back to non-drawing mode after drawing a shape.
             drawingManager.setDrawingMode(null);
             if (e.type === "polygon") {
@@ -344,7 +355,17 @@ function initMap() {
                 addNewMarker(e);
             }
         });
+        
     //}
+}
+
+function initMapReadOnly(wkt) {
+    var googleObj = getGeoJson(wkt, opts);
+    map = new google.maps.Map(document.getElementById('map'), {
+        center: { lat: 53.24150676822664, lng: -2.5523899555555545 },
+        zoom: 9
+    });
+
 }
 
 

@@ -24,7 +24,9 @@ namespace EnquiryRequest3
                         "~/Scripts/jquery.validate*"));
 
             bundles.Add(new ScriptBundle("~/bundles/enquiryRequest").Include(
-            "~/Scripts/EnquiryRequest.js"));
+            "~/Scripts/EnquiryRequest.js",
+            "~/Scripts/terraformer.js",
+            "~/Scripts/terraformer-wkt-parser.js"));
 
             // Use the development version of Modernizr to develop with and learn from. Then, when you're
             // ready for production, use the build tool at https://modernizr.com to pick only the tests you need.

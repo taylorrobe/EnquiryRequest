@@ -23,9 +23,9 @@
         <th>
             @Html.DisplayNameFor(model => model.InvoiceEmail)
         </th>
-        <th>
-            @Html.DisplayNameFor(model => model.SearchArea)
-        </th>
+        @*<th>
+                @Html.DisplayNameFor(model => model.SearchArea)
+            </th>*@
         <th>
             @Html.DisplayNameFor(model => model.NoOfYears)
         </th>
@@ -56,98 +56,106 @@
         <th>
             @Html.DisplayNameFor(model => model.Comment)
         </th>
-        <th>
-            @Html.DisplayNameFor(model => model.AddedToRersDate)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.DataCleanedDate)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.ReporCompleteDate)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.DocumentsCleanedDate)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.EnquiryDeliveredDate)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.AdminComment)
-        </th>
+        @if (ViewContext.HttpContext.User.IsInRole("EnquiryProducer"))
+        {
+            <th>
+                @Html.DisplayNameFor(model => model.AddedToRersDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DataCleanedDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ReporCompleteDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DocumentsCleanedDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EnquiryDeliveredDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.AdminComment)
+            </th>
+        }
+
         <th></th>
     </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.Invoice.Code)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Code)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Name)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.InvoiceEmail)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.SearchArea)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.NoOfYears)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.JobNumber)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Agency)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.AgencyContact)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.DataUsedFor)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Citations)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.GisKml)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Express)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.EnquiryDate)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Comment)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.AddedToRersDate)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.DataCleanedDate)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.ReporCompleteDate)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.DocumentsCleanedDate)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.EnquiryDeliveredDate)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.AdminComment)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.EnquiryId }) |
-            @Html.ActionLink("Details", "Details", new { id=item.EnquiryId }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.EnquiryId })
-        </td>
-    </tr>
-}
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Invoice.Code)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Code)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.InvoiceEmail)
+            </td>
+            @*<td>
+                    @Html.DisplayFor(modelItem => item.SearchArea)
+                </td>*@
+            <td>
+                @Html.DisplayFor(modelItem => item.NoOfYears)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.JobNumber)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Agency)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AgencyContact)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DataUsedFor)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Citations)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.GisKml)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Express)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EnquiryDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Comment)
+            </td>
+            @if (ViewContext.HttpContext.User.IsInRole("EnquiryProducer"))
+            {
+                <td>
+                    @Html.DisplayFor(modelItem => item.AddedToRersDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DataCleanedDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ReporCompleteDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DocumentsCleanedDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.EnquiryDeliveredDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.AdminComment)
+                </td>
+            }
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.EnquiryId }) |
+                @Html.ActionLink("Details", "Details", new { id = item.EnquiryId }) |
+                @Html.ActionLink("Delete", "Delete", new { id = item.EnquiryId })
+            </td>
+        </tr>
+    }
 
 </table>

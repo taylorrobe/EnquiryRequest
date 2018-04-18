@@ -5,182 +5,195 @@
 }
 
 <h2>Details</h2>
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @section scripts {
+        <script async defer
+                src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD9ieUIp9TK9KVQeoGIbs27lCoGwE_q6Yc&libraries=geometry&callback=initMapReadOnly">
 
-<div>
-    <h4>Enquiry</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.Invoice.Code)
-        </dt>
+        </script>
+    }
+}
+    <div>
+        <h4>Enquiry</h4>
+        <hr />
+        <dl class="dl-horizontal">
+            <dt>
+                @Html.DisplayNameFor(model => model.Invoice.Code)
+            </dt>
 
-        <dd>
-            @Html.DisplayFor(model => model.Invoice.Code)
-        </dd>
+            <dd>
+                @Html.DisplayFor(model => model.Invoice.Code)
+            </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Code)
-        </dt>
+            <dt>
+                @Html.DisplayNameFor(model => model.Code)
+            </dt>
 
-        <dd>
-            @Html.DisplayFor(model => model.Code)
-        </dd>
+            <dd>
+                @Html.DisplayFor(model => model.Code)
+            </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
+            <dt>
+                @Html.DisplayNameFor(model => model.Name)
+            </dt>
 
-        <dd>
-            @Html.DisplayFor(model => model.Name)
-        </dd>
+            <dd>
+                @Html.DisplayFor(model => model.Name)
+            </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.InvoiceEmail)
-        </dt>
+            <dt>
+                @Html.DisplayNameFor(model => model.InvoiceEmail)
+            </dt>
 
-        <dd>
-            @Html.DisplayFor(model => model.InvoiceEmail)
-        </dd>
+            <dd>
+                @Html.DisplayFor(model => model.InvoiceEmail)
+            </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.SearchArea)
-        </dt>
+            <dt>
+                @Html.DisplayNameFor(model => model.SearchArea)
+            </dt>
 
-        <dd>
-            @Html.DisplayFor(model => model.SearchArea)
-        </dd>
+            <dd>
+                @Html.DisplayFor(model => model.SearchArea.WellKnownValue)
 
-        <dt>
-            @Html.DisplayNameFor(model => model.NoOfYears)
-        </dt>
+    <div id="map" style="width: 150px; height: 150px;"></div>
 
-        <dd>
-            @Html.DisplayFor(model => model.NoOfYears)
-        </dd>
+    </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.JobNumber)
-        </dt>
 
-        <dd>
-            @Html.DisplayFor(model => model.JobNumber)
-        </dd>
+    <dt>
+        @Html.DisplayNameFor(model => model.NoOfYears)
+    </dt>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Agency)
-        </dt>
+    <dd>
+        @Html.DisplayFor(model => model.NoOfYears)
+    </dd>
 
-        <dd>
-            @Html.DisplayFor(model => model.Agency)
-        </dd>
+    <dt>
+        @Html.DisplayNameFor(model => model.JobNumber)
+    </dt>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.AgencyContact)
-        </dt>
+    <dd>
+        @Html.DisplayFor(model => model.JobNumber)
+    </dd>
 
-        <dd>
-            @Html.DisplayFor(model => model.AgencyContact)
-        </dd>
+    <dt>
+        @Html.DisplayNameFor(model => model.Agency)
+    </dt>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.DataUsedFor)
-        </dt>
+    <dd>
+        @Html.DisplayFor(model => model.Agency)
+    </dd>
 
-        <dd>
-            @Html.DisplayFor(model => model.DataUsedFor)
-        </dd>
+    <dt>
+        @Html.DisplayNameFor(model => model.AgencyContact)
+    </dt>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Citations)
-        </dt>
+    <dd>
+        @Html.DisplayFor(model => model.AgencyContact)
+    </dd>
 
-        <dd>
-            @Html.DisplayFor(model => model.Citations)
-        </dd>
+    <dt>
+        @Html.DisplayNameFor(model => model.DataUsedFor)
+    </dt>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.GisKml)
-        </dt>
+    <dd>
+        @Html.DisplayFor(model => model.DataUsedFor)
+    </dd>
 
-        <dd>
-            @Html.DisplayFor(model => model.GisKml)
-        </dd>
+    <dt>
+        @Html.DisplayNameFor(model => model.Citations)
+    </dt>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Express)
-        </dt>
+    <dd>
+        @Html.DisplayFor(model => model.Citations)
+    </dd>
 
-        <dd>
-            @Html.DisplayFor(model => model.Express)
-        </dd>
+    <dt>
+        @Html.DisplayNameFor(model => model.GisKml)
+    </dt>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.EnquiryDate)
-        </dt>
+    <dd>
+        @Html.DisplayFor(model => model.GisKml)
+    </dd>
 
-        <dd>
-            @Html.DisplayFor(model => model.EnquiryDate)
-        </dd>
+    <dt>
+        @Html.DisplayNameFor(model => model.Express)
+    </dt>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Comment)
-        </dt>
+    <dd>
+        @Html.DisplayFor(model => model.Express)
+    </dd>
 
-        <dd>
-            @Html.DisplayFor(model => model.Comment)
-        </dd>
+    <dt>
+        @Html.DisplayNameFor(model => model.EnquiryDate)
+    </dt>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.AddedToRersDate)
-        </dt>
+    <dd>
+        @Html.DisplayFor(model => model.EnquiryDate)
+    </dd>
 
-        <dd>
-            @Html.DisplayFor(model => model.AddedToRersDate)
-        </dd>
+    <dt>
+        @Html.DisplayNameFor(model => model.Comment)
+    </dt>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.DataCleanedDate)
-        </dt>
+    <dd>
+        @Html.DisplayFor(model => model.Comment)
+    </dd>
 
-        <dd>
-            @Html.DisplayFor(model => model.DataCleanedDate)
-        </dd>
+    <dt>
+        @Html.DisplayNameFor(model => model.AddedToRersDate)
+    </dt>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.ReporCompleteDate)
-        </dt>
+    <dd>
+        @Html.DisplayFor(model => model.AddedToRersDate)
+    </dd>
 
-        <dd>
-            @Html.DisplayFor(model => model.ReporCompleteDate)
-        </dd>
+    <dt>
+        @Html.DisplayNameFor(model => model.DataCleanedDate)
+    </dt>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.DocumentsCleanedDate)
-        </dt>
+    <dd>
+        @Html.DisplayFor(model => model.DataCleanedDate)
+    </dd>
 
-        <dd>
-            @Html.DisplayFor(model => model.DocumentsCleanedDate)
-        </dd>
+    <dt>
+        @Html.DisplayNameFor(model => model.ReporCompleteDate)
+    </dt>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.EnquiryDeliveredDate)
-        </dt>
+    <dd>
+        @Html.DisplayFor(model => model.ReporCompleteDate)
+    </dd>
 
-        <dd>
-            @Html.DisplayFor(model => model.EnquiryDeliveredDate)
-        </dd>
+    <dt>
+        @Html.DisplayNameFor(model => model.DocumentsCleanedDate)
+    </dt>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.AdminComment)
-        </dt>
+    <dd>
+        @Html.DisplayFor(model => model.DocumentsCleanedDate)
+    </dd>
 
-        <dd>
-            @Html.DisplayFor(model => model.AdminComment)
-        </dd>
+    <dt>
+        @Html.DisplayNameFor(model => model.EnquiryDeliveredDate)
+    </dt>
+
+    <dd>
+        @Html.DisplayFor(model => model.EnquiryDeliveredDate)
+    </dd>
+
+    <dt>
+        @Html.DisplayNameFor(model => model.AdminComment)
+    </dt>
+
+    <dd>
+        @Html.DisplayFor(model => model.AdminComment)
+    </dd>
 
     </dl>
-</div>
-<p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.EnquiryId }) |
-    @Html.ActionLink("Back to List", "Index")
-</p>
+    </div>
+    <p>
+        @Html.ActionLink("Edit", "Edit", new { id = Model.EnquiryId }) |
+        @Html.ActionLink("Back to List", "Index")
+    </p>
