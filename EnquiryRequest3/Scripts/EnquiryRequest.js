@@ -111,77 +111,6 @@ function addNewMarker(event) {
     setSelection(newMarker, event);
 }
 
-function applyBuffer(shape, buffer) {
-    if (shape == null) {
-        throw new UserException("no shape drawn");
-    }
-    if (TryParseInt(buffer, 0) <= 0) {
-        throw new UserException("no buffer specified");
-    }
-    if (shape.type == "polygon") {
-        var padding = parseInt(buffer);
-        var vertices = shape.getPath();
-        var polybounds = new google.maps.LatLngBounds();
-        for (var i = 0; i < vertices.getLength(); i++) {
-            polybounds.extend(vertices.getAt(i));
-        }
-        var center = polybounds.getCenter();
-        var centerMarker = new google.maps.Marker({
-            position: center,
-            visible : false,
-            map: map,
-            icon: {
-                size: new google.maps.Size(7, 7),
-                anchor: new google.maps.Point(4, 4)
-            }
-        });
-
-        var polylines = [];
-        var newPath = [];
-        for (var i = 0; i < vertices.getLength(); i++) {
-            polylines.push(new google.maps.Polyline({
-                path: [center, vertices.getAt(i)],
-                visible: false,
-                map: map,
-                strokeWidth: 2,
-                strokeColor: 'red'
-            }));
-            newPath[i] = google.maps.geometry.spherical.computeOffset(center,
-                padding + google.maps.geometry.spherical.computeDistanceBetween(center, vertices.getAt(i)),
-                google.maps.geometry.spherical.computeHeading(center, vertices.getAt(i)));
-        }
-        // render outer shape
-        var outer = new google.maps.Polygon({
-            strokeColor: 'white',
-            strokeOpacity: 0.8,
-            strokeWeight: 1,
-            fillColor: 'black',
-            fillOpacity: 0.35,
-            map: map,
-            editable: false,
-            path: newPath
-        });
-        var overlay = {
-            overlay: outer,
-            type: google.maps.drawing.OverlayType.POLYGON
-        };
-        return overlay;
-    } else if (shape.type === "marker") {
-        latlng = shape.getPosition();
-        circle = new google.maps.Circle({
-            center: latlng,
-            map: map,
-            strokeColor: '#000',
-            strokeWeight: 2,
-            strokeOpacity: 0.5,
-            fillColor: '#f0f0f0',
-            fillOpacity: 0.5,
-            radius: parseInt(buffer)
-        });
-        return circle;
-    }
-};
-
 function disableDrawing() {
     drawingManager.setDrawingMode(null);
     drawingManager.setOptions({
@@ -252,14 +181,21 @@ function getWktFromShapes() {
     else {
         throw new UserException('Invalid shapes, please use only one marker or draw polygons without markers');
     }
-    var geoJson = getGeoJsonFromWkt(wkt);
-    alert(JSON.stringify(geoJson), "geoJSON");
+
     return wkt;
 }
 
-//this function requires terraformer-wkt-parser.js
+//this function requires openlayers (ol.js)
 function getGeoJsonFromWkt(wkt) {
-    return Terraformer.WKT.parse(wkt);
+    //var val = 'GEOMETRYCOLLECTION(MULTIPOLYGON(((-0.12072212703174 51.51899157882951,-0.128597092699465 51.51191439062526,-0.129004788469729 51.51260880491084,-0.129584145616946 51.51374388239237,-0.130120587419924 51.51494569831,-0.130614113878664 51.51653471734371,-0.125507187914309 51.51718900318654,-0.121001076769289 51.519178508517115,-0.12072212703174 51.51899157882951))))';
+    var geojson_options = {};
+    var wkt_format = new ol.format.WKT();
+    var feature = wkt_format.readFeature(wkt);
+    var wkt_options = {};
+    var geojson_format = new ol.format.GeoJSON(wkt_options);
+    return geojson_format.writeFeatureObject(feature);
+    //this function requires terraformer-wkt-parser.js
+    //return Terraformer.WKT.parse(wkt);
 }
 
 /** @this {google.maps.Polygon} */
@@ -300,72 +236,151 @@ function removeShapeClickListenerFromShapes() {
     shapeEventListeners = [];
 }
 
-function setAreaButtonClick() {
-    //do something
+function setArea() {
     try {
+        //convert shapes to wkt
         var wkt = getWktFromShapes();
-        document.getElementById("SearchAreaWkt").value = wkt;
+        //set wkt textbox and grey out
+        var searchAreaWkt = document.getElementById("SearchAreaWkt");
+        searchAreaWkt.value = wkt;
+        searchAreaWkt.setAttribute("readonly", true);
+        //get json text box
+        var searchAreaJson = document.getElementById("SearchAreaJson");
+        var geoJson = getGeoJsonFromWkt(wkt);
+        //var gMapGeoJson = map.data.toGeoJson();
+        //var gMapGeoJsonStr = JSON.stringify(gMapGeoJson);
+        //alert(gMapGeoJsonStr);
+        searchAreaJson.value = JSON.stringify(geoJson);
+        //remove drawing from map and event listeners from shapes
         disableDrawing();
         removeShapeClickListenerFromShapes();
     } catch (e) {
         alert(e.message, e.name);
     }
 }
+
+function setAreaButtonClick() {
+    setArea();
+}
 function ClearSelectedShapeButtonClick() {
     deleteSelectedShape();
 }
-function ResetMapAndWktClick() {
-    //todo
+function resetMapAndSpatialText(){
     allShapes.splice(0, allShapes.length)
     initMap();
-    document.getElementById("SearchAreaWkt").value = "";
+    var searchAreaWkt = document.getElementById("SearchAreaWkt");
+    searchAreaWkt.value = "";
+    searchAreaWkt.removeAttribute("readonly");
+    var searchAreaJson = document.getElementById("SearchAreaJson");
+    searchAreaJson.value = "";
 }
-function ApplyBufferToSelectedButtonClick() {
+function ResetMapAndWktClick() {
+    resetMapAndSpatialText();
+}
+
+function applyBufferToFeatures(buffer) {
+    var parser = new jsts.io.OL3Parser();
+    var wktReader = new jsts.io.WKTReader()
+    var searchAreaWkt = document.getElementById("SearchAreaWkt");
+    var jstsGeom = wktReader.read(searchAreaWkt.value);
+    var buffered = jstsGeom.buffer(buffer);
+    var coords = buffered.getCoordinates();
+    var envelope = buffered.getEnvelope();
+    var googleCoords = [];
+    coords.forEach(coord => {
+        console.log('>> ', 'coord is: ', coord)
+        var myLatlng = new google.maps.LatLng(coord.y, coord.x);
+        googleCoords.push(myLatlng);
+    });
+
+    // Construct the polygon.
+    var bufferedPolygon = new google.maps.Polygon({
+        paths: googleCoords,
+        strokeColor: '#FF0000',
+        strokeOpacity: 0.8,
+        strokeWeight: 2,
+        fillColor: '#FF0000',
+        fillOpacity: 0.35
+    });
+    bufferedPolygon.setMap(map);
+
+    //not working for some reason:
+    //map.data.forEach(feature => {
+
+    //    //console.log('>> ', 'properties are: ');
+    //    //feature.forEachProperty(function (value, property) {
+    //    //    console.log(property, ':', value);
+    //    //});
+    //    var jstsGeom = parser.read(feature.getGeometry());
+    //    var area = computeArea(jstsGeom)
+    //    var buffered = jstsGeom.buffer(buffer);
+
+    //});
+        return buffered;
+}
+
+function ApplyBufferToShapesButtonClick() {
     try {
         var buffer = document.getElementById("Buffer").value;
-        var newShape = applyBuffer(selectedShape, buffer);
-        addNewShape(newShape);
+        setArea();
+        var buffered = applyBufferToFeatures(buffer);
+
     } catch (e) {
         alert(e.message, e.name);
     }
 }
-// This example requires the Drawing library. Include the libraries=drawing
-// parameter when you first load the API. For example:
-// <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=drawing">
 
 
 
 function initMap() {
-    //var isPostBack = document.getElementById("validationRepost").value;
-    //if (isPostBack === "false") {
-        map = new google.maps.Map(document.getElementById('map'), {
-            center: { lat: 53.24150676822664, lng: -2.5523899555555545 },
-            zoom: 9
-        });
-
-        drawingManager = getDrawingManager();
-        drawingManager.setMap(map);
-
-        var eventListener = google.maps.event.addListener(drawingManager, 'overlaycomplete', function shapeComplete(e) {
-            // Switch back to non-drawing mode after drawing a shape.
-            drawingManager.setDrawingMode(null);
-            if (e.type === "polygon") {
-                addNewShape(e);
-            } else if (e.type === "marker") {
-                addNewMarker(e);
-            }
-        });
-        
-    //}
-}
-
-function initMapReadOnly(wkt) {
-    var googleObj = getGeoJson(wkt, opts);
     map = new google.maps.Map(document.getElementById('map'), {
         center: { lat: 53.24150676822664, lng: -2.5523899555555545 },
         zoom: 9
     });
 
+    drawingManager = getDrawingManager();
+    drawingManager.setMap(map);
+
+    var eventListener = google.maps.event.addListener(drawingManager, 'overlaycomplete', function shapeComplete(e) {
+        // Switch back to non-drawing mode after drawing a shape.
+        drawingManager.setDrawingMode(null);
+        if (e.type === "polygon") {
+            addNewShape(e);
+        } else if (e.type === "marker") {
+            addNewMarker(e);
+        }
+    });
+
+    //}
+}
+
+function initMapReadOnly() {
+    var wktDiv = document.getElementById("wkt");
+    var innerText = wktDiv.innerText;
+    map = new google.maps.Map(document.getElementById('map'), {
+        center: { lat: 53.24150676822664, lng: -2.5523899555555545 },
+        zoom: 9
+    });
+    try {
+        var geoJson = getGeoJsonFromWkt(innerText);
+        var features = map.data.addGeoJson(geoJson);
+        
+        //map.getBoundsZoomLevel(shape.getBounds());
+        //map.setZoom();
+        var bounds = new google.maps.LatLngBounds();
+        features.forEach(feature => {
+            var geom = feature.getGeometry();
+            geom.forEachLatLng(latlong => {
+                bounds.extend(latlong);
+            })
+            
+        })
+        
+        map.fitBounds(bounds);
+    }
+    catch (e) {
+        alert(e.message, e.name);
+    }
 }
 
 

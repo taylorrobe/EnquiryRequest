@@ -135,8 +135,26 @@ namespace EnquiryRequest3.Controllers
             {
                 return HttpNotFound();
             }
-            ViewBag.InvoiceId = new SelectList(db.Invoices, "InvoiceId", "Code", enquiry.InvoiceId);
-            return View(enquiry);
+            var wkt = enquiry.SearchArea.WellKnownValue.WellKnownText;
+            UserCreateEditEnquiryViewModel userCreateEditEnquiryViewModel = new UserCreateEditEnquiryViewModel
+            {
+                EnquiryId = enquiry.EnquiryId,
+                Name = enquiry.Name,
+                InvoiceEmail = enquiry.InvoiceEmail,
+                SearchAreaWkt = wkt,
+                SearchTypeId = enquiry.SearchTypeId,
+                NoOfYears = enquiry.NoOfYears,
+                JobNumber = enquiry.JobNumber,
+                Agency = enquiry.Agency,
+                AgencyContact = enquiry.AgencyContact,
+                DataUsedFor = enquiry.DataUsedFor,
+                Citations = enquiry.Citations,
+                GisKml = enquiry.GisKml,
+                Express = enquiry.Express,
+                Comment = enquiry.Comment
+            };
+            ViewBag.SearchTypeId = new SelectList(db.SearchTypes, "SearchTypeId", "Name", userCreateEditEnquiryViewModel.SearchTypeId);
+            return View(userCreateEditEnquiryViewModel);
         }
 
         // POST: Enquiries/Edit/5
@@ -144,16 +162,37 @@ namespace EnquiryRequest3.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "EnquiryId,Code,Name,InvoiceEmail,SearchArea,NoOfYears,JobNumber,Agency,AgencyContact,DataUsedFor,Citations,GisKml,Express,EnquiryDate,Comment,AddedToRersDate,DataCleanedDate,ReporCompleteDate,DocumentsCleanedDate,EnquiryDeliveredDate,AdminComment,InvoiceId")] Enquiry enquiry)
+        public ActionResult Edit([Bind(Include = "EnquiryId,Name,InvoiceEmail,SearchAreaWkt,SearchTypeId,NoOfYears,JobNumber,Agency,AgencyContact,DataUsedFor,Citations,GisKml,Express,EnquiryDate,Comment")] UserCreateEditEnquiryViewModel model)
         {
+            DbGeometry geom = DbGeometry.FromText(model.SearchAreaWkt, 3857);
+            var user = User.Identity.GetAppUser();
+            var userId = User.Identity.GetIntUserId();
             if (ModelState.IsValid)
             {
+                Enquiry enquiry = new Enquiry
+                {
+                    EnquiryId = model.EnquiryId,
+                    ApplicationUserId = userId,
+                    Name = model.Name,
+                    InvoiceEmail = model.InvoiceEmail,
+                    SearchArea = geom,
+                    SearchTypeId = model.SearchTypeId,
+                    NoOfYears = model.NoOfYears,
+                    JobNumber = model.JobNumber,
+                    Agency = model.Agency,
+                    AgencyContact = model.AgencyContact,
+                    DataUsedFor = model.DataUsedFor,
+                    Citations = model.Citations,
+                    GisKml = model.GisKml,
+                    Express = model.Express,
+                    Comment = model.Comment
+                };
                 db.Entry(enquiry).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            ViewBag.InvoiceId = new SelectList(db.Invoices, "InvoiceId", "Code", enquiry.InvoiceId);
-            return View(enquiry);
+            ViewBag.SearchTypeId = new SelectList(db.SearchTypes, "SearchTypeId", "Name", model.SearchTypeId);
+            return View(model);
         }
 
         // GET: Enquiries/Delete/5

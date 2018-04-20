@@ -5,7 +5,12 @@
 }
 
 <h2>Index</h2>
+@section scripts {
+    <script async defer
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD9ieUIp9TK9KVQeoGIbs27lCoGwE_q6Yc&libraries=drawing,geometry&callback=initMapReadOnly">
 
+    </script>
+}
 <p>
     @Html.ActionLink("Create New", "Create")
 </p>
@@ -24,7 +29,7 @@
             @Html.DisplayNameFor(model => model.InvoiceEmail)
         </th>
         @*<th>
-                @Html.DisplayNameFor(model => model.SearchArea)
+            Search area
             </th>*@
         <th>
             @Html.DisplayNameFor(model => model.NoOfYears)
@@ -83,6 +88,9 @@
 
     @foreach (var item in Model)
     {
+        
+        var wktName = "wkt" + item.EnquiryId;
+                
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.Invoice.Code)
@@ -97,8 +105,11 @@
                 @Html.DisplayFor(modelItem => item.InvoiceEmail)
             </td>
             @*<td>
-                    @Html.DisplayFor(modelItem => item.SearchArea)
-                </td>*@
+                <div id=@wktName> 
+                    @Html.HiddenFor(modelItem => item.SearchArea.WellKnownValue.WellKnownText)
+                </div>
+                <div id="map" style="width: 150px; height: 150px;"></div>
+            </td>*@
             <td>
                 @Html.DisplayFor(modelItem => item.NoOfYears)
             </td>
