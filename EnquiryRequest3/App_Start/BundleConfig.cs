@@ -24,9 +24,21 @@ namespace EnquiryRequest3
                         "~/Scripts/jquery.validate*"));
 
             bundles.Add(new ScriptBundle("~/bundles/enquiryRequest").Include(
-            "~/Scripts/ol.js",
             "~/Scripts/jsts.js",
-            "~/Scripts/EnquiryRequest.js"));
+            //"~/Scripts/EnquiryRequest.js",
+            "~/Scripts/EnquiryRequest2.js"));
+
+            //add link to openLayers on the CDN
+            var openLayersCdnPath = "https://openlayers.org/en/v4.6.5/build/ol.js";
+
+            //add link to proj4js on the CDN
+            var proj4jsCdnPath = "https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.4.4/proj4.js";
+
+            bundles.Add(new ScriptBundle("~/bundles/openLayers", openLayersCdnPath).Include(
+                "~/Scripts/ol.js"));
+
+            bundles.Add(new ScriptBundle("~/bundles/proj4js", proj4jsCdnPath).Include(
+                "~/Scripts/proj4.js"));
 
             // Use the development version of Modernizr to develop with and learn from. Then, when you're
             // ready for production, use the build tool at https://modernizr.com to pick only the tests you need.

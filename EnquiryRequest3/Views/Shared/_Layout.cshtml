@@ -6,6 +6,9 @@
     <title>@ViewBag.Title - Enquiry Request</title>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/openLayers")
+    @Scripts.Render("~/bundles/proj4js")
+
 
 
     <script type='text/javascript'>
@@ -53,7 +56,10 @@
 
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
+    
     @Scripts.Render("~/bundles/enquiryRequest")
+
+
     @RenderSection("scripts", required: false)
 
 

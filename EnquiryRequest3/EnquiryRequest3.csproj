@@ -605,6 +605,7 @@
     <Content Include="Connected Services\Application Insights\ConnectedService.json" />
     <Content Include="Images\CustomMapMarkers\markers.psd" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
+    <Content Include="Scripts\EnquiryRequest2.js" />
     <Content Include="Scripts\EnquiryRequest.js" />
     <Content Include="Scripts\expressive.annotations.validate.js" />
     <Content Include="Scripts\expressive.annotations.validate.min.js" />
@@ -620,6 +621,7 @@
     <Content Include="Scripts\ol-debug.js" />
     <Content Include="Scripts\ol.css" />
     <Content Include="Scripts\ol.js" />
+    <Content Include="Scripts\proj4.js" />
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
     <Content Include="Web.config" />
