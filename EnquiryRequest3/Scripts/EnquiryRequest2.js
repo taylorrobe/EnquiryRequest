@@ -5,6 +5,7 @@ var typeSelect = document.getElementById('type');
 var map;
 var select = null;  // ref to currently selected interaction
 var selectClick;
+var savedFeatures = [];
 
 proj4.defs('EPSG:27700', '+proj=tmerc +lat_0=49 +lon_0=-2 +k=0.9996012717 ' +
     '+x_0=400000 +y_0=-100000 +ellps=airy ' +
@@ -30,6 +31,18 @@ function getLayerById(id) {
         }
     });
     return layer;
+}
+
+function getLayerSource(layerName) {
+    var layer = getLayerById(layerName);
+    var source = layer.getSource();
+    return source;
+}
+
+function getFeaturesFromLayer(layerName) {
+    var source = getLayerSource(layerName)
+    var features = source.getFeatures();
+    return features;
 }
 
 function changeInteraction() {
@@ -90,13 +103,12 @@ function initialiseMap() {
             draw.on('drawstart', function drawStart(e) { clearSearchAreaTextBoxes(); });
 
             draw.on('drawend', function drawEnd(e) {
-                map.removeInteraction(draw);
-                map.removeInteraction(snap);
+                //map.removeInteraction(draw);
+                //map.removeInteraction(snap);
             });
 
             map.addInteraction(draw);
             //todo select newly added shape
-
 
             snap = new ol.interaction.Snap({ source: source });
             map.addInteraction(snap);
@@ -134,8 +146,6 @@ function initialiseMap() {
         view: defaultView
     });
 
-
-
     /**
      * Handle change event.
      */
@@ -160,9 +170,8 @@ function extendToDrawing() {
         //Create an empty extent that we will gradually extend
         var extent = ol.extent.createEmpty();
 
-        var layer = getLayerById("drawingVector");
-        ol.extent.extend(extent, layer.getSource().getExtent());
-        var source = layer.getSource();
+        var source = getLayerSource("drawingVector");
+        ol.extent.extend(extent, source.getExtent());
 
         //Finally fit the map's view to our combined extent
         map.getView().fit(extent, map.getSize());
@@ -180,20 +189,10 @@ function setArea() {
         var wktFormat = new ol.format.WKT();
         var geoJsonFormat = new ol.format.GeoJSON();
 
-        var layer = getLayerById("drawingVector");
-
-        var source = layer.getSource();
-        var features = source.getFeatures();
+        var features = getFeaturesFromLayer("drawingVector");
         if (features) {
             var wkt = wktFormat.writeFeatures(features);
             var geoJson = geoJsonFormat.writeFeatures(features);
-            //if (source) {
-            //    source.forEachFeature(feature => {
-            //        feature;
-            //        wkt = wktFormat.writeFeature(feature);
-            //    });
-            //}
-
             searchAreaWkt.value = wkt;
             searchAreaJson.value = geoJson;
         }
@@ -204,8 +203,7 @@ function setArea() {
 }
 
 function ClearSelectedShape() {
-    var drawingLayer = getLayerById("drawingVector");
-    var source = drawingLayer.getSource();
+    var source = getLayerSource("drawingVector");
     if (select !== null) {
         var confirmPolygon = function () { return confirm("Do you want to delete this shape?") };
 
@@ -232,12 +230,9 @@ function clearSearchAreaTextBoxes() {
 }
 
 function ResetMapAndWkt() {
-    var confirmReset = function () { return confirm("Do you want to reset the map? this will clear all drawings.") };
 
-    if (confirmReset()) {
         //clear all drawings
-        var drawingLayer = getLayerById("drawingVector");
-        var source = drawingLayer.getSource();
+        var source = getLayerSource("drawingVector");
         source.clear();
         //recentre map
         var defaultView = new ol.View({
@@ -247,7 +242,86 @@ function ResetMapAndWkt() {
         })
         map.setView(defaultView);
         clearSearchAreaTextBoxes();
+    
+}
+
+function applyBufferToFeature(feature, distance) {
+    var parser = new jsts.io.OL3Parser();
+
+    // convert the OpenLayers geometry to a JSTS geometry
+    var jstsGeom = parser.read(feature.getGeometry());
+
+    // create a buffer around the feature
+    var buffered = jstsGeom.buffer(distance);
+
+    return buffered;
+}
+
+function unionFeatures() {
+    var parser = new jsts.io.OL3Parser();
+    var source = getLayerSource("drawingVector");
+    var features = getFeaturesFromLayer("drawingVector");
+    var unionOfFeatures = new ol.Feature();
+    var jstsGeomOfUnionOfFeatures;
+    var i = 0;
+    features.forEach(feature => {
+        if (i < 1) {
+            //for first iteration set up unionGeom
+            jstsGeomOfUnionOfFeatures = parser.read(feature.getGeometry());
+        } else {
+            //for next iterations merge to uniongeom
+            var jstsGeomOfFeature = parser.read(feature.getGeometry());
+            //union current geometry with single geometry
+            jstsGeomOfUnionOfFeatures = jstsGeomOfFeature.union(jstsGeomOfUnionOfFeatures);
+        }
+        i++;
+    })
+    //parse back to ol.feature
+    unionOfFeatures.setGeometry(parser.write(jstsGeomOfUnionOfFeatures));
+    source.clear();
+    source.addFeature(unionOfFeatures);
+}
+
+function applyBufferToShapes() {
+    var distance = document.getElementById("Buffer").value;
+    var parser = new jsts.io.OL3Parser();
+    var features = getFeaturesFromLayer("drawingVector");
+
+    //save copy of original features for undoApplyBufferToShapes function
+    var clonedFeatures = [];
+    features.forEach(feature => {
+        var clonedFeature = feature.clone();
+        clonedFeatures.push(clonedFeature);
+    })
+    savedFeatures.push(clonedFeatures);
+
+    //apply buffer to all features and add back to the map
+    features.forEach(feature => {
+        var buffered = applyBufferToFeature(feature, distance);
+            // convert back from JSTS and replace the geometry on the feature
+            feature.setGeometry(parser.write(buffered));
+    })
+    extendToDrawing();
+}
+
+function undoApplyBufferToShapes() {
+    if (savedFeatures.length > 0) {
+        //ResetMapAndWkt();
+        var features = savedFeatures.pop();
+        var source = getLayerSource("drawingVector");
+        source.clear();
+        features.forEach(feature => {
+            source.addFeature(feature);
+        })
+        
+        extendToDrawing();
     }
+    
+
+}
+
+function unionFeaturesButtonClick() {
+    unionFeatures();
 }
 
 function setAreaButtonClick() {
@@ -259,7 +333,20 @@ function ClearSelectedShapeButtonClick() {
 }
 
 function ResetMapAndWktClick() {
-    ResetMapAndWkt();
+    var confirmReset = function () { return confirm("Do you want to reset the map? this will clear all drawings.") };
+
+    if (confirmReset()) {
+        ResetMapAndWkt();
+    }
 }
+
+function ApplyBufferToShapesButtonClick() {
+    applyBufferToShapes();
+}
+
+function undoApplyBufferToShapesButtonClick() {
+    undoApplyBufferToShapes();
+}
+
 
 initialiseMap();
