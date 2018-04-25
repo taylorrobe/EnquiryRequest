@@ -1,14 +1,18 @@
-﻿
+﻿//get references from DOM
+var searchAreaWkt = document.getElementById("SearchAreaWkt");
+var searchAreaJson = document.getElementById("SearchAreaJson");
 var typeSelect = document.getElementById('type');
 var map;
 var select = null;  // ref to currently selected interaction
 var selectClick;
+
 proj4.defs('EPSG:27700', '+proj=tmerc +lat_0=49 +lon_0=-2 +k=0.9996012717 ' +
     '+x_0=400000 +y_0=-100000 +ellps=airy ' +
     '+towgs84=446.448,-125.157,542.06,0.15,0.247,0.842,-20.489 ' +
     '+units=m +no_defs');
 var proj27700 = ol.proj.get('EPSG:27700');
 proj27700.setExtent([0, 0, 700000, 1300000]);
+
 
 function UserException(message) {
     this.message = message;
@@ -65,10 +69,14 @@ function changeInteraction() {
 
 function initialiseMap() {
     var draw, snap;
-    
-    function drawEnd() {
-        map.removeInteraction(draw);
-        map.removeInteraction(snap);
+    map = null;
+
+    function drawStart(e) {
+        clearSearchAreaTextBoxes();
+    }
+
+    function drawEnd(e) {
+
     }
 
     function addInteractions() {
@@ -78,6 +86,14 @@ function initialiseMap() {
                 source: source,
                 type: typeSelect.value
             });
+
+            draw.on('drawstart', function drawStart(e) { clearSearchAreaTextBoxes(); });
+
+            draw.on('drawend', function drawEnd(e) {
+                map.removeInteraction(draw);
+                map.removeInteraction(snap);
+            });
+
             map.addInteraction(draw);
             //todo select newly added shape
 
@@ -87,8 +103,6 @@ function initialiseMap() {
         }
 
     }
-
-
 
     var raster = new ol.layer.Tile({
         source: new ol.source.OSM()
@@ -109,19 +123,19 @@ function initialiseMap() {
         id: "drawingVector",
         source: source
     });
-
+    var defaultView = new ol.View({
+        projection: 'EPSG:27700',
+        center: [362000, 369000],
+        zoom: 5
+    })
     map = new ol.Map({
         layers: [raster, vector],
         target: 'map',
-        view: new ol.View({
-            projection: 'EPSG:27700',
-            center: [362000, 369000],
-            zoom: 5
-        })
+        view: defaultView
     });
 
 
-    
+
     /**
      * Handle change event.
      */
@@ -158,25 +172,21 @@ function extendToDrawing() {
     }
 }
 
-
-
 function setArea() {
     try {
         extendToDrawing();
 
-        //get text box references from DOM
-        var searchAreaWkt = document.getElementById("SearchAreaWkt");
-        var searchAreaJson = document.getElementById("SearchAreaJson");
-
-        var wkt;
-
-        //convert features to wkt
+        //convert features to wkt and geoJson
         var wktFormat = new ol.format.WKT();
+        var geoJsonFormat = new ol.format.GeoJSON();
+
         var layer = getLayerById("drawingVector");
-        if (layer instanceof ol.layer.Vector) {
-            var source = layer.getSource();
-            var features = source.getFeatures();
-            wkt = wktFormat.writeFeatures(features);
+
+        var source = layer.getSource();
+        var features = source.getFeatures();
+        if (features) {
+            var wkt = wktFormat.writeFeatures(features);
+            var geoJson = geoJsonFormat.writeFeatures(features);
             //if (source) {
             //    source.forEachFeature(feature => {
             //        feature;
@@ -184,9 +194,9 @@ function setArea() {
             //    });
             //}
 
+            searchAreaWkt.value = wkt;
+            searchAreaJson.value = geoJson;
         }
-
-        searchAreaWkt.value = wkt;
 
     } catch (e) {
         alert(e.message, e.name);
@@ -212,8 +222,32 @@ function ClearSelectedShape() {
         alert("no shape selected, please change 'Geometry type' dropdown to 'Select', then select a shape to delete")
     }
     changeInteraction();
+    clearSearchAreaTextBoxes();
+}
 
+function clearSearchAreaTextBoxes() {
+    //get text box references from DOM
+    searchAreaWkt.value = "";
+    searchAreaJson.value = "";
+}
 
+function ResetMapAndWkt() {
+    var confirmReset = function () { return confirm("Do you want to reset the map? this will clear all drawings.") };
+
+    if (confirmReset()) {
+        //clear all drawings
+        var drawingLayer = getLayerById("drawingVector");
+        var source = drawingLayer.getSource();
+        source.clear();
+        //recentre map
+        var defaultView = new ol.View({
+            projection: 'EPSG:27700',
+            center: [362000, 369000],
+            zoom: 5
+        })
+        map.setView(defaultView);
+        clearSearchAreaTextBoxes();
+    }
 }
 
 function setAreaButtonClick() {
@@ -222,6 +256,10 @@ function setAreaButtonClick() {
 
 function ClearSelectedShapeButtonClick() {
     ClearSelectedShape();
+}
+
+function ResetMapAndWktClick() {
+    ResetMapAndWkt();
 }
 
 initialiseMap();
