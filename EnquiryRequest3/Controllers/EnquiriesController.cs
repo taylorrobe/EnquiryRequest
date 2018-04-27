@@ -6,6 +6,7 @@ using System.Data.Entity.Validation;
 using System.Linq;
 using System.Net;
 using System.Web.Mvc;
+using EnquiryRequest3.Controllers.Utilities;
 
 namespace EnquiryRequest3.Controllers
 {
@@ -54,13 +55,17 @@ namespace EnquiryRequest3.Controllers
         // GET: Enquiries/Create
         public ActionResult Create()
         {
-            if (ViewBag.ValidationRepost == null)
-            {
-                ViewBag.ValidationRepost = "false";
-            }
+            //if (ViewBag.ValidationRepost == null)
+            //{
+            //    ViewBag.ValidationRepost = "false";
+            //}
 
             ViewBag.DefaultInvoiceEmail = User.Identity.GetUserDefaultInvoicingEmail();
             ViewBag.SearchTypeId = new SelectList(db.SearchTypes, "SearchTypeId", "Name");
+            //get all boundaries also
+            //var boundariesArray = db.Boundaries.ToArray();
+            SpatialHelper spatial = new SpatialHelper();
+            ViewBag.Boundaries = spatial.GetGeoJsonCollectionFromBoundaryCollection(db.Boundaries.ToList());
             return View();
         }
 
@@ -112,14 +117,16 @@ namespace EnquiryRequest3.Controllers
                     foreach (var result in ex.EntityValidationErrors)
                         foreach (var error in result.ValidationErrors)
                             ModelState.AddModelError(error.PropertyName, error.ErrorMessage);
-                    ViewBag.ValidationRepost = "true";
+                    //ViewBag.ValidationRepost = "true";
                     return View(model);
                 }
             }
 
             ViewBag.DefaultInvoiceEmail = User.Identity.GetUserDefaultInvoicingEmail();
             ViewBag.SearchTypeId = new SelectList(db.SearchTypes, "SearchTypeId", "Name", model.SearchTypeId);
-            ViewBag.ValidationRepost = "true";
+            //get all boundaries also
+            ViewBag.Boundaries = db.Boundaries.ToList();
+            //ViewBag.ValidationRepost = "true";
             return View(model);
         }
 

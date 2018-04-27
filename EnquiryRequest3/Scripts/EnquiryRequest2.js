@@ -45,7 +45,7 @@ function getFeaturesFromLayer(layerName) {
     return features;
 }
 
-function changeInteraction() {
+function selectShape() {
     // select interaction working on "click"
     selectClick = new ol.interaction.Select({
         condition: ol.events.condition.click,
@@ -56,6 +56,11 @@ function changeInteraction() {
 
     var modify = new ol.interaction.Modify({ features: selectClick.getFeatures() });
     map.addInteraction(modify);
+    select = selectClick;
+}
+
+function changeInteraction() {
+
 
     if (select !== null) {
         map.removeInteraction(select);
@@ -64,19 +69,13 @@ function changeInteraction() {
     var value = typeSelect.value;
 
     if (value == 'Select') {
-        select = selectClick;
+        selectShape();
     } else {
         select = null;
     }
 
     if (select !== null) {
         map.addInteraction(select);
-        //select.on('select', function (e) {
-        //    document.getElementById('status').innerHTML = '&nbsp;' +
-        //        e.target.getFeatures().getLength() +
-        //        ' selected features (last operation selected ' + e.selected.length +
-        //        ' and deselected ' + e.deselected.length + ' features)';
-        //});
     }
 }
 
@@ -121,15 +120,24 @@ function initialiseMap() {
     });
 
     var source = new ol.source.Vector({ wrapX: false });
+    var sourceBoundary = new ol.source.Vector({ wrapX: false });
 
-    //var vectorBoundaries = new ol.layer.Vector({
-    //    id: 'boundaries',
-    //    source: new ol.source.GeoJSON({
-    //        projection: 'EPSG:3857',
-    //        url: '../assets/data/nutsv9_lea.geojson'
-    //    }),
-    //    style: defaultEuropa
-    //});
+    var vectorBoundaries = new ol.layer.Vector({
+        id: "boundaries",
+        source: sourceBoundary
+    });
+
+    //variable gets data from the ViewBag.boundaries
+    var boundariesFromHtmlData = document.getElementById("Boundaries").getAttribute('data-geoJson');
+    var format = new ol.format.GeoJSON();
+    var boundaries = format.readFeatures(boundariesFromHtmlData);
+    sourceBoundary.addFeatures(boundaries);
+    //boundaries.forEach(boundary => {
+
+    //    sourceBoundary.addFeature(boundary);
+    //})
+
+    
 
     var vector = new ol.layer.Vector({
         id: "drawingVector",
@@ -141,7 +149,7 @@ function initialiseMap() {
         zoom: 5
     })
     map = new ol.Map({
-        layers: [raster, vector],
+        layers: [raster, vectorBoundaries, vector],
         target: 'map',
         view: defaultView
     });
@@ -245,18 +253,6 @@ function ResetMapAndWkt() {
     
 }
 
-function applyBufferToFeature(feature, distance) {
-    var parser = new jsts.io.OL3Parser();
-
-    // convert the OpenLayers geometry to a JSTS geometry
-    var jstsGeom = parser.read(feature.getGeometry());
-
-    // create a buffer around the feature
-    var buffered = jstsGeom.buffer(distance);
-
-    return buffered;
-}
-
 function unionFeatures() {
     var parser = new jsts.io.OL3Parser();
     var source = getLayerSource("drawingVector");
@@ -280,6 +276,19 @@ function unionFeatures() {
     unionOfFeatures.setGeometry(parser.write(jstsGeomOfUnionOfFeatures));
     source.clear();
     source.addFeature(unionOfFeatures);
+    clearSearchAreaTextBoxes();
+}
+
+function applyBufferToFeature(feature, distance) {
+    var parser = new jsts.io.OL3Parser();
+
+    // convert the OpenLayers geometry to a JSTS geometry
+    var jstsGeom = parser.read(feature.getGeometry());
+
+    // create a buffer around the feature
+    var buffered = jstsGeom.buffer(distance);
+
+    return buffered;
 }
 
 function applyBufferToShapes() {
@@ -301,7 +310,11 @@ function applyBufferToShapes() {
             // convert back from JSTS and replace the geometry on the feature
             feature.setGeometry(parser.write(buffered));
     })
+    if (select !== null) {
+        map.removeInteraction(select);
+    }
     extendToDrawing();
+    clearSearchAreaTextBoxes();
 }
 
 function undoApplyBufferToShapes() {
@@ -313,10 +326,12 @@ function undoApplyBufferToShapes() {
         features.forEach(feature => {
             source.addFeature(feature);
         })
-        
+        if (select !== null) {
+            map.removeInteraction(select);
+        }
         extendToDrawing();
+        clearSearchAreaTextBoxes();
     }
-    
 
 }
 

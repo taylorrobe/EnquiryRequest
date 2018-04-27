@@ -73,7 +73,7 @@ function setSelection(shape) {
 function deleteShape(shape) {
     shape.setMap(null);
     var index = allShapes.indexOf(shape);
-    if (index != -1) {
+    if (index !== -1) {
         allShapes.splice(index, 1);
         shapeEventListeners.splice(index, 1);
     }
@@ -121,7 +121,7 @@ function disableDrawing() {
 
 function getWktFromShape(shape) {
     var wkt = "";
-    if (shape.type == google.maps.drawing.OverlayType.POLYGON) {
+    if (shape.type === google.maps.drawing.OverlayType.POLYGON) {
 
         wkt = "POLYGON(";
         wkt += "(";
@@ -134,7 +134,7 @@ function getWktFromShape(shape) {
         wkt += paths.getAt(0).lng() + " " + paths.getAt(0).lat() + "),";
         wkt = wkt.substring(0, wkt.length - 1) + ")";
     }
-    else if (shape.type == google.maps.drawing.OverlayType.MARKER) {
+    else if (shape.type === google.maps.drawing.OverlayType.MARKER) {
         wkt = "POINT(";
         var latlng = shape.getPosition();
 
@@ -153,7 +153,7 @@ function getWktFromShapes() {
     if (allShapes.length > 1) {
         //check that allshapes only contains polygons
         allShapes.forEach((shape) => {
-            if (shape.type == "marker") {
+            if (shape.type === "marker") {
                 allShapesArePolygons = false;
             }
         })
@@ -198,12 +198,13 @@ function getGeoJsonFromWkt(wkt) {
     //return Terraformer.WKT.parse(wkt);
 }
 
-/** @this {google.maps.Polygon} */
+
 function showInfo(event) {
     var windowPos;
+    var contentString;
     if (selectedShape.type === "polygon") {
         windowPos = event.latLng;
-        var contentString = '<b>Shape: ' + shapeId + '</b>' + '<br>' +
+        contentString = '<b>Shape: ' + shapeId + '</b>' + '<br>' +
             'Clicked location: <br>' + event.latLng.lat() + ',' + event.latLng.lng() +
             '<br>';
 
@@ -216,7 +217,7 @@ function showInfo(event) {
         }
     } else if (selectedShape.type === "marker") {
         windowPos = selectedShape.getPosition();
-        var contentString = '<b>Marker: ' + shapeId + '</b>' + '<br>' +
+            contentString = '<b>Marker: ' + shapeId + '</b>' + '<br>' +
             'Marker location: <br>' + windowPos.lat() + ',' + windowPos.lng() +
             '<br>';
     }
@@ -350,8 +351,6 @@ function initMap() {
             addNewMarker(e);
         }
     });
-
-    //}
 }
 
 function initMapReadOnly() {
