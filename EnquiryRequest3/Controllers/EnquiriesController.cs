@@ -21,7 +21,6 @@ namespace EnquiryRequest3.Controllers
             var userId = User.Identity.GetUserId<int>();
             var enquiries = db.Enquiries.Include(e => e.Invoice)
                 .Where(a => a.ApplicationUserId == userId);
-                //.Where(a => a.ApplicationUser == User);
             return View(enquiries.ToList());
         }
 
@@ -42,11 +41,15 @@ namespace EnquiryRequest3.Controllers
                 {
                     return HttpNotFound();
                 }
+                //get all boundaries for displaying on map
+                SpatialHelper spatial = new SpatialHelper();
+                ViewBag.Boundaries = spatial.GetGeoJsonCollectionFromBoundaryCollection(db.Boundaries.ToList(), SpatialHelper.BoundaryType.DISPLAY);
+                ViewBag.Coverage = spatial.GetGeoJsonCollectionFromBoundaryCollection(db.Boundaries.ToList(), SpatialHelper.BoundaryType.COVERAGE);
                 return View(enquiry);
             }
             else
             {
-                // send him back to the post or do something else.
+                // send user back to the index
                 return RedirectToAction("Index", "Enquiries");
             }
 
@@ -55,17 +58,12 @@ namespace EnquiryRequest3.Controllers
         // GET: Enquiries/Create
         public ActionResult Create()
         {
-            //if (ViewBag.ValidationRepost == null)
-            //{
-            //    ViewBag.ValidationRepost = "false";
-            //}
-
             ViewBag.DefaultInvoiceEmail = User.Identity.GetUserDefaultInvoicingEmail();
             ViewBag.SearchTypeId = new SelectList(db.SearchTypes, "SearchTypeId", "Name");
-            //get all boundaries also
-            //var boundariesArray = db.Boundaries.ToArray();
+            //get all boundaries for displaying on map
             SpatialHelper spatial = new SpatialHelper();
-            ViewBag.Boundaries = spatial.GetGeoJsonCollectionFromBoundaryCollection(db.Boundaries.ToList());
+            ViewBag.Boundaries = spatial.GetGeoJsonCollectionFromBoundaryCollection(db.Boundaries.ToList(), SpatialHelper.BoundaryType.DISPLAY);
+            ViewBag.Coverage = spatial.GetGeoJsonCollectionFromBoundaryCollection(db.Boundaries.ToList(), SpatialHelper.BoundaryType.COVERAGE);
             return View();
         }
 
@@ -117,16 +115,16 @@ namespace EnquiryRequest3.Controllers
                     foreach (var result in ex.EntityValidationErrors)
                         foreach (var error in result.ValidationErrors)
                             ModelState.AddModelError(error.PropertyName, error.ErrorMessage);
-                    //ViewBag.ValidationRepost = "true";
                     return View(model);
                 }
             }
 
             ViewBag.DefaultInvoiceEmail = User.Identity.GetUserDefaultInvoicingEmail();
             ViewBag.SearchTypeId = new SelectList(db.SearchTypes, "SearchTypeId", "Name", model.SearchTypeId);
-            //get all boundaries also
-            ViewBag.Boundaries = db.Boundaries.ToList();
-            //ViewBag.ValidationRepost = "true";
+            //get all boundaries for displaying on map
+            SpatialHelper spatial = new SpatialHelper();
+            ViewBag.Boundaries = spatial.GetGeoJsonCollectionFromBoundaryCollection(db.Boundaries.ToList(), SpatialHelper.BoundaryType.DISPLAY);
+            ViewBag.Coverage = spatial.GetGeoJsonCollectionFromBoundaryCollection(db.Boundaries.ToList(), SpatialHelper.BoundaryType.COVERAGE);
             return View(model);
         }
 
@@ -161,6 +159,10 @@ namespace EnquiryRequest3.Controllers
                 Comment = enquiry.Comment
             };
             ViewBag.SearchTypeId = new SelectList(db.SearchTypes, "SearchTypeId", "Name", userCreateEditEnquiryViewModel.SearchTypeId);
+            //get all boundaries for displaying on map
+            SpatialHelper spatial = new SpatialHelper();
+            ViewBag.Boundaries = spatial.GetGeoJsonCollectionFromBoundaryCollection(db.Boundaries.ToList(), SpatialHelper.BoundaryType.DISPLAY);
+            ViewBag.Coverage = spatial.GetGeoJsonCollectionFromBoundaryCollection(db.Boundaries.ToList(), SpatialHelper.BoundaryType.COVERAGE);
             return View(userCreateEditEnquiryViewModel);
         }
 
@@ -199,6 +201,10 @@ namespace EnquiryRequest3.Controllers
                 return RedirectToAction("Index");
             }
             ViewBag.SearchTypeId = new SelectList(db.SearchTypes, "SearchTypeId", "Name", model.SearchTypeId);
+            //get all boundaries for displaying on map
+            SpatialHelper spatial = new SpatialHelper();
+            ViewBag.Boundaries = spatial.GetGeoJsonCollectionFromBoundaryCollection(db.Boundaries.ToList(), SpatialHelper.BoundaryType.DISPLAY);
+            ViewBag.Coverage = spatial.GetGeoJsonCollectionFromBoundaryCollection(db.Boundaries.ToList(), SpatialHelper.BoundaryType.COVERAGE);
             return View(model);
         }
 

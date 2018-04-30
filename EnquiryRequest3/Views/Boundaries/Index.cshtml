@@ -17,6 +17,12 @@
         <th>
             @Html.DisplayNameFor(model => model.Area)
         </th>
+        <th>
+            @Html.DisplayNameFor(model => model.displayOnMap)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.isCoverageArea)
+        </th>
         <th></th>
     </tr>
 
@@ -26,12 +32,18 @@
             @Html.DisplayFor(modelItem => item.Name)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.Area)
+            @Html.DisplayFor(modelItem => item.Area.WellKnownValue.WellKnownText)
         </td>
         <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.BoundaryId }) |
-            @Html.ActionLink("Details", "Details", new { id=item.BoundaryId }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.BoundaryId })
+            @Html.DisplayFor(modelItem => item.displayOnMap)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.isCoverageArea)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id = item.BoundaryId }) |
+            @Html.ActionLink("Details", "Details", new { id = item.BoundaryId }) |
+            @Html.ActionLink("Delete", "Delete", new { id = item.BoundaryId })
         </td>
     </tr>
 }

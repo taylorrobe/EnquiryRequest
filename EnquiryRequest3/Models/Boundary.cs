@@ -18,5 +18,17 @@ namespace EnquiryRequest3.Models
 
         [Required]
         public DbGeometry Area { get; set; }
+
+        [Required]
+        public bool displayOnMap { get; set; }
+
+        [Required]
+        public bool isCoverageArea { get; set; }
+
+        public Boundary()
+        {
+            displayOnMap = true;
+            isCoverageArea = false;
+        }
     }
 }

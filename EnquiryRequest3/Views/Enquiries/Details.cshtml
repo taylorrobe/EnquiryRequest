@@ -9,10 +9,13 @@
 {
     @Html.AntiForgeryToken()
     @section scripts {
-        <script async defer
-                src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD9ieUIp9TK9KVQeoGIbs27lCoGwE_q6Yc&libraries=geometry&callback=initMapReadOnly">
-
-        </script>
+        <link rel="stylesheet" href="https://openlayers.org/en/v4.6.5/css/ol.css" type="text/css">
+        <style>
+            .map {
+                height: 100px;
+                width: 100%;
+            }
+        </style>
     }
 }
 @*@{var wktName = "wkt" + @Model.EnquiryId; }*@
@@ -58,10 +61,14 @@
         </dt>
 
         <dd>
-            <div id="wkt" hidden>
+            <div id="searchAreaWkt" hidden>
                 @Model.SearchArea.WellKnownValue.WellKnownText
             </div>
             <div id="map" style="width: 150px; height: 150px;"></div>
+            <input type="text" id="Boundaries" data-geoJson="@ViewBag.Boundaries" data-coverageGeoJson="@ViewBag.Coverage" hidden />
+            <input type="text" id="searchAreaJson" hidden />
+            <input type="text" id="areaText" hidden />
+            <input type="text" id="costText" hidden />
 
         </dd>
 

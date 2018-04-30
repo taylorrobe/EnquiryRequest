@@ -314,6 +314,10 @@
     <Compile Include="Migrations\201803132303066_auto timestamp enquirydate at db level.Designer.cs">
       <DependentUpon>201803132303066_auto timestamp enquirydate at db level.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201804271508072_boundaryextras.cs" />
+    <Compile Include="Migrations\201804271508072_boundaryextras.Designer.cs">
+      <DependentUpon>201804271508072_boundaryextras.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Boundary.cs" />
@@ -768,6 +772,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201803132303066_auto timestamp enquirydate at db level.resx">
       <DependentUpon>201803132303066_auto timestamp enquirydate at db level.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201804271508072_boundaryextras.resx">
+      <DependentUpon>201804271508072_boundaryextras.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
