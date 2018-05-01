@@ -29,7 +29,7 @@ namespace EnquiryRequest3.Controllers.Utilities
         //returns geoJSON from geometry
         public string GetGeoJsonFromGeometry(DbGeometry dBGeometry)
         {
-            var geoJsonWriter = new NetTopologySuite.IO.GeoJsonWriter();
+            var geoJsonWriter = new GeoJsonWriter();
             return geoJsonWriter.Write(dBGeometry);
         }
 
