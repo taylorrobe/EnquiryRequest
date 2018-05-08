@@ -25,6 +25,8 @@ namespace EnquiryRequest3
 
             bundles.Add(new ScriptBundle("~/bundles/enquiryRequest").Include(
             "~/Scripts/jsts.js",
+            "~/Scripts/latlon.js",
+            "~/Scripts/latlon2bng.js",
             "~/Scripts/EnquiryRequest2.js"));
 
             //add link to openLayers on the CDN

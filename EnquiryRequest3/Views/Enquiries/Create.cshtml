@@ -10,6 +10,9 @@
 {
     @Html.AntiForgeryToken()
     @section scripts {
+        @*<script async defer
+            src="https://maps.googleapis.com/maps/api/js?key="></script>*@
+
         <link rel="stylesheet" href="https://openlayers.org/en/v4.6.5/css/ol.css" type="text/css">
         <style>
             .map {
@@ -19,7 +22,7 @@
         </style>
 
     }
-
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD9ieUIp9TK9KVQeoGIbs27lCoGwE_q6Yc"></script>
 
 
     <div class="form-horizontal">
@@ -27,7 +30,7 @@
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
-        <div class="form-group">
+        <div class="form-group row">
             @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
                 @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
@@ -35,7 +38,7 @@
             </div>
         </div>
 
-        <div class="form-group">
+        <div class="form-group row">
             @Html.LabelFor(model => model.InvoiceEmail, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
                 @Html.EditorFor(model => model.InvoiceEmail, new { htmlAttributes = new { @class = "form-control", @Value = ViewBag.DefaultInvoiceEmail } })
@@ -44,11 +47,21 @@
         </div>
         <input type="text" id="Boundaries" data-geoJson="@ViewBag.Boundaries" data-coverageGeoJson="@ViewBag.Coverage" hidden />
 
-        <div class="form-group">
-            <div id="map" class="map" style="width: 640px; height: 480px;"></div>
+        <div class="form-group row">
+            @*<label for="AddressLookup" class="control-label col-md-2">Address lookup</label>
+            <div class="col-md-10">
+                <input type="text" id="Address" class="form-control" />
+                <input id="btnAddressLookup" type="button" value="Look up" class="btn btn-default" onclick="AddressLookupButtonClick()" />
+            </div>*@
+            <label for="GridReferenceLookup" class="control-label col-md-2">Grid Reference lookup</label>
+            
+                <input type="text" id="GridReferenceLookup" class="form-control col-md-2" />
+                <input id="btnGridReferenceLookup" type="button" value="Look up" class="btn btn-default col-md-2" onclick="GridReferenceLookupButtonClick()" />
+            
+            <div id="map" class="map col-md-10" style="width: 640px; height: 480px;"></div>
             <form class="form-inline">
                 <label for="type" class="control-label col-md-2">Geometry type</label>
-                <select id="type" class="form-control">
+                <select id="type" class="form-control col-md-2">
                     <option value="Point">Point</option>
                     <option value="LineString">LineString</option>
                     <option value="Polygon">Polygon</option>
@@ -76,22 +89,25 @@
                     <option value="ordnanceSurvey">Ordnance Survey</option>
                 </select>*@
         </form>
-        <div class="form-group">
+        <div class="form-group row">
             <label for="Buffer" class="control-label col-md-2">Buffer</label>
             <div class="col-md-10">
-                <input id="Buffer" type="text" value="1000" class="form-control" />
-                <input id="ApplyBufferToSelected" type="button" value="Apply buffer" class="btn btn-default" onclick="ApplyBufferToShapesButtonClick()" />
-                <input id="UndoApplyBufferToShapes" type="button" value="Undo Apply buffer" class="btn btn-default" onclick="undoApplyBufferToShapesButtonClick()" />
-                <input id="ClearSelectedShape" type="button" value="Clear selected shape" class="btn btn-default" onclick="ClearSelectedShapeButtonClick()" />
-                <input id="ResetMapAndWkt" type="button" value="Reset Map and WKT" class="btn btn-default" onclick="ResetMapAndWktClick()" />
+                <span>
+                    <input id="Buffer" type="text" value="1000" class="form-control col-md-2" />
+                    <input id="ApplyBufferToSelected" type="button" value="Apply buffer" class="btn btn-default col-md-2" onclick="ApplyBufferToShapesButtonClick()" />
+                    <input id="UndoApplyBufferToShapes" type="button" value="Undo Apply buffer" class="btn btn-default col-md-2" onclick="undoApplyBufferToShapesButtonClick()" />
+                </span>
+
+                <input id="ClearSelectedShape" type="button" value="Clear selected shape" class="btn btn-default col-md-2" onclick="ClearSelectedShapeButtonClick()" />
+                <input id="ResetMapAndWkt" type="button" value="Reset Map and WKT" class="btn btn-default col-md-2" onclick="ResetMapAndWktClick()" />
                 @*<input id="UnionFeatures" type="button" value="Merge shapes" class="btn btn-default" onclick="unionFeaturesButtonClick()" />*@
             </div>
 
         </div>
-        <div class="form-group">
+        <div class="form-group row">
             <label for="SetArea" class="control-label col-md-2">Set area ----></label>
             <div class="col-md-10">
-                <input id="SetArea" type="button" value="Set Area" class="btn btn-default" onclick="setAreaButtonClick()" />
+                <input id="SetArea" type="button" value="Set Area" class="btn btn-default col-md-2" onclick="setAreaButtonClick()" />
             </div>
 
         </div>

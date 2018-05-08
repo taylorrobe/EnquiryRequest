@@ -6,6 +6,7 @@ var costText = document.getElementById("Cost");
 
 var typeSelect = document.getElementById('type');
 //file accessible references
+var geocoder;
 var map;
 // refs to currently selected interaction
 var select = null;
@@ -282,6 +283,7 @@ var createTextStyle = function (feature, resolution, dom) {
 function initialiseMap() {
     var draw, snap;
     map = null;
+    geocoder = new google.maps.Geocoder();
     ////bing maps stuff
     //var styles = [
     //    'Road',
@@ -382,7 +384,9 @@ function initialiseMap() {
     var defaultView = new ol.View({
         projection: 'EPSG:27700',
         center: [362000, 369000],
-        zoom: 5
+        zoom: 5,
+        minZoom: 4,
+        maxZoom: 16
     })
 
     //create map with new layers
@@ -730,6 +734,68 @@ function undoApplyBufferToShapes() {
 
 }
 
+//function AddressLookup() {
+//    var address = document.getElementById("Address").value;
+//    geocoder.geocode({ 'address': address }, function (results, status) {
+//        if (status == google.maps.GeocoderStatus.OK) {
+//            map.getView().setCenter(results[0].geometry.location);
+//            //var marker = new google.maps.Marker({
+//            //    map: map,
+//            //    position: results[0].geometry.location
+//            //});
+//        } else {
+//            alert("Geocode was not successful for the following reason: " + status);
+//        }
+//    });
+//}
+
+function CenterAndZoomMap(eAndN, zoom) {
+    //console.log("east: " + east + " north: " + north);
+    
+    map.getView().setCenter(eAndN);
+    map.getView().setZoom(zoom);
+}
+
+function GridReferenceLookup() {
+    var currentZoom = map.getView().getZoom();
+    var gridRef = document.getElementById("GridReferenceLookup").value;
+    var gridRefLength = gridRef.length;
+    var zoom;
+    switch(gridRefLength) {
+        case 4:
+            zoom = 6
+            break;
+        case 6:
+            zoom = 7
+            break;
+        case 8:
+            zoom = 9
+            break;
+        case 10:
+            zoom = 12
+            break;
+        case 12:
+            zoom = 14
+            break;
+        case 14:
+            zoom = 15
+            break;
+        default:
+            zoom = 5
+    }
+    var osGridRef = OsGridRef.parse(gridRef);
+    var eAndN = [];
+    eAndN.push(osGridRef.easting);
+    eAndN.push(osGridRef.northing);
+
+    var marker = new ol.geom.Point(osGridRef)
+    var labelVector = getLayerById("labelVector");
+    var feature = new ol.Feature();
+    feature.setGeometry(marker);
+    labelVector.getSource().addFeature(feature);
+    CenterAndZoomMap(eAndN, zoom);
+}
+
 //click events
 function unionFeaturesButtonClick() {
     unionFeaturesInLayer("drawingVector");
@@ -759,5 +825,12 @@ function undoApplyBufferToShapesButtonClick() {
     undoApplyBufferToShapes();
 }
 
+//function AddressLookupButtonClick() {
+//    AddressLookup();
+//}
+
+function GridReferenceLookupButtonClick() {
+    GridReferenceLookup();
+}
 
 initialiseMap();
