@@ -11,11 +11,11 @@ namespace EnquiryRequest3
             bundles.UseCdn = true;   //enable CDN support
 
             //add link to jquery on the CDN
-            var jqueryCdnPath = "http://ajax.aspnetcdn.com/ajax/jQuery/jquery-{version}.min.js";
+            var jqueryCdnPath = "http://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.3.1.min.js";
 
             bundles.Add(new ScriptBundle("~/bundles/jquery",
                         jqueryCdnPath).Include(
-                        "~/Scripts/jquery-{version}.js"));
+                        "~/Scripts/jquery-3.3.1.js"));
 
             //bundles.Add(new ScriptBundle("~/bundles/jquery").Include(
             //            "~/Scripts/jquery-{version}.js"));
@@ -25,7 +25,6 @@ namespace EnquiryRequest3
 
             bundles.Add(new ScriptBundle("~/bundles/enquiryRequest").Include(
             "~/Scripts/jsts.js",
-            //"~/Scripts/EnquiryRequest.js",
             "~/Scripts/EnquiryRequest2.js"));
 
             //add link to openLayers on the CDN

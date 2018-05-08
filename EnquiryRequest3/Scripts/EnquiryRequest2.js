@@ -24,7 +24,7 @@ proj27700.setExtent([0, 0, 700000, 1300000]);
 //set boundary style
 var boundaryStyle = new ol.style.Style({
     fill: new ol.style.Fill({
-        color: 'rgba(255, 255, 255, 0.6)'
+        color: 'rgba(255, 255, 255, 0)'
     }),
     stroke: new ol.style.Stroke({
         color: '#319FD3',
@@ -38,7 +38,8 @@ var boundaryStyle = new ol.style.Style({
         stroke: new ol.style.Stroke({
             color: '#fff',
             width: 3
-        })
+        }),
+        text: 'hello'
     })
 });
 
@@ -48,8 +49,8 @@ var coverageStyle = new ol.style.Style({
         color: 'rgba(255, 0, 0, 0.05)'
     }),
     stroke: new ol.style.Stroke({
-        color: '#319FD3',
-        width: 1
+        color: 'red',
+        width: 5
     }),
     text: new ol.style.Text({
         font: '12px Calibri,sans-serif',
@@ -145,11 +146,164 @@ function setMapAndTextFromWkt(wkt, source) {
     populateTextBoxes();
 }
 
+//text options for boundary layer labels
+var boundaryVectorTextOptions = {
+    polygons: {
+        text: 'normal',
+        align: 'center',
+        baseline: 'middle',
+        rotation: '0',
+        font: 'Arial',
+        weight: 'bold',
+        placement: 'point',
+        maxangle: '0.7853981633974483',
+        size: '10px',
+        offsetX: '0',
+        offsetY: '0',
+        color: 'blue',
+        outline: '#ffffff',
+        outlineWidth: '3',
+        overflow: 'false',
+        maxreso: '1200'
+
+    }
+};
+
+//text options for label layer labels
+var labelVectorTextOptions = {
+    polygons: {
+        text: 'wrap',
+        align: 'center',
+        baseline: 'middle',
+        rotation: '0',
+        font: 'Arial',
+        weight: 'bold',
+        placement: 'point',
+        maxangle: '0.7853981633974483',
+        size: '10px',
+        offsetX: '0',
+        offsetY: '0',
+        color: 'green',
+        outline: '#ffffff',
+        outlineWidth: '3',
+        overflow: 'true',
+        maxreso: '1200'
+
+    }
+};
+
+//get text function for boundary layers
+var getText = function (feature, resolution, dom) {
+    var type = dom.text.value;
+    var maxResolution = dom.maxreso.value;
+    var text = feature.get('Name');
+
+    if (resolution > maxResolution) {
+        text = '';
+    } else if (type == 'hide') {
+        text = '';
+    } else if (type == 'shorten') {
+        text = text.trunc(12);
+    } else if (type == 'wrap' && dom.placement.value != 'line') {
+        text = stringDivider(text, 16, '\n');
+    }
+
+    return text;
+};
+
+// boundary style using text
+function boundaryStyleFunction(feature, resolution) {
+    return new ol.style.Style({
+        stroke: new ol.style.Stroke({
+            color: 'blue',
+            width: 1
+        }),
+        fill: new ol.style.Fill({
+            color: 'rgba(0, 0, 255, 0.01)'
+        }),
+        text: createTextStyle(feature, resolution, boundaryVectorTextOptions.polygons)
+    });
+}
+
+// label style using text
+function labelStyleFunction(feature, resolution) {
+    return new ol.style.Style({
+        stroke: new ol.style.Stroke({
+            color: 'blue',
+            width: 0
+        }),
+        fill: new ol.style.Fill({
+            color: 'rgba(0, 0, 255, 0)'
+        }),
+        text: createTextStyle(feature, resolution, labelVectorTextOptions.polygons)
+    });
+}
+
+var createTextStyle = function (feature, resolution, dom) {
+    var align = dom.align;
+    var baseline = dom.baseline;
+    var size = dom.size;
+    var offsetX = parseInt(dom.offsetX, 10);
+    var offsetY = parseInt(dom.offsetY, 10);
+    var weight = dom.weight;
+    var placement = dom.placement ? dom.placement : undefined;
+    var maxAngle = dom.maxangle ? parseFloat(dom.maxangle) : undefined;
+    var overflow = dom.overflow ? (dom.overflow == 'true') : undefined;
+    var rotation = parseFloat(dom.rotation);
+    if (dom.font == '\'Open Sans\'' && !openSansAdded) {
+        var openSans = document.createElement('link');
+        openSans.href = 'https://fonts.googleapis.com/css?family=Open+Sans';
+        openSans.rel = 'stylesheet';
+        document.getElementsByTagName('head')[0].appendChild(openSans);
+        openSansAdded = true;
+    }
+    var font = weight + ' ' + size + ' ' + dom.font;
+    var fillColor = dom.color;
+    var outlineColor = dom.outline;
+    var outlineWidth = parseInt(dom.outlineWidth, 10);
+
+    return new ol.style.Text({
+        textAlign: align == '' ? undefined : align,
+        textBaseline: baseline,
+        font: font,
+        text: getText(feature, resolution, dom),
+        fill: new ol.style.Fill({ color: fillColor }),
+        stroke: new ol.style.Stroke({ color: outlineColor, width: outlineWidth }),
+        offsetX: offsetX,
+        offsetY: offsetY,
+        placement: placement,
+        maxAngle: maxAngle,
+        overflow: overflow,
+        rotation: rotation
+    });
+};
+
 //init map
 function initialiseMap() {
     var draw, snap;
     map = null;
-
+    ////bing maps stuff
+    //var styles = [
+    //    'Road',
+    //    'RoadOnDemand',
+    //    'Aerial',
+    //    'AerialWithLabels',
+    //    'collinsBart',
+    //    'ordnanceSurvey'
+    //];
+    //var layers = [];
+    //var i, ii;
+    //for (i = 0, ii = styles.length; i < ii; ++i) {
+    //    layers.push(new ol.layer.Tile({
+    //        visible: false,
+    //        preload: Infinity,
+    //        source: new ol.source.BingMaps({
+    //            key: 'Aj4s3uxt7sMUlytcU9MPkK7OO5JXQvMV-Y0iF6F0tPhYaFevU7hVq_-v6pjs0Aog',
+    //            imagerySet: styles[i],
+    //            maxZoom: 19
+    //        })
+    //    }));
+    //}
     function addInteractions() {
         if (typeSelect.value !== "Select") {
 
@@ -158,11 +312,11 @@ function initialiseMap() {
                 type: typeSelect.value
             });
             //event listener to clear the area text boxes when new drawing started
-            draw.on('drawstart', function drawStart(e) { clearSearchAreaTextBoxes(); });
+            draw.on('drawstart', function drawStart(e) { });
 
             //event listener (empty) for map drawing end
             draw.on('drawend', function drawEnd(e) {
-
+                clearSearchAreaTextBoxes();
             });
 
             map.addInteraction(draw);
@@ -184,7 +338,7 @@ function initialiseMap() {
     var boundaryVector = new ol.layer.Vector({
         id: "boundaries",
         source: boundarySource,
-        style: boundaryStyle
+        style: boundaryStyleFunction
     });
 
     //variable gets data from the ViewBag.boundaries to add boundaries to layer
@@ -214,6 +368,16 @@ function initialiseMap() {
         source: source
     });
 
+    //layer to display labels for drawn features
+    var labelSource = new ol.source.Vector({ wrapX: false });
+    var labelVector = new ol.layer.Vector({
+        id: "labelVector",
+        source: labelSource,
+        style: labelStyleFunction
+    });
+
+
+
     //set the projection and centre / zoom map
     var defaultView = new ol.View({
         projection: 'EPSG:27700',
@@ -223,12 +387,13 @@ function initialiseMap() {
 
     //create map with new layers
     map = new ol.Map({
-        layers: [raster, coverageVector, boundaryVector, vector],
+        layers: [raster, coverageVector, boundaryVector, vector, labelVector],
         target: 'map',
-        view: defaultView
+        view: defaultView,
+        loadTilesWhileInteracting: true
     });
 
-    if (typeSelect !=null) {
+    if (typeSelect != null) {
         //Handle change event for type select
         typeSelect.onchange = function () {
             map.removeInteraction(draw);
@@ -240,12 +405,53 @@ function initialiseMap() {
         changeInteraction();
     }
 
+    ////event listener for bing maps layer select
+    //var select = document.getElementById('layer-select');
+    //function onChange() {
+    //    var style = select.value;
+    //    for (var i = 0, ii = layers.length; i < ii; ++i) {
+    //        layers[i].setVisible(styles[i] === style);
+    //    }
+    //}
+    //select.onchange = onChange();
+    //onChange();
+
     //if wkt is not "" (edit mode), set json and map up search area
     var wkt = searchAreaWkt.value;
     if (wkt != "") {
         setMapAndTextFromWkt(wkt, source);
     }
 
+}
+
+//get array of new boundaries intersecting the feature for labelling and local authority wording
+function getIntersectingDisplayAreas(feature) {
+    var parser = new jsts.io.OL3Parser();
+    var boundaryFeatures = getFeaturesFromLayer("boundaries");
+    var jstsGeomOfFeature = parser.read(feature.getGeometry());
+    var intersectingFeatures = [];
+    boundaryFeatures.forEach(boundaryFeature => {
+        var boundaryName = boundaryFeature.get("Name");
+        var jstsGeomOfBoundary = parser.read(boundaryFeature.getGeometry());
+        var intersection = jstsGeomOfFeature.intersection(jstsGeomOfBoundary);
+        var newFeature = new ol.Feature();
+        newFeature.setGeometry(parser.write(intersection));
+        newFeature.set("Name", boundaryName);
+        intersectingFeatures.push(newFeature);
+    })
+    return intersectingFeatures;
+}
+
+function addLabelsToMap() {
+    var drawingFeatures = getFeaturesFromLayer("drawingVector");
+    var source = getLayerSource("labelVector");
+    source.clear();
+    drawingFeatures.forEach(feature => {
+        var intersecting = getIntersectingDisplayAreas(feature);
+        intersecting.forEach(labelFeature => {
+            source.addFeature(labelFeature);
+        })
+    })
 }
 
 //get intersection with coverage area
@@ -272,7 +478,7 @@ function removeOutsideCoverageArea() {
     //clear original features from map
     source.clear();
     source.addFeature(newFeature);
-    clearSearchAreaTextBoxes();
+    populateTextBoxes();
 }
 
 //enlarge view window to see all drawings
@@ -294,8 +500,16 @@ function extendToDrawing() {
 }
 
 function getCostFromArea(area) {
-    var cost = ((area - 314) / 12.57) + 150;
-    var roundedCost = Math.round(cost * 1) / 1;
+    var cost;
+    var roundedCost;
+    if (area === 0) {
+        cost = 0;
+    }
+    else {
+        cost = ((area - 314) / 12.57) + 150;
+    }
+
+    roundedCost = Math.round(cost * 1) / 1;
     return roundedCost;
 }
 
@@ -305,7 +519,7 @@ function populateTextBoxes() {
     var geoJsonFormat = new ol.format.GeoJSON();
 
     var features = getFeaturesFromLayer("drawingVector");
-    if (features) {
+    if (features.length > 0) {
         //convert to text / JSON and set text areas
         var wkt = wktFormat.writeFeatures(features);
         var geoJson = geoJsonFormat.writeFeatures(features);
@@ -320,14 +534,35 @@ function populateTextBoxes() {
         areaText.value = roundedArea;
         costText.value = getCostFromArea(roundedArea);
     }
+    else {
+        clearSearchAreaTextBoxes();
+    }
 }
 
 function setArea() {
     try {
-        unionFeaturesInLayer("drawingVector");
-        removeOutsideCoverageArea();
-        extendToDrawing();
-        populateTextBoxes();
+        var features = getFeaturesFromLayer("drawingVector");
+        if (features.length > 0) {
+            //var distance = document.getElementById("Buffer").value;
+            //var confirmApplyBuffer;
+            //if (distance === "" || distance === 0) {
+            //    confirmApplyBuffer = function () { return confirm("There will be no buffer applied, is this what you want?") };
+            //}
+            //else {
+            //    confirmApplyBuffer = function () { return confirm("There will be a " + distance + "m buffer applied, is this what you want?") };
+            //}
+            //var applyBuffer = confirmApplyBuffer();
+            //if (applyBuffer) {
+
+            addLabelsToMap();
+            unionFeaturesInLayer("drawingVector");
+
+            removeOutsideCoverageArea();
+            extendToDrawing();
+            populateTextBoxes();
+            //}
+        }
+
 
     } catch (e) {
         alert(e.message, e.name);
@@ -354,7 +589,12 @@ function ClearSelectedShape() {
     }
     changeInteraction();
     //clear text as map has changed
-    clearSearchAreaTextBoxes();
+    if (select !== null) {
+        populateTextBoxes();
+    } else {
+        clearSearchAreaTextBoxes();
+    }
+
 }
 
 //clear text representation of drawn map features
@@ -365,11 +605,19 @@ function clearSearchAreaTextBoxes() {
     costText.value = "";
 }
 
-//clear all drawings and reset map
-function ResetMapAndWkt() {
+function clearDrawingsAndLabels() {
     //clear all drawings
     var source = getLayerSource("drawingVector");
     source.clear();
+    //clear all labels
+    var labelSource = getLayerSource("labelVector");
+    labelSource.clear();
+}
+
+//clear all drawings and reset map
+function ResetMapAndWkt() {
+    clearDrawingsAndLabels();
+
     //recentre map
     var defaultView = new ol.View({
         projection: 'EPSG:27700',
@@ -407,7 +655,6 @@ function unionFeaturesInLayer(layerName) {
     //clear original features from map
     source.clear();
     source.addFeature(unionOfFeatures);
-    clearSearchAreaTextBoxes();
 }
 
 //apply distance buffer to individual feature
@@ -427,32 +674,39 @@ function applyBufferToFeature(feature, distance) {
 //apply buffer to all features
 function applyBufferToShapes() {
     var distance = document.getElementById("Buffer").value;
-    var parser = new jsts.io.OL3Parser();
-    var features = getFeaturesFromLayer("drawingVector");
+    if (distance === "" || distance === "0") {
 
-    //save copy of original features for undoApplyBufferToShapes function
-    var clonedFeatures = [];
-    features.forEach(feature => {
-        var clonedFeature = feature.clone();
-        clonedFeatures.push(clonedFeature);
-    })
-    savedFeatures.push(clonedFeatures);
+    }
+    else {
+        var parser = new jsts.io.OL3Parser();
+        var features = getFeaturesFromLayer("drawingVector");
 
-    //apply buffer to all features and add back to the map
-    features.forEach(feature => {
-        var buffered = applyBufferToFeature(feature, distance);
-        // convert back from JSTS and replace the geometry on the feature
-        feature.setGeometry(parser.write(buffered));
-    })
+        //save copy of original features for undoApplyBufferToShapes function
+        var clonedFeatures = [];
+        features.forEach(feature => {
+            var clonedFeature = feature.clone();
+            clonedFeatures.push(clonedFeature);
+        })
+        savedFeatures.push(clonedFeatures);
 
-    //unselect selected feature if required
-    if (select !== null) {
-        map.removeInteraction(select);
+        //apply buffer to all features and add back to the map
+        features.forEach(feature => {
+            var buffered = applyBufferToFeature(feature, distance);
+            // convert back from JSTS and replace the geometry on the feature
+            feature.setGeometry(parser.write(buffered));
+        })
+
+        //unselect selected feature if required
+        if (select !== null) {
+            map.removeInteraction(select);
+        }
+
+        //zoom to extent and populate Text Boxes with new area
+        extendToDrawing();
+        populateTextBoxes();
     }
 
-    //zoom to extent and clear text
-    extendToDrawing();
-    clearSearchAreaTextBoxes();
+
 }
 
 //undo buffer function
@@ -460,9 +714,7 @@ function undoApplyBufferToShapes() {
     if (savedFeatures.length > 0) {
         //get newly added shape
         var features = savedFeatures.pop();
-        var source = getLayerSource("drawingVector");
-        //clear current buffer
-        source.clear();
+        clearDrawingsAndLabels();
         //add last saved features to map
         features.forEach(feature => {
             source.addFeature(feature);
@@ -473,7 +725,7 @@ function undoApplyBufferToShapes() {
         }
         //zoom and clear text
         extendToDrawing();
-        clearSearchAreaTextBoxes();
+        populateTextBoxes();
     }
 
 }
