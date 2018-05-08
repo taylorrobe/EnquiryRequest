@@ -8,8 +8,6 @@ namespace EnquiryRequest3.Controllers.Utilities.Tests
     [TestClass()]
     public class SpatialHelperTests
     {
-
-
         [TestMethod()]
         public void GetGeoJsonListFromArrayTest()
         {
