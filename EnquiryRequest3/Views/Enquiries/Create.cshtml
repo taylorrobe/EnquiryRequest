@@ -25,7 +25,7 @@
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD9ieUIp9TK9KVQeoGIbs27lCoGwE_q6Yc"></script>
 
 
-    <div class="form-horizontal">
+    <div class="form-horizontal container">
         <h4>Enquiry</h4>
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
@@ -48,62 +48,65 @@
         <input type="text" id="Boundaries" data-geoJson="@ViewBag.Boundaries" data-coverageGeoJson="@ViewBag.Coverage" hidden />
 
         <div class="form-group row">
-            @*<label for="AddressLookup" class="control-label col-md-2">Address lookup</label>
-            <div class="col-md-10">
-                <input type="text" id="Address" class="form-control" />
-                <input id="btnAddressLookup" type="button" value="Look up" class="btn btn-default" onclick="AddressLookupButtonClick()" />
-            </div>*@
-            <label for="GridReferenceLookup" class="control-label col-md-2">Grid Reference lookup</label>
-            
-                <input type="text" id="GridReferenceLookup" class="form-control col-md-2" />
-                <input id="btnGridReferenceLookup" type="button" value="Look up" class="btn btn-default col-md-2" onclick="GridReferenceLookupButtonClick()" />
-            
-            <div id="map" class="map col-md-10" style="width: 640px; height: 480px;"></div>
-            <form class="form-inline">
-                <label for="type" class="control-label col-md-2">Geometry type</label>
-                <select id="type" class="form-control col-md-2">
-                    <option value="Point">Point</option>
-                    <option value="LineString">LineString</option>
-                    <option value="Polygon">Polygon</option>
-                    <option value="Select">Select</option>
-                    <option value="None">None</option>
-                </select>
-            </form>
-        </div>
 
-        <form class="form-inline">
-            @*<label>Geometry type &nbsp;</label>
-                <select id="type">
-                    <option value="Point">Point</option>
-                    <option value="LineString">LineString</option>
-                    <option value="Polygon">Polygon</option>
-                    <option value="Select">Select</option>
-                    <option value="None">None</option>
-                </select>*@
-            @*<select id="layer-select">
-                    <option value="Aerial">Aerial</option>
-                    <option value="AerialWithLabels" selected>Aerial with labels</option>
-                    <option value="Road">Road (static)</option>
-                    <option value="RoadOnDemand">Road (dynamic)</option>
-                    <option value="collinsBart">Collins Bart</option>
-                    <option value="ordnanceSurvey">Ordnance Survey</option>
-                </select>*@
-        </form>
-        <div class="form-group row">
-            <label for="Buffer" class="control-label col-md-2">Buffer</label>
-            <div class="col-md-10">
-                <span>
-                    <input id="Buffer" type="text" value="1000" class="form-control col-md-2" />
-                    <input id="ApplyBufferToSelected" type="button" value="Apply buffer" class="btn btn-default col-md-2" onclick="ApplyBufferToShapesButtonClick()" />
-                    <input id="UndoApplyBufferToShapes" type="button" value="Undo Apply buffer" class="btn btn-default col-md-2" onclick="undoApplyBufferToShapesButtonClick()" />
-                </span>
 
-                <input id="ClearSelectedShape" type="button" value="Clear selected shape" class="btn btn-default col-md-2" onclick="ClearSelectedShapeButtonClick()" />
-                <input id="ResetMapAndWkt" type="button" value="Reset Map and WKT" class="btn btn-default col-md-2" onclick="ResetMapAndWktClick()" />
-                @*<input id="UnionFeatures" type="button" value="Merge shapes" class="btn btn-default" onclick="unionFeaturesButtonClick()" />*@
+            <div class="col-md-10">
+
             </div>
-
         </div>
+        <div class="form-group row">
+            <div class="col-md-9">
+                <div id="map" class="map" style="width: 100%; height: auto;"></div>
+            </div>
+            <div class="col-md-3">
+                <div class="row">
+                    <label for="GridReferenceLookup" class="control-label">Grid Reference lookup</label>
+
+                    <input type="text" id="GridReferenceLookup" class="form-control" />
+
+                    <input id="btnGridReferenceLookup" type="button" value="Look up" class="btn btn-default  col-md-4" onclick="GridReferenceLookupButtonClick()" />
+
+                </div>
+                <div class="row">
+                    <label for="type" class="control-label">Drawing type</label>
+
+                    <select id="type" class="form-control">
+                        <option value="Point">Point</option>
+                        <option value="LineString">LineString</option>
+                        <option value="Polygon">Polygon</option>
+                        <option value="Select">Select</option>
+                        <option value="None">None</option>
+                    </select>
+                </div>
+                <div class="row">
+
+                    <label for="Buffer" class="control-label ">Buffer (m)</label>
+                </div>
+                <div class="row">
+                    <input id="Buffer" type="text" value="1000" class="form-control " />
+                </div>
+                <div class="row">
+                    <input id="ApplyBufferToSelected" type="button" value="Apply buffer" class="btn btn-default " onclick="ApplyBufferToShapesButtonClick()" />
+                </div>
+                <div class="row">
+                    <input id="UndoApplyBufferToShapes" type="button" value="Undo Apply buffer" class="btn btn-default  " onclick="undoApplyBufferToShapesButtonClick()" />
+                </div>
+                <div class="row">
+                    <label for="ClearSelectedShape" class="control-label ">Remove drawings</label>
+
+                </div>
+                <div class="row">
+                    <input id="ClearSelectedShape" type="button" value="Clear selected shape" class="btn btn-default " onclick="ClearSelectedShapeButtonClick()" />
+                </div>
+                <div class="row">
+
+                    <input id="ResetMapAndWkt" type="button" value="Reset Map and WKT" class="btn btn-default " onclick="ResetMapAndWktClick()" />
+                </div>
+            </div>
+        </div>
+
+
+
         <div class="form-group row">
             <label for="SetArea" class="control-label col-md-2">Set area ----></label>
             <div class="col-md-10">
