@@ -6,7 +6,7 @@ var costText = document.getElementById("Cost");
 
 var typeSelect = document.getElementById('type');
 //file accessible references
-var geocoder;
+//var geocoder;
 var map;
 // refs to currently selected interaction
 var select = null;
@@ -144,6 +144,7 @@ function setMapAndTextFromWkt(wkt, source) {
     //get features from GeoJson
     var features = geoJsonFormat.readFeatures(geoJson);
     source.addFeatures(features);
+    extendToDrawing();
     populateTextBoxes();
 }
 
@@ -283,7 +284,8 @@ var createTextStyle = function (feature, resolution, dom) {
 function initialiseMap() {
     var draw, snap;
     map = null;
-    geocoder = new google.maps.Geocoder();
+    //geocoder = new google.maps.Geocoder();
+
     ////bing maps stuff
     //var styles = [
     //    'Road',
@@ -310,7 +312,7 @@ function initialiseMap() {
         if (typeSelect.value !== "Select") {
 
             draw = new ol.interaction.Draw({
-                source: source,
+                source: drawingSource,
                 type: typeSelect.value
             });
             //event listener to clear the area text boxes when new drawing started
@@ -324,7 +326,7 @@ function initialiseMap() {
             map.addInteraction(draw);
             //TODO auto select newly added shape
 
-            snap = new ol.interaction.Snap({ source: source });
+            snap = new ol.interaction.Snap({ source: drawingSource });
             map.addInteraction(snap);
         }
 
@@ -364,10 +366,10 @@ function initialiseMap() {
     coverageSource.addFeatures(coverageBoundaries);
 
     //layer to display user map interactions / drawing
-    var source = new ol.source.Vector({ wrapX: false });
+    var drawingSource = new ol.source.Vector({ wrapX: false });
     var vector = new ol.layer.Vector({
         id: "drawingVector",
-        source: source
+        source: drawingSource
     });
 
     //layer to display labels for drawn features
@@ -423,7 +425,7 @@ function initialiseMap() {
     //if wkt is not "" (edit mode), set json and map up search area
     var wkt = searchAreaWkt.value;
     if (wkt != "") {
-        setMapAndTextFromWkt(wkt, source);
+        setMapAndTextFromWkt(wkt, drawingSource);
     }
 
 }
@@ -448,12 +450,12 @@ function getIntersectingDisplayAreas(feature) {
 
 function addLabelsToMap() {
     var drawingFeatures = getFeaturesFromLayer("drawingVector");
-    var source = getLayerSource("labelVector");
-    source.clear();
+    var labelSource = getLayerSource("labelVector");
+    labelSource.clear();
     drawingFeatures.forEach(feature => {
         var intersecting = getIntersectingDisplayAreas(feature);
         intersecting.forEach(labelFeature => {
-            source.addFeature(labelFeature);
+            labelSource.addFeature(labelFeature);
         })
     })
 }
@@ -465,7 +467,7 @@ function removeOutsideCoverageArea() {
     unionFeaturesInLayer("coverage");
     //create jsts parser
     var parser = new jsts.io.OL3Parser();
-    var source = getLayerSource("drawingVector");
+    var drawingSource = getLayerSource("drawingVector");
     var features = getFeaturesFromLayer("drawingVector");
     var coverageFeatures = getFeaturesFromLayer("coverage");
     var newFeature = new ol.Feature();
@@ -480,8 +482,8 @@ function removeOutsideCoverageArea() {
     //parse back to ol.feature
     newFeature.setGeometry(parser.write(removedOutsideFeature));
     //clear original features from map
-    source.clear();
-    source.addFeature(newFeature);
+    drawingSource.clear();
+    drawingSource.addFeature(newFeature);
     populateTextBoxes();
 }
 
@@ -492,8 +494,8 @@ function extendToDrawing() {
         //Create an empty extent that will gradually extend to all drawings
         var extent = ol.extent.createEmpty();
 
-        var source = getLayerSource("drawingVector");
-        ol.extent.extend(extent, source.getExtent());
+        var drawingSource = getLayerSource("drawingVector");
+        ol.extent.extend(extent, drawingSource.getExtent());
 
         //Finally fit the map's view to our combined extent
         map.getView().fit(extent, map.getSize());
@@ -575,14 +577,14 @@ function setArea() {
 
 //clear current selected feature
 function ClearSelectedShape() {
-    var source = getLayerSource("drawingVector");
+    var drawingSource = getLayerSource("drawingVector");
     if (select !== null) {
         var confirmPolygon = function () { return confirm("Do you want to delete this shape?") };
 
         if (confirmPolygon()) {
             var features = select.getFeatures();
             features.forEach(feature => {
-                source.removeFeature(feature);
+                drawingSource.removeFeature(feature);
                 map.removeInteraction(select);
             });
 
@@ -611,8 +613,8 @@ function clearSearchAreaTextBoxes() {
 
 function clearDrawingsAndLabels() {
     //clear all drawings
-    var source = getLayerSource("drawingVector");
-    source.clear();
+    var drawingSource = getLayerSource("drawingVector");
+    drawingSource.clear();
     //clear all labels
     var labelSource = getLayerSource("labelVector");
     labelSource.clear();
@@ -636,7 +638,7 @@ function ResetMapAndWkt() {
 function unionFeaturesInLayer(layerName) {
     //create jsts parser
     var parser = new jsts.io.OL3Parser();
-    var source = getLayerSource(layerName);
+    var layerSource = getLayerSource(layerName);
     var features = getFeaturesFromLayer(layerName);
     var unionOfFeatures = new ol.Feature();
     //variable to hold merged features as one feature
@@ -657,8 +659,8 @@ function unionFeaturesInLayer(layerName) {
     //parse back to ol.feature
     unionOfFeatures.setGeometry(parser.write(jstsGeomOfUnionOfFeatures));
     //clear original features from map
-    source.clear();
-    source.addFeature(unionOfFeatures);
+    layerSource.clear();
+    layerSource.addFeature(unionOfFeatures);
 }
 
 //apply distance buffer to individual feature
@@ -720,8 +722,9 @@ function undoApplyBufferToShapes() {
         var features = savedFeatures.pop();
         clearDrawingsAndLabels();
         //add last saved features to map
+        var drawingSource = getLayerSource("drawingVector");
         features.forEach(feature => {
-            source.addFeature(feature);
+            drawingSource.addFeature(feature);
         })
         //unselect
         if (select !== null) {

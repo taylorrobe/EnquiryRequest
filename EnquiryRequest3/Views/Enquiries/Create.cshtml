@@ -45,92 +45,14 @@
                 @Html.ValidationMessageFor(model => model.InvoiceEmail, "", new { @class = "text-danger" })
             </div>
         </div>
-        <input type="text" id="Boundaries" data-geoJson="@ViewBag.Boundaries" data-coverageGeoJson="@ViewBag.Coverage" hidden />
-
-        <div class="form-group row">
-
-
-            <div class="col-md-10">
-
-            </div>
-        </div>
-        <div class="form-group row">
-            <div class="col-md-9">
-                <div id="map" class="map" style="width: 100%; height: auto;"></div>
-            </div>
-            <div class="col-md-3">
-                <div class="row">
-                    <label for="GridReferenceLookup" class="control-label">Grid Reference lookup</label>
-
-                    <input type="text" id="GridReferenceLookup" class="form-control" />
-
-                    <input id="btnGridReferenceLookup" type="button" value="Look up" class="btn btn-default  col-md-4" onclick="GridReferenceLookupButtonClick()" />
-
-                </div>
-                <div class="row">
-                    <label for="type" class="control-label">Drawing type</label>
-
-                    <select id="type" class="form-control">
-                        <option value="Point">Point</option>
-                        <option value="LineString">LineString</option>
-                        <option value="Polygon">Polygon</option>
-                        <option value="Select">Select</option>
-                        <option value="None">None</option>
-                    </select>
-                </div>
-                <div class="row">
-
-                    <label for="Buffer" class="control-label ">Buffer (m)</label>
-                </div>
-                <div class="row">
-                    <input id="Buffer" type="text" value="1000" class="form-control " />
-                </div>
-                <div class="row">
-                    <input id="ApplyBufferToSelected" type="button" value="Apply buffer" class="btn btn-default " onclick="ApplyBufferToShapesButtonClick()" />
-                </div>
-                <div class="row">
-                    <input id="UndoApplyBufferToShapes" type="button" value="Undo Apply buffer" class="btn btn-default  " onclick="undoApplyBufferToShapesButtonClick()" />
-                </div>
-                <div class="row">
-                    <label for="ClearSelectedShape" class="control-label ">Remove drawings</label>
-
-                </div>
-                <div class="row">
-                    <input id="ClearSelectedShape" type="button" value="Clear selected shape" class="btn btn-default " onclick="ClearSelectedShapeButtonClick()" />
-                </div>
-                <div class="row">
-
-                    <input id="ResetMapAndWkt" type="button" value="Reset Map and WKT" class="btn btn-default " onclick="ResetMapAndWktClick()" />
-                </div>
-            </div>
-        </div>
-
-
-
-        <div class="form-group row">
-            <label for="SetArea" class="control-label col-md-2">Set area ----></label>
-            <div class="col-md-10">
-                <input id="SetArea" type="button" value="Set Area" class="btn btn-default col-md-2" onclick="setAreaButtonClick()" />
-            </div>
-
-        </div>
-
-
-        <div class="form-group">
-            <label for="Area" class="control-label col-md-2">Area (hectares)</label>
-            <div class="col-md-10">
-                <input id="Area" type="text" value="" class="form-control" disabled />
-            </div>
-            <label for="Cost" class="control-label col-md-2">Estimated cost (£)</label>
-            <div class="col-md-10">
-                <input id="Cost" type="text" value="" class="form-control" disabled />
-            </div>
-        </div>
-
+        @{
+            Html.RenderPartial("_PartialMap");
+        }
+        
         <div class="form-group">
             @Html.LabelFor(model => model.SearchAreaWkt, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.SearchAreaWkt, new { htmlAttributes = new { @class = "form-control", @disabled = "disabled" } })
+                @Html.EditorFor(model => model.SearchAreaWkt, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
                 @Html.ValidationMessageFor(model => model.SearchAreaWkt, "", new { @class = "text-danger" })
 
             </div>
@@ -141,7 +63,6 @@
             </div>
 
         </div>
-
         <div class="form-group">
             @Html.LabelFor(model => model.SearchTypeId, "Search Type", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">

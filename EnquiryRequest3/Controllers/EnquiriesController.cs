@@ -173,11 +173,11 @@ namespace EnquiryRequest3.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "EnquiryId,Name,InvoiceEmail,SearchAreaWkt,SearchTypeId,NoOfYears,JobNumber,Agency,AgencyContact,DataUsedFor,Citations,GisKml,Express,EnquiryDate,Comment")] UserCreateEditEnquiryViewModel model)
         {
-            DbGeometry geom = DbGeometry.FromText(model.SearchAreaWkt, 3857);
-            var user = User.Identity.GetAppUser();
-            var userId = User.Identity.GetIntUserId();
             if (ModelState.IsValid)
             {
+                DbGeometry geom = DbGeometry.FromText(model.SearchAreaWkt, 3857);
+                var user = User.Identity.GetAppUser();
+                var userId = User.Identity.GetIntUserId();
                 Enquiry enquiry = new Enquiry
                 {
                     EnquiryId = model.EnquiryId,

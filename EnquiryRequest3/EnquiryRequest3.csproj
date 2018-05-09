@@ -615,6 +615,7 @@
     <Content Include="Scripts\EnquiryRequest.js" />
     <Content Include="Scripts\expressive.annotations.validate.js" />
     <Content Include="Scripts\expressive.annotations.validate.min.js" />
+    <None Include="Properties\PublishProfiles\CustomProfile.pubxml" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.3.1.slim.js" />
     <Content Include="Scripts\jquery-3.3.1.slim.min.js" />
@@ -719,6 +720,7 @@
     <Content Include="Views\SearchTypes\Index.cshtml" />
     <Content Include="Views\Manage\EditContactInfo.cshtml" />
     <Content Include="Views\Account\ChangeEmail.cshtml" />
+    <Content Include="Views\Enquiries\_PartialMap.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
