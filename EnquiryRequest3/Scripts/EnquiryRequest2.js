@@ -183,7 +183,7 @@ var boundaryVectorTextOptions = {
         size: '10px',
         offsetX: '0',
         offsetY: '0',
-        color: 'blue',
+        color: 'green',
         outline: '#ffffff',
         outlineWidth: '3',
         overflow: 'false',
@@ -206,7 +206,7 @@ var labelVectorTextOptions = {
         size: '10px',
         offsetX: '0',
         offsetY: '0',
-        color: 'green',
+        color: 'blue',
         outline: '#ffffff',
         outlineWidth: '3',
         overflow: 'true',
@@ -261,11 +261,11 @@ var getText = function (feature, resolution, dom) {
 function boundaryStyleFunction(feature, resolution) {
     return new ol.style.Style({
         stroke: new ol.style.Stroke({
-            color: 'blue',
+            color: 'green',
             width: 1
         }),
         fill: new ol.style.Fill({
-            color: 'rgba(0, 0, 255, 0.01)'
+            color: 'rgba(0, 255, 0, 0.01)'
         }),
         text: createTextStyle(feature, resolution, boundaryVectorTextOptions.polygons)
     });
@@ -285,7 +285,7 @@ function labelStyleFunction(feature, resolution) {
     });
 }
 
-// label style using text
+// gridref style using text
 function gridRefStyleFunction(feature, resolution) {
     return new ol.style.Style({
         stroke: new ol.style.Stroke({
@@ -400,7 +400,8 @@ function initialiseMap() {
     var boundaryVector = new ol.layer.Vector({
         id: "boundaries",
         source: boundarySource,
-        style: boundaryStyleFunction
+        style: boundaryStyleFunction,
+        declutter: true
     });
 
     //variable gets data from the ViewBag.boundaries to add boundaries to layer
@@ -414,7 +415,8 @@ function initialiseMap() {
     var coverageVector = new ol.layer.Vector({
         id: "coverage",
         source: coverageSource,
-        style: coverageStyle
+        style: coverageStyle,
+        declutter: true
     });
 
     //variable gets data from the ViewBag.boundaries to add boundaries to coverage layer
@@ -427,7 +429,8 @@ function initialiseMap() {
     var drawingSource = new ol.source.Vector({ wrapX: false });
     var vector = new ol.layer.Vector({
         id: "drawingVector",
-        source: drawingSource
+        source: drawingSource,
+        declutter: true
     });
 
     //layer to display labels for drawn features
@@ -435,7 +438,8 @@ function initialiseMap() {
     var labelVector = new ol.layer.Vector({
         id: "labelVector",
         source: labelSource,
-        style: labelStyleFunction
+        style: labelStyleFunction,
+        declutter: true
     });
 
     //layer to display gridRef
@@ -443,7 +447,8 @@ function initialiseMap() {
     var gridRefVector = new ol.layer.Vector({
         id: "gridRefVector",
         source: gridRefSource,
-        style: gridRefStyleFunction
+        style: gridRefStyleFunction,
+        declutter: true
     });
 
 
@@ -508,20 +513,28 @@ function initialiseMap() {
 
     // display popup on click
     map.on('click', function (evt) {
-        var feature = map.forEachFeatureAtPixel(evt.pixel,
-            function (feature) {
-                return feature;
-            });
-        if (feature) {
-            var coordinates = feature.getGeometry().getCoordinates();
-            popup.setPosition(coordinates);
-            $(element).popover({
-                'placement': 'top',
-                'html': true,
-                'content': feature.get('name')
-            });
-            $(element).popover('show');
-        } else {
+        var value = typeSelect.value;
+
+        if (value == 'Select') {
+            var feature = map.forEachFeatureAtPixel(evt.pixel,
+                function (feature) {
+                    return feature;
+                });
+            if (feature) {
+                var coordinates = feature.getGeometry().getCoordinates();
+                popup.setPosition(coordinates);
+                $(element).popover({
+                    'placement': 'top',
+                    'html': true,
+                    'content': feature.get('name')
+                });
+                $(element).popover('show');
+
+            } else {
+                $(element).popover('destroy');
+            }
+        }
+        else {
             $(element).popover('destroy');
         }
     });
@@ -608,6 +621,10 @@ function ExtendToLayerFeatures(layerSource) {
 
         //Finally fit the map's view to our combined extent
         map.getView().fit(extent, map.getSize());
+        if (map.getView().getZoom() > 15) {
+            map.getView().setZoom(15);
+        }
+
 
     } catch (e) {
         alert(e.message, e.name);
@@ -659,16 +676,6 @@ function setArea() {
         var features = getFeaturesFromLayer("drawingVector");
         var drawingSource = getLayerSource("drawingVector");
         if (features.length > 0) {
-            //var distance = document.getElementById("Buffer").value;
-            //var confirmApplyBuffer;
-            //if (distance === "" || distance === 0) {
-            //    confirmApplyBuffer = function () { return confirm("There will be no buffer applied, is this what you want?") };
-            //}
-            //else {
-            //    confirmApplyBuffer = function () { return confirm("There will be a " + distance + "m buffer applied, is this what you want?") };
-            //}
-            //var applyBuffer = confirmApplyBuffer();
-            //if (applyBuffer) {
 
             addLabelsToMap();
             unionFeaturesInLayer("drawingVector");
@@ -676,7 +683,7 @@ function setArea() {
             removeOutsideCoverageArea();
             ExtendToLayerFeatures(drawingSource);
             populateTextBoxes();
-            //}
+
         }
 
 
@@ -728,6 +735,9 @@ function clearDrawingsAndLabels() {
     //clear all labels
     var labelSource = getLayerSource("labelVector");
     labelSource.clear();
+    //clear all gridSquares
+    var gridRefSource = getLayerSource("gridRefVector");
+    gridRefSource.clear();
 }
 
 //clear all drawings and reset map
@@ -871,8 +881,18 @@ function CenterAndZoomMap(eAndN, zoom) {
 //returns geometry representing the gridref supplied
 function GetSquareFromGridRef(gridRef) {
     var squareSize = 0;
-    var gridRefFigure = gridRef.length - 2;
+
+    //this gets the size of the gridsquare from length of gridref
+    gridRef = gridRef.replace(/\s/g, '');
+    if (gridRef)
+        gridRefFigure = gridRef.length - 2;
     switch (gridRefFigure) {
+        case 0:
+            squareSize = 100000;
+            break;
+        case 2:
+            squareSize = 10000;
+            break;
         case 4:
             squareSize = 1000;
             break;
@@ -890,10 +910,12 @@ function GetSquareFromGridRef(gridRef) {
             break;
     }
 
+    //using latlon2bng.js and latlon.js to convert grid ref to easting and northing
     var EN = OsGridRef.parse(gridRef.toString(gridRefFigure));
     var E = EN.easting;
     var N = EN.northing;
 
+    //create ol.coordinates for grid square (coordinate is simple array of xy e.g. [x, y])
     var xy1 = ol.coordinate.add([E, N], [0, 0]);
 
     var xy2 = ol.coordinate.add([E, N], [squareSize, 0]);
@@ -902,8 +924,14 @@ function GetSquareFromGridRef(gridRef) {
 
     var xy4 = ol.coordinate.add([E, N], [0, squareSize]);
 
+    //coordinates are array of coordinate i.e. [[x1,y1], [x2,y2], ...[x1,y1]] 
+    //polygon also needs to be closed so last coordinate sould be the same as first
     var coordinates = [xy1, xy2, xy3, xy4, xy1];
 
+    //ol.geom.Polygon constructor takes an array of coordinates the first is the outer polygon
+    //the others are the inner holes, in this case just one is supplies but is 
+    //important to provide the array, the "XY" is the format of the coordinates
+    //i.e. new ol.geom.Polygon([coordinatesOfOuter, coordinatesOfInner1, ... coordinatesOfInner2], "XY")
     var geom = new ol.geom.Polygon([coordinates], "XY");
 
     return geom;
@@ -912,16 +940,21 @@ function GetSquareFromGridRef(gridRef) {
 //function to add grid reference to map
 function GridReferenceLookup() {
     var gridRef = document.getElementById("GridReferenceLookup").value;
+
+    //get geom of gridsquare
     var geom = GetSquareFromGridRef(gridRef);
+
+    //create feature including naming with gridref
     var gridRefFeature = new ol.Feature({
         geometry: geom,
-        name: gridRef
+        Name: gridRef
     });
 
     var gridRefSource = getLayerSource("gridRefVector")
     gridRefSource.clear();
     gridRefSource.addFeatures([gridRefFeature]);
 
+    //zoom to gridsquare
     ExtendToLayerFeatures(gridRefSource);
 
 }
