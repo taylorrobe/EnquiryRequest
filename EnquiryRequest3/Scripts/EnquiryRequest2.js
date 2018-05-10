@@ -65,6 +65,27 @@ var coverageStyle = new ol.style.Style({
     })
 });
 
+//set grid ref style
+var gridRefStyle = new ol.style.Style({
+    fill: new ol.style.Fill({
+        color: 'rgba(255, 0, 0, 0)'
+    }),
+    stroke: new ol.style.Stroke({
+        color: 'red',
+        width: 5
+    }),
+    text: new ol.style.Text({
+        font: '12px Calibri,sans-serif',
+        fill: new ol.style.Fill({
+            color: '#000'
+        }),
+        stroke: new ol.style.Stroke({
+            color: '#fff',
+            width: 3
+        })
+    })
+});
+
 //helper to display exceptions
 function UserException(message) {
     this.message = message;
@@ -144,7 +165,7 @@ function setMapAndTextFromWkt(wkt, source) {
     //get features from GeoJson
     var features = geoJsonFormat.readFeatures(geoJson);
     source.addFeatures(features);
-    extendToDrawing();
+    ExtendToLayerFeatures(source);
     populateTextBoxes();
 }
 
@@ -186,6 +207,29 @@ var labelVectorTextOptions = {
         offsetX: '0',
         offsetY: '0',
         color: 'green',
+        outline: '#ffffff',
+        outlineWidth: '3',
+        overflow: 'true',
+        maxreso: '1200'
+
+    }
+};
+
+//text options for gridRef layer labels
+var gridRefVectorTextOptions = {
+    polygons: {
+        text: 'wrap',
+        align: 'center',
+        baseline: 'middle',
+        rotation: '0',
+        font: 'Arial',
+        weight: 'bold',
+        placement: 'point',
+        maxangle: '0.7853981633974483',
+        size: '10px',
+        offsetX: '0',
+        offsetY: '0',
+        color: 'red',
         outline: '#ffffff',
         outlineWidth: '3',
         overflow: 'true',
@@ -238,6 +282,20 @@ function labelStyleFunction(feature, resolution) {
             color: 'rgba(0, 0, 255, 0)'
         }),
         text: createTextStyle(feature, resolution, labelVectorTextOptions.polygons)
+    });
+}
+
+// label style using text
+function gridRefStyleFunction(feature, resolution) {
+    return new ol.style.Style({
+        stroke: new ol.style.Stroke({
+            color: 'red',
+            width: 0
+        }),
+        fill: new ol.style.Fill({
+            color: 'rgba(0, 0, 255, 0)'
+        }),
+        text: createTextStyle(feature, resolution, gridRefVectorTextOptions.polygons)
     });
 }
 
@@ -380,6 +438,13 @@ function initialiseMap() {
         style: labelStyleFunction
     });
 
+    //layer to display gridRef
+    var gridRefSource = new ol.source.Vector({ wrapX: false });
+    var gridRefVector = new ol.layer.Vector({
+        id: "gridRefVector",
+        source: gridRefSource,
+        style: gridRefStyleFunction
+    });
 
 
     //set the projection and centre / zoom map
@@ -393,7 +458,7 @@ function initialiseMap() {
 
     //create map with new layers
     map = new ol.Map({
-        layers: [raster, coverageVector, boundaryVector, vector, labelVector],
+        layers: [raster, coverageVector, boundaryVector, vector, labelVector, gridRefVector],
         target: 'map',
         view: defaultView,
         loadTilesWhileInteracting: true
@@ -427,7 +492,51 @@ function initialiseMap() {
     if (wkt != "") {
         setMapAndTextFromWkt(wkt, drawingSource);
     }
+    else {
+        ExtendToLayerFeatures(coverageSource);
+    }
+    var element = document.getElementById('popup');
 
+    //set up popup info
+    var popup = new ol.Overlay({
+        element: element,
+        positioning: 'bottom-center',
+        stopEvent: false,
+        offset: [0, -50]
+    });
+    map.addOverlay(popup);
+
+    // display popup on click
+    map.on('click', function (evt) {
+        var feature = map.forEachFeatureAtPixel(evt.pixel,
+            function (feature) {
+                return feature;
+            });
+        if (feature) {
+            var coordinates = feature.getGeometry().getCoordinates();
+            popup.setPosition(coordinates);
+            $(element).popover({
+                'placement': 'top',
+                'html': true,
+                'content': feature.get('name')
+            });
+            $(element).popover('show');
+        } else {
+            $(element).popover('destroy');
+        }
+    });
+
+
+    // change mouse cursor when over marker
+    //map.on('pointermove', function(e) {
+    //    if (e.dragging) {
+    //        $(element).popover('destroy');
+    //        return;
+    //    }
+    //    var pixel = map.getEventPixel(e.originalEvent);
+    //    var hit = map.hasFeatureAtPixel(pixel);
+    //    map.getTarget().style.cursor = hit ? 'pointer' : '';
+    //});
 }
 
 //get array of new boundaries intersecting the feature for labelling and local authority wording
@@ -488,14 +597,14 @@ function removeOutsideCoverageArea() {
 }
 
 //enlarge view window to see all drawings
-function extendToDrawing() {
+function ExtendToLayerFeatures(layerSource) {
     try {
 
         //Create an empty extent that will gradually extend to all drawings
         var extent = ol.extent.createEmpty();
 
-        var drawingSource = getLayerSource("drawingVector");
-        ol.extent.extend(extent, drawingSource.getExtent());
+
+        ol.extent.extend(extent, layerSource.getExtent());
 
         //Finally fit the map's view to our combined extent
         map.getView().fit(extent, map.getSize());
@@ -548,6 +657,7 @@ function populateTextBoxes() {
 function setArea() {
     try {
         var features = getFeaturesFromLayer("drawingVector");
+        var drawingSource = getLayerSource("drawingVector");
         if (features.length > 0) {
             //var distance = document.getElementById("Buffer").value;
             //var confirmApplyBuffer;
@@ -564,7 +674,7 @@ function setArea() {
             unionFeaturesInLayer("drawingVector");
 
             removeOutsideCoverageArea();
-            extendToDrawing();
+            ExtendToLayerFeatures(drawingSource);
             populateTextBoxes();
             //}
         }
@@ -673,8 +783,8 @@ function applyBufferToFeature(feature, distance) {
 
     // create a buffer around the feature
     var buffered = jstsGeom.buffer(distance);
-
-    return buffered;
+    var geom = parser.write(buffered)
+    return geom;
 }
 
 //apply buffer to all features
@@ -684,9 +794,8 @@ function applyBufferToShapes() {
 
     }
     else {
-        var parser = new jsts.io.OL3Parser();
         var features = getFeaturesFromLayer("drawingVector");
-
+        var drawingSource = getLayerSource("drawingVector");
         //save copy of original features for undoApplyBufferToShapes function
         var clonedFeatures = [];
         features.forEach(feature => {
@@ -699,7 +808,7 @@ function applyBufferToShapes() {
         features.forEach(feature => {
             var buffered = applyBufferToFeature(feature, distance);
             // convert back from JSTS and replace the geometry on the feature
-            feature.setGeometry(parser.write(buffered));
+            feature.setGeometry(buffered);
         })
 
         //unselect selected feature if required
@@ -708,7 +817,7 @@ function applyBufferToShapes() {
         }
 
         //zoom to extent and populate Text Boxes with new area
-        extendToDrawing();
+        ExtendToLayerFeatures(drawingSource);
         populateTextBoxes();
     }
 
@@ -731,7 +840,7 @@ function undoApplyBufferToShapes() {
             map.removeInteraction(select);
         }
         //zoom and clear text
-        extendToDrawing();
+        ExtendToLayerFeatures(drawingSource);
         populateTextBoxes();
     }
 
@@ -754,49 +863,67 @@ function undoApplyBufferToShapes() {
 
 function CenterAndZoomMap(eAndN, zoom) {
     //console.log("east: " + east + " north: " + north);
-    
+
     map.getView().setCenter(eAndN);
     map.getView().setZoom(zoom);
 }
 
-function GridReferenceLookup() {
-    var currentZoom = map.getView().getZoom();
-    var gridRef = document.getElementById("GridReferenceLookup").value;
-    var gridRefLength = gridRef.length;
-    var zoom;
-    switch(gridRefLength) {
+//returns geometry representing the gridref supplied
+function GetSquareFromGridRef(gridRef) {
+    var squareSize = 0;
+    var gridRefFigure = gridRef.length - 2;
+    switch (gridRefFigure) {
         case 4:
-            zoom = 6
+            squareSize = 1000;
             break;
         case 6:
-            zoom = 7
+            squareSize = 100;
             break;
         case 8:
-            zoom = 9
+            squareSize = 10;
             break;
         case 10:
-            zoom = 12
+            squareSize = 1;
             break;
         case 12:
-            zoom = 14
+            squareSize = 0.1;
             break;
-        case 14:
-            zoom = 15
-            break;
-        default:
-            zoom = 5
     }
-    var osGridRef = OsGridRef.parse(gridRef);
-    var eAndN = [];
-    eAndN.push(osGridRef.easting);
-    eAndN.push(osGridRef.northing);
 
-    var marker = new ol.geom.Point(osGridRef)
-    var labelVector = getLayerById("labelVector");
-    var feature = new ol.Feature();
-    feature.setGeometry(marker);
-    labelVector.getSource().addFeature(feature);
-    CenterAndZoomMap(eAndN, zoom);
+    var EN = OsGridRef.parse(gridRef.toString(gridRefFigure));
+    var E = EN.easting;
+    var N = EN.northing;
+
+    var xy1 = ol.coordinate.add([E, N], [0, 0]);
+
+    var xy2 = ol.coordinate.add([E, N], [squareSize, 0]);
+
+    var xy3 = ol.coordinate.add([E, N], [squareSize, squareSize]);
+
+    var xy4 = ol.coordinate.add([E, N], [0, squareSize]);
+
+    var coordinates = [xy1, xy2, xy3, xy4, xy1];
+
+    var geom = new ol.geom.Polygon([coordinates], "XY");
+
+    return geom;
+}
+
+//function to add grid reference to map
+function GridReferenceLookup() {
+    var gridRef = document.getElementById("GridReferenceLookup").value;
+    var geom = GetSquareFromGridRef(gridRef);
+    var gridRefFeature = new ol.Feature({
+        geometry: geom,
+        name: gridRef
+    });
+
+    var gridRefSource = getLayerSource("gridRefVector")
+    gridRefSource.clear();
+    gridRefSource.addFeatures([gridRefFeature]);
+
+    ExtendToLayerFeatures(gridRefSource);
+
 }
 
 //click events

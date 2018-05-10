@@ -30,7 +30,7 @@ namespace EnquiryRequest3
             "~/Scripts/EnquiryRequest2.js"));
 
             //add link to openLayers on the CDN
-            var openLayersCdnPath = "https://openlayers.org/en/v4.6.5/build/ol.js";
+            var openLayersCdnPath = "https://openlayers.org/en/v4.6.4/build/ol.js";
 
             //add link to proj4js on the CDN
             var proj4jsCdnPath = "https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.4.4/proj4.js";
