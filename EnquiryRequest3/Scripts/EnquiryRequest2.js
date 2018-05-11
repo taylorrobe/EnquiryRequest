@@ -205,12 +205,12 @@ var labelVectorTextOptions = {
         maxangle: '0.7853981633974483',
         size: '10px',
         offsetX: '0',
-        offsetY: '0',
+        offsetY: '20',
         color: 'blue',
         outline: '#ffffff',
         outlineWidth: '3',
         overflow: 'true',
-        maxreso: '1200'
+        maxreso: '800'
 
     }
 };
@@ -218,14 +218,14 @@ var labelVectorTextOptions = {
 //text options for gridRef layer labels
 var gridRefVectorTextOptions = {
     polygons: {
-        text: 'wrap',
+        text: 'normal',
         align: 'center',
-        baseline: 'middle',
+        baseline: 'top',
         rotation: '0',
         font: 'Arial',
         weight: 'bold',
         placement: 'point',
-        maxangle: '0.7853981633974483',
+        maxangle: '360',
         size: '10px',
         offsetX: '0',
         offsetY: '0',
@@ -233,7 +233,7 @@ var gridRefVectorTextOptions = {
         outline: '#ffffff',
         outlineWidth: '3',
         overflow: 'true',
-        maxreso: '1200'
+        maxreso: '38400'
 
     }
 };
@@ -398,7 +398,7 @@ function initialiseMap() {
     //layer for boundaries
     var boundarySource = new ol.source.Vector({ wrapX: false });
     var boundaryVector = new ol.layer.Vector({
-        id: "boundaries",
+        id: "boundaryVector",
         source: boundarySource,
         style: boundaryStyleFunction,
         declutter: true
@@ -413,7 +413,7 @@ function initialiseMap() {
     //layer for coverage area
     var coverageSource = new ol.source.Vector({ wrapX: false });
     var coverageVector = new ol.layer.Vector({
-        id: "coverage",
+        id: "coverageVector",
         source: coverageSource,
         style: coverageStyle,
         declutter: true
@@ -555,7 +555,7 @@ function initialiseMap() {
 //get array of new boundaries intersecting the feature for labelling and local authority wording
 function getIntersectingDisplayAreas(feature) {
     var parser = new jsts.io.OL3Parser();
-    var boundaryFeatures = getFeaturesFromLayer("boundaries");
+    var boundaryFeatures = getFeaturesFromLayer("boundaryVector");
     var jstsGeomOfFeature = parser.read(feature.getGeometry());
     var intersectingFeatures = [];
     boundaryFeatures.forEach(boundaryFeature => {
@@ -586,12 +586,12 @@ function addLabelsToMap() {
 function removeOutsideCoverageArea() {
     //merge features
     unionFeaturesInLayer("drawingVector");
-    unionFeaturesInLayer("coverage");
+    unionFeaturesInLayer("coverageVector");
     //create jsts parser
     var parser = new jsts.io.OL3Parser();
     var drawingSource = getLayerSource("drawingVector");
     var features = getFeaturesFromLayer("drawingVector");
-    var coverageFeatures = getFeaturesFromLayer("coverage");
+    var coverageFeatures = getFeaturesFromLayer("coverageVector");
     var newFeature = new ol.Feature();
 
     //only one in features as have been merged
@@ -881,82 +881,143 @@ function CenterAndZoomMap(eAndN, zoom) {
 //returns geometry representing the gridref supplied
 function GetSquareFromGridRef(gridRef) {
     var squareSize = 0;
-
+    var geom = null;
     //this gets the size of the gridsquare from length of gridref
     gridRef = gridRef.replace(/\s/g, '');
-    if (gridRef)
+    if (gridRef && gridRef.length > 1 && gridRef.length % 2 == 0) {
         gridRefFigure = gridRef.length - 2;
-    switch (gridRefFigure) {
-        case 0:
-            squareSize = 100000;
-            break;
-        case 2:
-            squareSize = 10000;
-            break;
-        case 4:
-            squareSize = 1000;
-            break;
-        case 6:
-            squareSize = 100;
-            break;
-        case 8:
-            squareSize = 10;
-            break;
-        case 10:
-            squareSize = 1;
-            break;
-        case 12:
-            squareSize = 0.1;
-            break;
+        switch (gridRefFigure) {
+            case 0:
+                squareSize = 100000;
+                break;
+            case 2:
+                squareSize = 10000;
+                break;
+            case 4:
+                squareSize = 1000;
+                break;
+            case 6:
+                squareSize = 100;
+                break;
+            case 8:
+                squareSize = 10;
+                break;
+            case 10:
+                squareSize = 1;
+                break;
+            case 12:
+                squareSize = 0.1;
+                break;
+        }
+
+        //using latlon2bng.js and latlon.js to convert grid ref to easting and northing
+        var EN = OsGridRef.parse(gridRef.toString(gridRefFigure));
+        var E = EN.easting;
+        var N = EN.northing;
+
+        //create ol.coordinates for grid square (coordinate is simple array of xy e.g. [x, y])
+        var xy1 = ol.coordinate.add([E, N], [0, 0]);
+
+        var xy2 = ol.coordinate.add([E, N], [squareSize, 0]);
+
+        var xy3 = ol.coordinate.add([E, N], [squareSize, squareSize]);
+
+        var xy4 = ol.coordinate.add([E, N], [0, squareSize]);
+
+        //coordinates are array of coordinate i.e. [[x1,y1], [x2,y2], ...[x1,y1]] 
+        //polygon also needs to be closed so last coordinate sould be the same as first
+        var coordinates = [xy1, xy2, xy3, xy4, xy1];
+
+        //ol.geom.Polygon constructor takes an array of coordinates the first is the outer polygon
+        //the others are the inner holes, in this case just one is supplies but is 
+        //important to provide the array, the "XY" is the format of the coordinates
+        //i.e. new ol.geom.Polygon([coordinatesOfOuter, coordinatesOfInner1, ... coordinatesOfInner2], "XY")
+        geom = new ol.geom.Polygon([coordinates], "XY");
     }
-
-    //using latlon2bng.js and latlon.js to convert grid ref to easting and northing
-    var EN = OsGridRef.parse(gridRef.toString(gridRefFigure));
-    var E = EN.easting;
-    var N = EN.northing;
-
-    //create ol.coordinates for grid square (coordinate is simple array of xy e.g. [x, y])
-    var xy1 = ol.coordinate.add([E, N], [0, 0]);
-
-    var xy2 = ol.coordinate.add([E, N], [squareSize, 0]);
-
-    var xy3 = ol.coordinate.add([E, N], [squareSize, squareSize]);
-
-    var xy4 = ol.coordinate.add([E, N], [0, squareSize]);
-
-    //coordinates are array of coordinate i.e. [[x1,y1], [x2,y2], ...[x1,y1]] 
-    //polygon also needs to be closed so last coordinate sould be the same as first
-    var coordinates = [xy1, xy2, xy3, xy4, xy1];
-
-    //ol.geom.Polygon constructor takes an array of coordinates the first is the outer polygon
-    //the others are the inner holes, in this case just one is supplies but is 
-    //important to provide the array, the "XY" is the format of the coordinates
-    //i.e. new ol.geom.Polygon([coordinatesOfOuter, coordinatesOfInner1, ... coordinatesOfInner2], "XY")
-    var geom = new ol.geom.Polygon([coordinates], "XY");
-
     return geom;
+}
+
+function ValidateAndReformatGridRef(gridRef)
+{
+    var gridRefFormatted = null;
+    gridRef = gridRef.replace(/\s/g, '');
+    var regExpGridRef = /^[A-Za-z][A-Za-z](\d\d)*$/;
+
+    if(regExpGridRef.test(gridRef))
+    {
+        //format grid ref for name display
+        gridRefFormatted = gridRef.replace(/[a-z]/g, Function.prototype.call.bind(String.prototype.toUpperCase));
+        return gridRefFormatted;
+    }
+    else {
+        throw "Invalid grid reference";
+    }
 }
 
 //function to add grid reference to map
 function GridReferenceLookup() {
-    var gridRef = document.getElementById("GridReferenceLookup").value;
+    try{
+        var gridRefElement = document.getElementById("GridReferenceLookup");
+        var validGridRef = ValidateAndReformatGridRef(gridRefElement.value);
 
-    //get geom of gridsquare
-    var geom = GetSquareFromGridRef(gridRef);
+        //get geom of gridsquare
+        var geom = GetSquareFromGridRef(validGridRef);
+        if (geom)
+        {
+            var chkGridRefLayer = document.getElementById("chkGridRefLayer");
+            chkGridRefLayer.checked = true;
+            UpdateLayers();
+            //create feature including naming with gridref
+            var gridRefFeature = new ol.Feature({
+                geometry: geom,
+                Name: validGridRef
+            });
 
-    //create feature including naming with gridref
-    var gridRefFeature = new ol.Feature({
-        geometry: geom,
-        Name: gridRef
-    });
+            var gridRefSource = getLayerSource("gridRefVector")
+            gridRefSource.clear();
+            gridRefSource.addFeatures([gridRefFeature]);
 
-    var gridRefSource = getLayerSource("gridRefVector")
-    gridRefSource.clear();
-    gridRefSource.addFeatures([gridRefFeature]);
+            //zoom to gridsquare
+            ExtendToLayerFeatures(gridRefSource);
+        }
+        else {
+            alert("invalid grid reference");
+        }
+    }
+    catch(exception)
+    {
+        alert(exception);
+    }
 
-    //zoom to gridsquare
-    ExtendToLayerFeatures(gridRefSource);
+}
+function UpdateLayers() {
+    var chkBoundaryLayer = document.getElementById("chkBoundaryLayer");
+    var boundaryLayer = getLayerById("boundaryVector");
+    var chkGridRefLayer = document.getElementById("chkGridRefLayer");
+    var gridRefLayer = getLayerById("gridRefVector");
+    var chkLabelLayer = document.getElementById("chkLabelLayer");
+    var labelLayer = getLayerById("labelVector");
 
+    if (chkBoundaryLayer.checked == true) {
+        boundaryLayer.setVisible(true);
+    }
+    else {
+        boundaryLayer.setVisible(false);
+    }
+
+    if (chkGridRefLayer.checked == true) {
+        gridRefLayer.setVisible(true);
+    }
+    else {
+        gridRefLayer.setVisible(false);
+    }
+
+    if (chkLabelLayer.checked == true) {
+        labelLayer.setVisible(true);
+    }
+    else {
+        labelLayer.setVisible(false);
+    }
 }
 
 //click events
@@ -994,6 +1055,10 @@ function undoApplyBufferToShapesButtonClick() {
 
 function GridReferenceLookupButtonClick() {
     GridReferenceLookup();
+}
+
+function UpdateLayersClick() {
+    UpdateLayers();
 }
 
 initialiseMap();
