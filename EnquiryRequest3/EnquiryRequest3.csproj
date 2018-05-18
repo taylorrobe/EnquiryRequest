@@ -322,6 +322,10 @@
     <Compile Include="Migrations\201805141439440_after concurrency model update.Designer.cs">
       <DependentUpon>201805141439440_after concurrency model update.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201805181350075_changes to login model to allow non email address.cs" />
+    <Compile Include="Migrations\201805181350075_changes to login model to allow non email address.Designer.cs">
+      <DependentUpon>201805181350075_changes to login model to allow non email address.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Boundary.cs" />
@@ -787,6 +791,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201805141439440_after concurrency model update.resx">
       <DependentUpon>201805141439440_after concurrency model update.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201805181350075_changes to login model to allow non email address.resx">
+      <DependentUpon>201805181350075_changes to login model to allow non email address.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

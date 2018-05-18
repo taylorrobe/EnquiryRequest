@@ -10,7 +10,7 @@ var typeSelect = document.getElementById('type');
 var map;
 // refs to currently selected interaction
 var select = null;
-var selectClick;
+var modify;
 //array to hold saved features for undo action
 var savedFeatures = [];
 
@@ -39,7 +39,8 @@ var boundaryStyle = new ol.style.Style({
         stroke: new ol.style.Stroke({
             color: '#fff',
             width: 3
-        })
+        }),
+        text: 'hello'
     })
 });
 
@@ -72,6 +73,27 @@ var gridRefStyle = new ol.style.Style({
     stroke: new ol.style.Stroke({
         color: 'red',
         width: 5
+    }),
+    text: new ol.style.Text({
+        font: '12px Calibri,sans-serif',
+        fill: new ol.style.Fill({
+            color: '#000'
+        }),
+        stroke: new ol.style.Stroke({
+            color: '#fff',
+            width: 3
+        })
+    })
+});
+
+//set grid ref style
+var drawingStyle = new ol.style.Style({
+    fill: new ol.style.Fill({
+        color: 'rgba(0, 0, 255, 0.1)'
+    }),
+    stroke: new ol.style.Stroke({
+        color: 'blue',
+        width: 3
     }),
     text: new ol.style.Text({
         font: '12px Calibri,sans-serif',
@@ -118,38 +140,21 @@ function getFeaturesFromLayer(layerName) {
 }
 
 //set feature as selected with modify function to allow repositioning of nodes
-function selectShape() {
-    // select interaction working on "click"
-    selectClick = new ol.interaction.Select({
-        condition: ol.events.condition.click,
-        layers: function (layer) {
-            return layer.get('id') == 'drawingVector';
-        }
-    });
+function unSelectShape() {
+    if (select)
+    {
+        map.removeInteraction(select);
 
-    var modify = new ol.interaction.Modify({ features: selectClick.getFeatures() });
-    map.addInteraction(modify);
-    select = selectClick;
+        map.removeInteraction(modify);
+        select = null;
+    }
+
 }
 
 //sets the correct interaction dependant on drop down select
 function changeInteraction() {
 
-    if (select !== null) {
-        map.removeInteraction(select);
-    }
 
-    var value = typeSelect.value;
-
-    if (value == 'Select') {
-        selectShape();
-    } else {
-        select = null;
-    }
-
-    if (select !== null) {
-        map.addInteraction(select);
-    }
 }
 
 //helper to set map and text boxes from wkt, for use in edit enquiry
@@ -298,6 +303,19 @@ function gridRefStyleFunction(feature, resolution) {
     });
 }
 
+// label style using text
+function drawingStyleFunction(feature, resolution) {
+    return new ol.style.Style({
+        stroke: new ol.style.Stroke({
+            color: 'blue',
+            width: 1
+        }),
+        fill: new ol.style.Fill({
+            color: 'rgba(0, 0, 255, 0.5)'
+        })
+    });
+}
+
 var createTextStyle = function (feature, resolution, dom) {
     var align = dom.align;
     var baseline = dom.baseline;
@@ -336,7 +354,85 @@ var createTextStyle = function (feature, resolution, dom) {
         rotation: rotation
     });
 };
+//set up map layers
+var raster = new ol.layer.Tile({
+    source: new ol.source.OSM()
+});
 
+//layer for boundaries
+var boundarySource = new ol.source.Vector({ wrapX: false });
+var boundaryVector = new ol.layer.Vector({
+    id: "boundaryVector",
+    source: boundarySource,
+    style: boundaryStyleFunction,
+    declutter: true
+});
+
+//variable gets data from the ViewBag.boundaries to add boundaries to layer
+var boundariesFromHtmlData = document.getElementById("Boundaries").getAttribute('data-geoJson');
+var format = new ol.format.GeoJSON();
+var boundaries = format.readFeatures(boundariesFromHtmlData);
+boundarySource.addFeatures(boundaries);
+
+//layer for coverage area
+var coverageSource = new ol.source.Vector({ wrapX: false });
+var coverageVector = new ol.layer.Vector({
+    id: "coverageVector",
+    source: coverageSource,
+    style: coverageStyle,
+    declutter: true
+});
+
+//variable gets data from the ViewBag.boundaries to add boundaries to coverage layer
+var coverageFromHtmlData = document.getElementById("Boundaries").getAttribute('data-coverageGeoJson');
+var format = new ol.format.GeoJSON();
+var coverageBoundaries = format.readFeatures(coverageFromHtmlData);
+coverageSource.addFeatures(coverageBoundaries);
+
+//layer to display user map interactions / drawing
+var drawingSource = new ol.source.Vector({ wrapX: false });
+var drawingVector = new ol.layer.Vector({
+    id: "drawingVector",
+    source: drawingSource,
+    style: drawingStyleFunction,
+    declutter: true
+});
+
+//layer to display labels for drawn features
+var labelSource = new ol.source.Vector({ wrapX: false });
+var labelVector = new ol.layer.Vector({
+    id: "labelVector",
+    source: labelSource,
+    style: labelStyleFunction,
+    declutter: true
+});
+
+//layer to display gridRef
+var gridRefSource = new ol.source.Vector({ wrapX: false });
+var gridRefVector = new ol.layer.Vector({
+    id: "gridRefVector",
+    source: gridRefSource,
+    style: gridRefStyleFunction,
+    declutter: true
+});
+
+
+//set the projection and centre / zoom map
+var defaultView = new ol.View({
+    projection: 'EPSG:27700',
+    center: [362000, 369000],
+    zoom: 5,
+    minZoom: 4,
+    maxZoom: 16
+})
+
+raster.setZIndex(0);
+coverageVector.setZIndex(1);
+boundaryVector.setZIndex(2);
+gridRefVector.setZIndex(3);
+labelVector.setZIndex(4);
+drawingVector.setZIndex(4);
+drawingVector.setVisible(true);
 //init map
 function initialiseMap() {
     var draw, snap;
@@ -367,7 +463,7 @@ function initialiseMap() {
     //}
     function addInteractions() {
         if (typeSelect.value !== "Select") {
-
+            unSelectShape();
             draw = new ol.interaction.Draw({
                 source: drawingSource,
                 type: typeSelect.value
@@ -386,81 +482,24 @@ function initialiseMap() {
             snap = new ol.interaction.Snap({ source: drawingSource });
             map.addInteraction(snap);
         }
+        else {
+            // select interaction working on "click"
+
+            var selectClick = new ol.interaction.Select({layers: getLayerById("drawingVector")});
+            select = selectClick;
+            map.addInteraction(selectClick);
+            modify = new ol.interaction.Modify({ features: selectClick.getFeatures() });
+            map.addInteraction(modify);
+
+        }
 
     }
 
-    //set up map layers
-    var raster = new ol.layer.Tile({
-        source: new ol.source.OSM()
-    });
 
-    //layer for boundaries
-    var boundarySource = new ol.source.Vector({ wrapX: false });
-    var boundaryVector = new ol.layer.Vector({
-        id: "boundaryVector",
-        source: boundarySource,
-        style: boundaryStyleFunction
-    });
-
-    //variable gets data from the ViewBag.boundaries to add boundaries to layer
-    var boundariesFromHtmlData = document.getElementById("Boundaries").getAttribute('data-geoJson');
-    var format = new ol.format.GeoJSON();
-    var boundaries = format.readFeatures(boundariesFromHtmlData);
-    boundarySource.addFeatures(boundaries);
-
-    //layer for coverage area
-    var coverageSource = new ol.source.Vector({ wrapX: false });
-    var coverageVector = new ol.layer.Vector({
-        id: "coverageVector",
-        source: coverageSource,
-        style: coverageStyle
-    });
-
-    //variable gets data from the ViewBag.boundaries to add boundaries to coverage layer
-    var coverageFromHtmlData = document.getElementById("Boundaries").getAttribute('data-coverageGeoJson');
-    var format = new ol.format.GeoJSON();
-    var coverageBoundaries = format.readFeatures(coverageFromHtmlData);
-    coverageSource.addFeatures(coverageBoundaries);
-
-    //layer to display user map interactions / drawing
-    var drawingSource = new ol.source.Vector({ wrapX: false });
-    var vector = new ol.layer.Vector({
-        id: "drawingVector",
-        source: drawingSource
-
-
-    });
-    //layer to display labels for drawn features
-    var labelSource = new ol.source.Vector({ wrapX: false });
-    var labelVector = new ol.layer.Vector({
-        id: "labelVector",
-        source: labelSource,
-        style: labelStyleFunction,
-        declutter: true
-    });
-
-    //layer to display gridRef
-    var gridRefSource = new ol.source.Vector({ wrapX: false });
-    var gridRefVector = new ol.layer.Vector({
-        id: "gridRefVector",
-        source: gridRefSource,
-        style: gridRefStyleFunction,
-        declutter: true
-    });
-
-
-    //set the projection and centre / zoom map
-    var defaultView = new ol.View({
-        projection: 'EPSG:27700',
-        center: [362000, 369000],
-        zoom: 5,
-        minZoom: 4,
-        maxZoom: 16
-    })
 
     //create map with new layers
     map = new ol.Map({
-        layers: [raster, coverageVector, boundaryVector, vector, labelVector, gridRefVector],
+        layers: [raster, coverageVector, boundaryVector, drawingVector, labelVector, gridRefVector],
         target: 'map',
         view: defaultView,
         loadTilesWhileInteracting: true
@@ -472,10 +511,10 @@ function initialiseMap() {
             map.removeInteraction(draw);
             map.removeInteraction(snap);
             addInteractions();
-            changeInteraction();
+            //changeInteraction();
         };
         addInteractions();
-        changeInteraction();
+        //changeInteraction();
     }
 
     ////event listener for bing maps layer select
@@ -515,14 +554,12 @@ function initialiseMap() {
     //    var layerGroup = map.getLayerGroup();
     //    var layers = map.getLayers();
     //    if (value == 'Select') {
+    //        //addInteractions();
+    //        var options = function (layer) {
+    //            return layer.get('id') == "drawingVector";
+    //        }
     //        var feature = map.forEachFeatureAtPixel(evt.pixel,
-    //            function (feature, layer) {
-    //                if (layer) {
-    //                    if (layer.get('id') == "drawingVector") {
-    //                        return feature;
-    //                    }
-    //                }
-    //            });
+    //            function (feature) {return feature;}, options);
     //        if (feature) {
     //            var coordinates = feature.getGeometry().getCoordinates();
     //            popup.setPosition(coordinates);
@@ -713,7 +750,7 @@ function ClearSelectedShape() {
     else {
         alert("no shape selected, please change 'Geometry type' dropdown to 'Select', then select a shape to delete")
     }
-    changeInteraction();
+    //changeInteraction();
     //clear text as map has changed
     if (select !== null) {
         populateTextBoxes();
