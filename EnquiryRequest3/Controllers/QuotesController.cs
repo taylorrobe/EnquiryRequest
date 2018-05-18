@@ -1,4 +1,5 @@
 ﻿using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Net;
 using System.Web.Mvc;
@@ -78,16 +79,23 @@ namespace EnquiryRequest3.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "QuoteId,Amount,QuotedDate,AcceptedDate,EnquiryId")] Quote quote)
+        public ActionResult Edit([Bind(Include = "QuoteId,Amount,QuotedDate,AcceptedDate,EnquiryId, RowVersion")] Quote quote)
         {
-            if (ModelState.IsValid)
+            ViewBag.EnquiryId = new SelectList(db.Enquiries, "EnquiryId", "Code", quote.EnquiryId);
+            if (!ModelState.IsValid) return View(quote);
+            try
             {
                 db.Entry(quote).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            ViewBag.EnquiryId = new SelectList(db.Enquiries, "EnquiryId", "Code", quote.EnquiryId);
-            return View(quote);
+            catch (DbUpdateConcurrencyException)
+            {
+                ViewBag.Message = "Sorry, couldn't update due to a concurrency issue <br />Please try again";
+                return View(quote);
+            }
+
+
         }
 
         // GET: Quotes/Delete/5
@@ -110,10 +118,18 @@ namespace EnquiryRequest3.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Quote quote = db.Quotes.Find(id);
-            db.Quotes.Remove(quote);
-            db.SaveChanges();
-            return RedirectToAction("Index");
+            try
+            {
+                Quote quote = db.Quotes.Find(id);
+                db.Quotes.Remove(quote);
+                db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                ViewBag.Message = "Sorry, couldn't delete due to a concurrency issue <br />Please try again";
+                return RedirectToAction("Delete");
+            }
         }
 
         protected override void Dispose(bool disposing)

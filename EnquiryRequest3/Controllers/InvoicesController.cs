@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Net;
 using System.Web;
@@ -77,15 +78,22 @@ namespace EnquiryRequest3.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "InvoiceId,Code,Amount,PONumber,InvoiceDate,PaidDate,PaymentMethodId,PaymentMethod,ChequeNumber,InSlipNumber,RemittanceReference")] Invoice invoice)
+        public ActionResult Edit([Bind(Include = "InvoiceId,Code,Amount,PONumber,InvoiceDate,PaidDate,PaymentMethodId,PaymentMethod,ChequeNumber,InSlipNumber,RemittanceReference, RowVersion")] Invoice invoice)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid) return View(invoice);
+
+            try
             {
+
                 db.Entry(invoice).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            return View(invoice);
+            catch (DbUpdateConcurrencyException)
+            {
+                ViewBag.Message = "Sorry, couldn't update due to a concurrency issue <br />Please try again";
+                return View(invoice);
+            }
         }
 
         // GET: Invoices/Delete/5
@@ -108,10 +116,19 @@ namespace EnquiryRequest3.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Invoice invoice = db.Invoices.Find(id);
-            db.Invoices.Remove(invoice);
-            db.SaveChanges();
-            return RedirectToAction("Index");
+            try
+            {
+                Invoice invoice = db.Invoices.Find(id);
+                db.Invoices.Remove(invoice);
+                db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                ViewBag.Message = "Sorry, couldn't delete due to a concurrency issue <br />Please try again";
+                return RedirectToAction("Delete");
+            }
+
         }
 
         protected override void Dispose(bool disposing)

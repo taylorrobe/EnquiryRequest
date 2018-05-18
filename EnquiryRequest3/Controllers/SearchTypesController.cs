@@ -1,6 +1,8 @@
 ﻿using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
 using System.Linq;
-using System.Net;using System.Web;
+using System.Net;
+using System.Web;
 using System.Web.Mvc;
 using EnquiryRequest3.Models;
 
@@ -74,15 +76,21 @@ namespace EnquiryRequest3.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "SearchTypeId,Name,Description")] SearchType searchType)
+        public ActionResult Edit([Bind(Include = "SearchTypeId,Name,Description, RowVersion")] SearchType searchType)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid) return View(searchType);
+            try
             {
                 db.Entry(searchType).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            return View(searchType);
+            catch (DbUpdateConcurrencyException)
+            {
+                ViewBag.Message = "Sorry, couldn't update due to a concurrency issue <br />Please try again";
+                return View(searchType);
+            }
+
         }
 
         // GET: SearchTypes/Delete/5
@@ -105,10 +113,18 @@ namespace EnquiryRequest3.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            SearchType searchType = db.SearchTypes.Find(id);
-            db.SearchTypes.Remove(searchType);
-            db.SaveChanges();
-            return RedirectToAction("Index");
+            try
+            {
+                SearchType searchType = db.SearchTypes.Find(id);
+                db.SearchTypes.Remove(searchType);
+                db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                ViewBag.Message = "Sorry, couldn't delete due to a concurrency issue <br />Please try again";
+                return RedirectToAction("Delete");
+            }
         }
 
         protected override void Dispose(bool disposing)

@@ -30,5 +30,8 @@ namespace EnquiryRequest3.Models
             displayOnMap = true;
             isCoverageArea = false;
         }
+
+        [Timestamp]
+        public byte[] RowVersion { get; set; }
     }
 }

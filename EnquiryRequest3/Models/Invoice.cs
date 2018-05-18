@@ -44,5 +44,8 @@ namespace EnquiryRequest3.Models
         public string RemittanceReference { get; set; }
 
         public virtual ICollection<InvoiceReminder> InvoiceReminders { get; set; }
+
+        [Timestamp]
+        public byte[] RowVersion { get; set; }
     }
 }

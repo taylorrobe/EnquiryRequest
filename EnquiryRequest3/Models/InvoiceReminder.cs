@@ -18,5 +18,8 @@ namespace EnquiryRequest3.Models
         [Required]
         public int InvoiceReminderTypeId { get; set; }
         public virtual  InvoiceReminderType InvoiceReminderType { get; set; }
+
+        [Timestamp]
+        public byte[] RowVersion { get; set; }
     }
 }

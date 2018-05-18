@@ -125,5 +125,7 @@ namespace EnquiryRequest3.Models
         [Display(Name = "Comment", Prompt = "Enter Comments", Description = "Write here if there is anything else we should know about the request")]
         public string Comment { get; set; }
 
+        [Timestamp]
+        public byte[] RowVersion { get; set; }
     }
 }

@@ -514,11 +514,17 @@ function initialiseMap() {
     // display popup on click
     map.on('click', function (evt) {
         var value = typeSelect.value;
-
+        var drawingFeatures = getFeaturesFromLayer("drawingVector");
+        var layerGroup = map.getLayerGroup();
+        var layers = map.getLayers();
         if (value == 'Select') {
             var feature = map.forEachFeatureAtPixel(evt.pixel,
-                function (feature) {
-                    return feature;
+                function (feature, layer) {
+                    if (layer) {
+                        if (layer.get('id') == "drawingVector") {
+                            return feature;
+                        }
+                    }
                 });
             if (feature) {
                 var coordinates = feature.getGeometry().getCoordinates();
@@ -937,14 +943,12 @@ function GetSquareFromGridRef(gridRef) {
     return geom;
 }
 
-function ValidateAndReformatGridRef(gridRef)
-{
+function ValidateAndReformatGridRef(gridRef) {
     var gridRefFormatted = null;
     gridRef = gridRef.replace(/\s/g, '');
     var regExpGridRef = /^[A-Za-z][A-Za-z](\d\d)*$/;
 
-    if(regExpGridRef.test(gridRef))
-    {
+    if (regExpGridRef.test(gridRef)) {
         //format grid ref for name display
         gridRefFormatted = gridRef.replace(/[a-z]/g, Function.prototype.call.bind(String.prototype.toUpperCase));
         return gridRefFormatted;
@@ -956,14 +960,13 @@ function ValidateAndReformatGridRef(gridRef)
 
 //function to add grid reference to map
 function GridReferenceLookup() {
-    try{
+    try {
         var gridRefElement = document.getElementById("GridReferenceLookup");
         var validGridRef = ValidateAndReformatGridRef(gridRefElement.value);
 
         //get geom of gridsquare
         var geom = GetSquareFromGridRef(validGridRef);
-        if (geom)
-        {
+        if (geom) {
             var chkGridRefLayer = document.getElementById("chkGridRefLayer");
             chkGridRefLayer.checked = true;
             UpdateLayers();
@@ -984,8 +987,7 @@ function GridReferenceLookup() {
             alert("invalid grid reference");
         }
     }
-    catch(exception)
-    {
+    catch (exception) {
         alert(exception);
     }
 

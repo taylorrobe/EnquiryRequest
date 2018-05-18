@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 //using System.Data;
 using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Net;
 using System.Web;
@@ -78,15 +79,21 @@ namespace EnquiryRequest3.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "LrcInfoId,Name,Area,CompanyNumber,CharityNumber,Address1,Address2,Address3,PostCode,Phone,Email,Website,PaymentTerms,BankAccountName,BankAccountSortCode,BankAccountNumber,InformationRequested,Declaration")] LrcInfo lrcInfo)
+        public ActionResult Edit([Bind(Include = "LrcInfoId,Name,Area,CompanyNumber,CharityNumber,Address1,Address2,Address3,PostCode,Phone,Email,Website,PaymentTerms,BankAccountName,BankAccountSortCode,BankAccountNumber,InformationRequested,Declaration, RowVersion")] LrcInfo lrcInfo)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid) return View(lrcInfo);
+            try
             {
                 db.Entry(lrcInfo).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            return View(lrcInfo);
+            catch (DbUpdateConcurrencyException)
+            {
+                ViewBag.Message = "Sorry, couldn't update due to a concurrency issue <br />Please try again";
+                return View(lrcInfo);
+            }
+
         }
 
         // GET: LrcInfoes/Delete/5
@@ -109,10 +116,18 @@ namespace EnquiryRequest3.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            LrcInfo lrcInfo = db.LrcInfoes.Find(id);
-            db.LrcInfoes.Remove(lrcInfo);
-            db.SaveChanges();
-            return RedirectToAction("Index");
+            try
+            {
+                LrcInfo lrcInfo = db.LrcInfoes.Find(id);
+                db.LrcInfoes.Remove(lrcInfo);
+                db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                ViewBag.Message = "Sorry, couldn't delete due to a concurrency issue <br />Please try again";
+                return RedirectToAction("Delete");
+            }
         }
 
         protected override void Dispose(bool disposing)

@@ -6,8 +6,8 @@
 
 <h2>Index</h2>
 @section scripts {
-    <script async defer
-            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD9ieUIp9TK9KVQeoGIbs27lCoGwE_q6Yc&libraries=drawing,geometry&callback=initMapReadOnly">
+    @*<script async defer
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD9ieUIp9TK9KVQeoGIbs27lCoGwE_q6Yc&libraries=drawing,geometry&callback=initMapReadOnly">*@
 
     </script>
 }
@@ -61,7 +61,7 @@
         <th>
             @Html.DisplayNameFor(model => model.Comment)
         </th>
-        @if (ViewContext.HttpContext.User.IsInRole("EnquiryProducer"))
+        @if (ViewContext.HttpContext.User.IsInRole("EnquiryManager"))
         {
             <th>
                 @Html.DisplayNameFor(model => model.AddedToRersDate)

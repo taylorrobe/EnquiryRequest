@@ -17,5 +17,8 @@ namespace EnquiryRequest3.Models
         public string Description { get; set; }
 
         public virtual ICollection<Enquiry> Enquiries { get; set; }
+
+        [Timestamp]
+        public byte[] RowVersion { get; set; }
     }
 }

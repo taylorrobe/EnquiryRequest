@@ -78,6 +78,7 @@ namespace EnquiryRequest3.Models
         [DataType(DataType.MultilineText)]
         public string Declaration { get; set; }
 
-
+        [Timestamp]
+        public byte[] RowVersion { get; set; }
     }
 }

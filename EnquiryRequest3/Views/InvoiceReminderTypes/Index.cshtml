@@ -5,7 +5,10 @@
 }
 
 <h2>Index</h2>
-
+@if (!string.IsNullOrEmpty(ViewBag.Message))
+{
+    <h3 style="color:red">@Html.Raw(ViewBag.Message)</h3>
+}
 <p>
     @Html.ActionLink("Create New", "Create")
 </p>
@@ -20,20 +23,21 @@
         <th></th>
     </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.ReminderSubject)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.ReminderBody)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.InvoiceReminderTypeId }) |
-            @Html.ActionLink("Details", "Details", new { id=item.InvoiceReminderTypeId }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.InvoiceReminderTypeId })
-        </td>
-    </tr>
-}
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.ReminderSubject)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ReminderBody)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.InvoiceReminderTypeId }) |
+                @Html.ActionLink("Details", "Details", new { id = item.InvoiceReminderTypeId }) |
+                @Html.ActionLink("Delete", "Delete", new { id = item.InvoiceReminderTypeId })
+            </td>
+        </tr>
+    }
 
 </table>

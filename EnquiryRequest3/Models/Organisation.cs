@@ -15,5 +15,8 @@ namespace EnquiryRequest3.Models
         public string Name { get; set; }
 
         public virtual ICollection<ApplicationUser> ApplicationUsers { get; set; }
+
+        [Timestamp]
+        public byte[] RowVersion { get; set; }
     }
 }

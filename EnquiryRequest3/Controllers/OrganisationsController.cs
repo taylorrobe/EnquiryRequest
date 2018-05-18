@@ -1,4 +1,5 @@
 ﻿using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Net;
 using System.Web.Mvc;
@@ -74,15 +75,21 @@ namespace EnquiryRequest3.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "OrganisationId,Name")] Organisation organisation)
+        public ActionResult Edit([Bind(Include = "OrganisationId,Name,RowVersion")] Organisation organisation)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid) return View(organisation);
+            try
             {
                 db.Entry(organisation).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            return View(organisation);
+            catch (DbUpdateConcurrencyException)
+            {
+                ViewBag.Message = "Sorry, couldn't update due to a concurrency issue <br />Please try again";
+                return View(organisation);
+            }
+
         }
 
         // GET: Organisations/Delete/5
@@ -105,10 +112,18 @@ namespace EnquiryRequest3.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Organisation organisation = db.Organisations.Find(id);
-            db.Organisations.Remove(organisation);
-            db.SaveChanges();
-            return RedirectToAction("Index");
+            try
+            {
+                Organisation organisation = db.Organisations.Find(id);
+                db.Organisations.Remove(organisation);
+                db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                ViewBag.Message = "Sorry, couldn't delete due to a concurrency issue <br />Please try again";
+                return RedirectToAction("Delete");
+            }
         }
 
         protected override void Dispose(bool disposing)

@@ -96,5 +96,7 @@ namespace EnquiryRequest3.Models
         public int? InvoiceId { get; set; }
         public virtual Invoice Invoice { get; set; }
 
+        [Timestamp]
+        public byte[] RowVersion { get; set; }
     }
 }

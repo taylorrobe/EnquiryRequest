@@ -24,5 +24,8 @@ namespace EnquiryRequest3.Models
         [Required]
         public int EnquiryId { get; set; }
         public virtual Enquiry Enquiry { get; set; }
+
+        [Timestamp]
+        public byte[] RowVersion { get; set; }
     }
 }

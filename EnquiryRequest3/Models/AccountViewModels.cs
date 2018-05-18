@@ -3,17 +3,6 @@ using System.ComponentModel.DataAnnotations;
 
 namespace EnquiryRequest3.Models
 {
-    public class ExternalLoginConfirmationViewModel
-    {
-        [Required]
-        [Display(Name = "Email")]
-        public string Email { get; set; }
-    }
-
-    public class ExternalLoginListViewModel
-    {
-        public string ReturnUrl { get; set; }
-    }
 
     public class SendCodeViewModel
     {
@@ -49,8 +38,7 @@ namespace EnquiryRequest3.Models
     public class LoginViewModel
     {
         [Required]
-        [Display(Name = "Email")]
-        [EmailAddress]
+        [Display(Name = "Email or username")]
         public string Email { get; set; }
 
         [Required]

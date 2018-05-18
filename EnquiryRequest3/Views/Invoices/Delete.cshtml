@@ -5,7 +5,10 @@
 }
 
 <h2>Delete</h2>
-
+@if (!string.IsNullOrEmpty(ViewBag.Message))
+{
+    <h3 style="color:red">@Html.Raw(ViewBag.Message)</h3>
+}
 <h3>Are you sure you want to delete this?</h3>
 <div>
     <h4>Invoice</h4>
@@ -92,8 +95,9 @@
         </dd>
 
     </dl>
-
-    @using (Html.BeginForm()) {
+    @Html.HiddenFor(model => model.RowVersion)
+    @using (Html.BeginForm())
+    {
         @Html.AntiForgeryToken()
 
         <div class="form-actions no-color">

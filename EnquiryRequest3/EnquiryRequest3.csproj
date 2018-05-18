@@ -318,6 +318,10 @@
     <Compile Include="Migrations\201804271508072_boundaryextras.Designer.cs">
       <DependentUpon>201804271508072_boundaryextras.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201805141439440_after concurrency model update.cs" />
+    <Compile Include="Migrations\201805141439440_after concurrency model update.Designer.cs">
+      <DependentUpon>201805141439440_after concurrency model update.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Boundary.cs" />
@@ -652,10 +656,7 @@
     <Content Include="Views\Home\About.cshtml" />
     <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
-    <Content Include="Views\Account\_ExternalLoginsListPartial.cshtml" />
     <Content Include="Views\Account\ConfirmEmail.cshtml" />
-    <Content Include="Views\Account\ExternalLoginConfirmation.cshtml" />
-    <Content Include="Views\Account\ExternalLoginFailure.cshtml" />
     <Content Include="Views\Account\ForgotPassword.cshtml" />
     <Content Include="Views\Account\ForgotPasswordConfirmation.cshtml" />
     <Content Include="Views\Account\Login.cshtml" />
@@ -783,6 +784,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201804271508072_boundaryextras.resx">
       <DependentUpon>201804271508072_boundaryextras.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201805141439440_after concurrency model update.resx">
+      <DependentUpon>201805141439440_after concurrency model update.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
