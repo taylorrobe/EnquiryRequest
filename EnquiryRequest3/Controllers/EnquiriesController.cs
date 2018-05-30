@@ -54,8 +54,32 @@ namespace EnquiryRequest3.Controllers
             return View(enquiries.ToList());
         }
 
-        // GET: Enquiries/Details/5
-        public ActionResult Details(int? id)
+        // GET: Enquiries
+        public ActionResult ManagerIndex()
+        {
+            IQueryable<Enquiry> enquiries;
+            var userId = User.Identity.GetUserId<int>();
+            var userName = User.Identity.Name;
+            if (userManager.IsInRole(userId, "Admin"))
+            {
+                enquiries = db.Enquiries.Include(e => e.Invoice).OrderByDescending(d => d.EnquiryDate);
+            }
+            else if (userManager.IsInRole(userId, "EnquiryManager"))
+            {
+                enquiries = db.Enquiries.Include(e => e.Invoice).OrderByDescending(d => d.EnquiryDate);
+            }
+            else
+            {
+                enquiries = db.Enquiries.Include(e => e.Invoice).Where(a => a.ApplicationUserId == userId);
+            }
+
+            
+
+            return View(enquiries.ToList());
+        }
+
+    // GET: Enquiries/Details/5
+    public ActionResult Details(int? id)
         {
             if (id == null)
             {
@@ -173,7 +197,7 @@ namespace EnquiryRequest3.Controllers
             }
             if (userId == enquiry.ApplicationUserId || userManager.IsInRole(userId, "Admin") || userManager.IsInRole(userId, "EnquiryManager"))
             {
-
+                FormatHelper formatHelper = new FormatHelper();
                 var wkt = enquiry.SearchArea.WellKnownValue.WellKnownText;
                 UserCreateEditEnquiryViewModel userCreateEditEnquiryViewModel = new UserCreateEditEnquiryViewModel
                 {
@@ -191,6 +215,12 @@ namespace EnquiryRequest3.Controllers
                     GisKml = enquiry.GisKml,
                     Express = enquiry.Express,
                     Comment = enquiry.Comment,
+                    AddedToRersDate = enquiry.AddedToRersDate,
+                    DataCleanedDate = enquiry.DataCleanedDate,
+                    ReportCompleteDate = enquiry.ReportCompleteDate,
+                    DocumentsCleanedDate = enquiry.DocumentsCleanedDate,
+                    EnquiryDeliveredDate = enquiry.EnquiryDeliveredDate,
+                    AdminComment = enquiry.AdminComment,
                     RowVersion = enquiry.RowVersion
                 };
                 ViewBag.SearchTypeId = new SelectList(db.SearchTypes, "SearchTypeId", "Name", userCreateEditEnquiryViewModel.SearchTypeId);
@@ -212,7 +242,10 @@ namespace EnquiryRequest3.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "EnquiryId,Name,InvoiceEmail,SearchAreaWkt,SearchTypeId,NoOfYears,JobNumber,Agency,AgencyContact,DataUsedFor,Citations,GisKml,Express,EnquiryDate,Comment, RowVersion")] UserCreateEditEnquiryViewModel model)
+        public ActionResult Edit([Bind(Include = "EnquiryId,Name,InvoiceEmail,SearchAreaWkt,SearchTypeId" +
+            ",NoOfYears,JobNumber,Agency,AgencyContact,DataUsedFor,Citations,GisKml,Express,EnquiryDate" +
+            ",Comment,AddedToRersDate, DataCleanedDate, ReportCompleteDate, DocumentsCleanedDate, EnquiryDeliveredDate" +
+            ", AdminComment, RowVersion")] UserCreateEditEnquiryViewModel model)
         {
             SpatialHelper spatial = new SpatialHelper();
             ViewBag.SearchTypeId = new SelectList(db.SearchTypes, "SearchTypeId", "Name", model.SearchTypeId);
@@ -242,6 +275,12 @@ namespace EnquiryRequest3.Controllers
                     GisKml = model.GisKml,
                     Express = model.Express,
                     Comment = model.Comment,
+                    AddedToRersDate = model.AddedToRersDate,
+                    DataCleanedDate = model.DataCleanedDate,
+                    ReportCompleteDate = model.ReportCompleteDate,
+                    DocumentsCleanedDate = model.DocumentsCleanedDate,
+                    EnquiryDeliveredDate = model.EnquiryDeliveredDate,
+                    AdminComment = model.AdminComment,
                     RowVersion = model.RowVersion
                 };
                 try
@@ -250,7 +289,7 @@ namespace EnquiryRequest3.Controllers
                     db.SaveChanges();
                     return RedirectToAction("Index");
                 }
-                catch (DbUpdateConcurrencyException ex)
+                catch (DbUpdateConcurrencyException)
                 {
                     ViewBag.Message = "Sorry, couldn't update due to a concurrency issue <br />Please try again";
 

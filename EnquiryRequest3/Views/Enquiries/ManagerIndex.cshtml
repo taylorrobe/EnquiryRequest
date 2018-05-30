@@ -1,16 +1,11 @@
 ﻿@model IEnumerable<EnquiryRequest3.Models.Enquiry>
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "View";
 }
 
-<h2>Index</h2>
-@section scripts {
-    @*<script async defer
-            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD9ieUIp9TK9KVQeoGIbs27lCoGwE_q6Yc&libraries=drawing,geometry&callback=initMapReadOnly">*@
+<h2>View</h2>
 
-    @*</script>*@
-}
 <p>
     @Html.ActionLink("Create New", "Create")
 </p>
@@ -20,17 +15,14 @@
             @Html.DisplayNameFor(model => model.Invoice.Code)
         </th>
         <th>
+            @Html.DisplayNameFor(model => model.SearchType.Name)
+        </th>
+        <th>
             @Html.DisplayNameFor(model => model.Code)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.Name)
         </th>
-        <th>
-            @Html.DisplayNameFor(model => model.InvoiceEmail)
-        </th>
-        @*<th>
-            Search area
-            </th>*@
         <th>
             @Html.DisplayNameFor(model => model.NoOfYears)
         </th>
@@ -61,39 +53,34 @@
         <th>
             @Html.DisplayNameFor(model => model.Comment)
         </th>
-        @if (ViewContext.HttpContext.User.IsInRole("EnquiryManager") || ViewContext.HttpContext.User.IsInRole("Admin"))
-        {
-            <th>
-                @Html.DisplayNameFor(model => model.AddedToRersDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DataCleanedDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ReportCompleteDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DocumentsCleanedDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.EnquiryDeliveredDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.AdminComment)
-            </th>
-        }
-
+        <th>
+            @Html.DisplayNameFor(model => model.AddedToRersDate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DataCleanedDate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ReportCompleteDate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DocumentsCleanedDate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.EnquiryDeliveredDate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.AdminComment)
+        </th>
         <th></th>
     </tr>
 
-    @foreach (var item in Model)
-    {
-        
-        var wktName = "wkt" + item.EnquiryId;
-                
+@foreach (var item in Model) {
     <tr>
         <td>
             @Html.DisplayFor(modelItem => item.Invoice.Code)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.SearchType.Name)
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.Code)
@@ -101,15 +88,6 @@
         <td>
             @Html.DisplayFor(modelItem => item.Name)
         </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.InvoiceEmail)
-        </td>
-        @*<td>
-            <div id=@wktName>
-                @Html.HiddenFor(modelItem => item.SearchArea.WellKnownValue.WellKnownText)
-            </div>
-            <div id="map" style="width: 150px; height: 150px;"></div>
-        </td>*@
         <td>
             @Html.DisplayFor(modelItem => item.NoOfYears)
         </td>
@@ -140,8 +118,6 @@
         <td>
             @Html.DisplayFor(modelItem => item.Comment)
         </td>
-        @if (ViewContext.HttpContext.User.IsInRole("EnquiryManager") || ViewContext.HttpContext.User.IsInRole("Admin"))
-    {
         <td>
             @Html.DisplayFor(modelItem => item.AddedToRersDate)
         </td>
@@ -160,13 +136,12 @@
         <td>
             @Html.DisplayFor(modelItem => item.AdminComment)
         </td>
-}
         <td>
-            @Html.ActionLink("Edit", "Edit", new { id = item.EnquiryId }) |
-            @Html.ActionLink("Details", "Details", new { id = item.EnquiryId }) |
-            @Html.ActionLink("Delete", "Delete", new { id = item.EnquiryId })
+            @Html.ActionLink("Edit", "Edit", new { id=item.EnquiryId }) |
+            @Html.ActionLink("Details", "Details", new { id=item.EnquiryId }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.EnquiryId })
         </td>
     </tr>
-    }
+}
 
 </table>

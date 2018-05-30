@@ -123,7 +123,7 @@ function selectShape() {
     selectClick = new ol.interaction.Select({
         condition: ol.events.condition.click,
         layers: function (layer) {
-            return layer.get('id') == 'drawingVector';
+            return layer.get('id') === 'drawingVector';
         }
     });
 
@@ -141,7 +141,7 @@ function changeInteraction() {
 
     var value = typeSelect.value;
 
-    if (value == 'Select') {
+    if (value === 'Select') {
         selectShape();
     } else {
         select = null;
@@ -245,11 +245,11 @@ var getText = function (feature, resolution, dom) {
 
     if (resolution > maxResolution) {
         text = '';
-    } else if (type == 'hide') {
+    } else if (type === 'hide') {
         text = '';
-    } else if (type == 'shorten') {
+    } else if (type === 'shorten') {
         text = text.trunc(12);
-    } else if (type == 'wrap' && dom.placement.value != 'line') {
+    } else if (type === 'wrap' && dom.placement.value !== 'line') {
         text = stringDivider(text, 16, '\n');
     }
 
@@ -307,9 +307,9 @@ var createTextStyle = function (feature, resolution, dom) {
     var weight = dom.weight;
     var placement = dom.placement ? dom.placement : undefined;
     var maxAngle = dom.maxangle ? parseFloat(dom.maxangle) : undefined;
-    var overflow = dom.overflow ? (dom.overflow == 'true') : undefined;
+    var overflow = dom.overflow ? (dom.overflow === 'true') : undefined;
     var rotation = parseFloat(dom.rotation);
-    if (dom.font == '\'Open Sans\'' && !openSansAdded) {
+    if (dom.font === '\'Open Sans\'' && !openSansAdded) {
         var openSans = document.createElement('link');
         openSans.href = 'https://fonts.googleapis.com/css?family=Open+Sans';
         openSans.rel = 'stylesheet';
@@ -322,7 +322,7 @@ var createTextStyle = function (feature, resolution, dom) {
     var outlineWidth = parseInt(dom.outlineWidth, 10);
 
     return new ol.style.Text({
-        textAlign: align == '' ? undefined : align,
+        textAlign: align === '' ? undefined : align,
         textBaseline: baseline,
         font: font,
         text: getText(feature, resolution, dom),
@@ -404,8 +404,8 @@ function initialiseMap() {
 
     //variable gets data from the ViewBag.boundaries to add boundaries to layer
     var boundariesFromHtmlData = document.getElementById("Boundaries").getAttribute('data-geoJson');
-    var format = new ol.format.GeoJSON();
-    var boundaries = format.readFeatures(boundariesFromHtmlData);
+    var formatBoundary = new ol.format.GeoJSON();
+    var boundaries = formatBoundary.readFeatures(boundariesFromHtmlData);
     boundarySource.addFeatures(boundaries);
 
     //layer for coverage area
@@ -418,8 +418,8 @@ function initialiseMap() {
 
     //variable gets data from the ViewBag.boundaries to add boundaries to coverage layer
     var coverageFromHtmlData = document.getElementById("Boundaries").getAttribute('data-coverageGeoJson');
-    var format = new ol.format.GeoJSON();
-    var coverageBoundaries = format.readFeatures(coverageFromHtmlData);
+    var formatCoverage = new ol.format.GeoJSON();
+    var coverageBoundaries = formatCoverage.readFeatures(coverageFromHtmlData);
     coverageSource.addFeatures(coverageBoundaries);
 
     //layer to display user map interactions / drawing
@@ -466,7 +466,7 @@ function initialiseMap() {
         loadTilesWhileInteracting: true
     });
 
-    if (typeSelect != null) {
+    if (typeSelect !== null) {
         //Handle change event for type select
         typeSelect.onchange = function () {
             map.removeInteraction(draw);
@@ -491,7 +491,7 @@ function initialiseMap() {
 
     //if wkt is not "" (edit mode), set json and map up search area
     var wkt = searchAreaWkt.value;
-    if (wkt != "") {
+    if (wkt !== "") {
         setMapAndTextFromWkt(wkt, drawingSource);
     }
     else {
@@ -699,16 +699,14 @@ function setArea() {
 function ClearSelectedShape() {
     var drawingSource = getLayerSource("drawingVector");
     if (select !== null) {
-        var confirmPolygon = function () { return confirm("Do you want to delete this shape?") };
 
-        if (confirmPolygon()) {
             var features = select.getFeatures();
             features.forEach(feature => {
                 drawingSource.removeFeature(feature);
                 map.removeInteraction(select);
+                select = null;
             });
 
-        }
     }
     else {
         alert("no shape selected, please change 'Geometry type' dropdown to 'Select', then select a shape to delete")
@@ -731,16 +729,28 @@ function clearSearchAreaTextBoxes() {
     costText.value = "";
 }
 
-function clearDrawingsAndLabels() {
+function clearDrawings() {
     //clear all drawings
     var drawingSource = getLayerSource("drawingVector");
     drawingSource.clear();
+}
+
+function clearLabels()
+{
     //clear all labels
     var labelSource = getLayerSource("labelVector");
     labelSource.clear();
+}
+function clearGridSquares(){
     //clear all gridSquares
     var gridRefSource = getLayerSource("gridRefVector");
     gridRefSource.clear();
+}
+
+function clearDrawingsAndLabels() {
+    clearDrawings();
+    clearLabels();
+    clearGridSquares()
 }
 
 //clear all drawings and reset map
@@ -803,10 +813,7 @@ function applyBufferToFeature(feature, distance) {
 //apply buffer to all features
 function applyBufferToShapes() {
     var distance = document.getElementById("Buffer").value;
-    if (distance === "" || distance === "0") {
-
-    }
-    else {
+    if (distance !== "" || distance !== "0") {
         var features = getFeaturesFromLayer("drawingVector");
         var drawingSource = getLayerSource("drawingVector");
         //save copy of original features for undoApplyBufferToShapes function
@@ -855,6 +862,7 @@ function undoApplyBufferToShapes() {
         //zoom and clear text
         ExtendToLayerFeatures(drawingSource);
         populateTextBoxes();
+        clearLabels();
     }
 
 }
@@ -887,7 +895,7 @@ function GetSquareFromGridRef(gridRef) {
     var geom = null;
     //this gets the size of the gridsquare from length of gridref
     gridRef = gridRef.replace(/\s/g, '');
-    if (gridRef && gridRef.length > 1 && gridRef.length % 2 == 0) {
+    if (gridRef && gridRef.length > 1 && gridRef.length % 2 === 0) {
         gridRefFigure = gridRef.length - 2;
         switch (gridRefFigure) {
             case 0:
@@ -997,21 +1005,21 @@ function UpdateLayers() {
     var chkLabelLayer = document.getElementById("chkLabelLayer");
     var labelLayer = getLayerById("labelVector");
 
-    if (chkBoundaryLayer.checked == true) {
+    if (chkBoundaryLayer.checked === true) {
         boundaryLayer.setVisible(true);
     }
     else {
         boundaryLayer.setVisible(false);
     }
 
-    if (chkGridRefLayer.checked == true) {
+    if (chkGridRefLayer.checked === true) {
         gridRefLayer.setVisible(true);
     }
     else {
         gridRefLayer.setVisible(false);
     }
 
-    if (chkLabelLayer.checked == true) {
+    if (chkLabelLayer.checked === true) {
         labelLayer.setVisible(true);
     }
     else {
@@ -1030,6 +1038,7 @@ function setAreaButtonClick() {
 
 function ClearSelectedShapeButtonClick() {
     ClearSelectedShape();
+    clearLabels();
 }
 
 function ResetMapAndWktClick() {

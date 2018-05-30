@@ -25,13 +25,15 @@ namespace EnquiryRequest3
         }
         static async Task Execute(IdentityMessage message)
         {
-
+            
             SmtpClient client = new SmtpClient(ConfigurationManager.AppSettings["SmtpHost"]);
             client.Credentials = new System.Net.NetworkCredential(ConfigurationManager.AppSettings["SmtpUser"], ConfigurationManager.AppSettings["SmtpPassword"]);
-            await client.SendMailAsync("no_reply@record-lrc.co.uk",
+            var mailMessage = new MailMessage("no_reply@record-lrc.co.uk",
                                         message.Destination,
                                         message.Subject,
                                         message.Body);
+            mailMessage.IsBodyHtml = true;
+            await client.SendMailAsync(mailMessage);
         }
     }
 

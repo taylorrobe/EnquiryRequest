@@ -74,18 +74,23 @@ namespace EnquiryRequest3.Models
         public string Comment { get; set; }
 
         //should be non createable, automatically timestamped on user click and show up in details
+        [DataType(DataType.DateTime)]
         public DateTime? AddedToRersDate { get; set; }
 
         //should be non createable, automatically timestamped on user click and show up in details
+        [DataType(DataType.DateTime)]
         public DateTime? DataCleanedDate { get; set; }
 
         //should be non createable, automatically timestamped on user click and show up in details
-        public DateTime? ReporCompleteDate { get; set; }
+        [DataType(DataType.DateTime)]
+        public DateTime? ReportCompleteDate { get; set; }
 
         //should be non createable, automatically timestamped on user click and show up in details
+        [DataType(DataType.DateTime)]
         public DateTime? DocumentsCleanedDate { get; set; }
 
         //should be non createable, automatically timestamped on user click and show up in details
+        [DataType(DataType.DateTime)]
         public DateTime? EnquiryDeliveredDate { get; set; }
 
         [DataType(DataType.MultilineText)]

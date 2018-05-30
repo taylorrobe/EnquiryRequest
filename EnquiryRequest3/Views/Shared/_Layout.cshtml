@@ -39,8 +39,13 @@
                     <li>@Html.ActionLink("Home", "Index", "Home")</li>
                     <li>@Html.ActionLink("About", "About", "Home")</li>
                     <li>@Html.ActionLink("Contact us", "Contact", "Home")</li>
-                    <li>@Html.ActionLink("Enquiries", "Index", "Enquiries")</li>
-                    <li>@Html.ActionLink("Invoices", "Index", "Invoices")</li>
+                    <li>@Html.ActionLink("My Enquiries", "Index", "Enquiries")</li>
+                    <li>@Html.ActionLink("My Invoices", "Index", "Invoices")</li>
+                    @if (ViewContext.HttpContext.User.IsInRole("EnquiryManager") || ViewContext.HttpContext.User.IsInRole("Admin"))
+                    {
+                        <li>@Html.ActionLink("All Enquiries", "ManagerIndex", "Enquiries")</li>
+                        <li>@Html.ActionLink("All Invoices", "ManagerIndex", "Invoices")</li>
+                    }
                 </ul>
                 @Html.Partial("_LoginPartial")
             </div>
@@ -56,6 +61,8 @@
 
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/jqueryui")
+    
 
     @Scripts.Render("~/bundles/bootstrap")
 

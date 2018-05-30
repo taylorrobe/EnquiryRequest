@@ -16,8 +16,13 @@
         </p>
         <p>
             <ul>
-                <li>@Html.ActionLink("Enquiries", "Index", "Enquiries")</li>
+                @if (ViewContext.HttpContext.User.IsInRole("EnquiryManager") || ViewContext.HttpContext.User.IsInRole("Admin"))
+                {
+                    <li>@Html.ActionLink("All Enquiries", "ManagerIndex", "Enquiries")</li>
+                }
+                <li>@Html.ActionLink("My Enquiries", "Index", "Enquiries")</li>
                 <li>@Html.ActionLink("New Enquiry", "Create", "Enquiries")</li>
+
             </ul>
         </p>
     </div>
@@ -28,8 +33,16 @@
         </p>
         <p>
             <ul>
-                <li>@Html.ActionLink("Invoices", "Index", "Invoices")</li>
-                <li>@Html.ActionLink("New Invoice", "Create", "Invoices")</li>
+
+                @if (ViewContext.HttpContext.User.IsInRole("EnquiryManager") || ViewContext.HttpContext.User.IsInRole("Admin"))
+                {
+                    <li>@Html.ActionLink("All Invoices", "ManagerIndex", "Invoices")</li>
+                }
+                else
+                {
+                    <li>@Html.ActionLink("My Invoices", "Index", "Invoices")</li>
+                    <li>@Html.ActionLink("New Invoice", "Create", "Invoices")</li>
+                }
             </ul>
         </p>
     </div>

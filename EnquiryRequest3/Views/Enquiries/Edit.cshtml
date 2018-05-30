@@ -146,6 +146,67 @@
         </div>
         @Html.HiddenFor(model => model.EnquiryId)
         @Html.HiddenFor(model => model.RowVersion)
+
+
+        @if (ViewContext.HttpContext.User.IsInRole("EnquiryManager") || ViewContext.HttpContext.User.IsInRole("Admin"))
+        {
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.AddedToRersDate, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.AddedToRersDate, new { htmlAttributes = new { @class = "form-control", type = "datetime-local" } })
+                    @Html.ValidationMessageFor(model => model.AddedToRersDate, "", new { @class = "text-danger" })
+                    <input id="btnSetNowAddedToRersDate" type="button" value="Set Now" class="btn btn-default " onclick="SetNowAddedToRersDateClick()" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.DataCleanedDate, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.DataCleanedDate, new { htmlAttributes = new { @class = "form-control", type = "datetime-local" } })
+                    @Html.ValidationMessageFor(model => model.DataCleanedDate, "", new { @class = "text-danger" })
+                    <input id="btnSetNowDataCleanedDate" type="button" value="Set Now" class="btn btn-default " onclick="SetNowDataCleanedDateClick()" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.ReportCompleteDate, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.ReportCompleteDate, new { htmlAttributes = new { @class = "form-control", type = "datetime-local" } })
+                    @Html.ValidationMessageFor(model => model.ReportCompleteDate, "", new { @class = "text-danger" })
+                    <input id="btnSetNowReportCompleteDate" type="button" value="Set Now" class="btn btn-default " onclick="SetNowReportCompleteDateClick()" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.DocumentsCleanedDate, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.DocumentsCleanedDate, new { htmlAttributes = new { @class = "form-control", type = "datetime-local" } })
+                    @Html.ValidationMessageFor(model => model.DocumentsCleanedDate, "", new { @class = "text-danger" })
+                    <input id="btnSetNowDocumentsCleanedDate" type="button" value="Set Now" class="btn btn-default " onclick="SetNowDocumentsCleanedDateClick()" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.EnquiryDeliveredDate, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.EnquiryDeliveredDate, new { htmlAttributes = new { @class = "form-control", type = "datetime-local" } })
+                    @Html.ValidationMessageFor(model => model.EnquiryDeliveredDate, "", new { @class = "text-danger" })
+                    <input id="btnSetNowEnquiryDeliveredDate" type="button" value="Set Now" class="btn btn-default " onclick="SetNowEnquiryDeliveredDateClick()" />
+
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.AdminComment, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.AdminComment, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.AdminComment, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+
+        }
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
                 <input type="submit" value="Save" class="btn btn-default" />

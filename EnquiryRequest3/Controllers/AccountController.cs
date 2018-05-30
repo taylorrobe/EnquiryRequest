@@ -262,6 +262,7 @@ namespace EnquiryRequest3.Controllers
             if (ModelState.IsValid)
             {
                 var user = await UserManager.FindByNameAsync(model.Email);
+                if (user == null) { user = await UserManager.FindByEmailAsync(model.Email); }
                 if (user == null || !(await UserManager.IsEmailConfirmedAsync(user.Id)))
                 {
                     // Don't reveal that the user does not exist or is not confirmed
@@ -308,6 +309,7 @@ namespace EnquiryRequest3.Controllers
                 return View(model);
             }
             var user = await UserManager.FindByNameAsync(model.Email);
+            if(user == null) { user = await UserManager.FindByEmailAsync(model.Email); }
             if (user == null)
             {
                 // Don't reveal that the user does not exist

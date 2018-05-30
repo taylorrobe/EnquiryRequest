@@ -22,12 +22,16 @@ namespace EnquiryRequest3
 
             bundles.Add(new ScriptBundle("~/bundles/jqueryval").Include(
                         "~/Scripts/jquery.validate*"));
+            bundles.Add(new ScriptBundle("~/bundles/jqueryui").Include(
+                        "~/Scripts/jquery-ui-1.12.1.js"));
+            
 
             bundles.Add(new ScriptBundle("~/bundles/enquiryRequest").Include(
             "~/Scripts/jsts.js",
             "~/Scripts/latlon.js",
             "~/Scripts/latlon2bng.js",
-            "~/Scripts/EnquiryRequest2.js"));
+            "~/Scripts/enquiryRequestGeneralFunctions.js",
+            "~/Scripts/enquiryRequestMapFunctions.js"));
 
             //add link to openLayers on the CDN
             var openLayersCdnPath = "https://openlayers.org/en/v4.6.4/build/ol.js";

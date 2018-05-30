@@ -210,16 +210,16 @@ function showInfo(event) {
 
         var vertices = selectedShape.getPath();
         // Iterate over the vertices.
-        for (var i = 0; i < vertices.getLength(); i++) {
+        for (var i = 0; i < vertices.getLength() ; i++) {
             var xy = vertices.getAt(i);
             contentString += '<br>' + 'Coordinate ' + i + ':<br>' + xy.lat() + ',' +
                 xy.lng();
         }
     } else if (selectedShape.type === "marker") {
         windowPos = selectedShape.getPosition();
-            contentString = '<b>Marker: ' + shapeId + '</b>' + '<br>' +
-            'Marker location: <br>' + windowPos.lat() + ',' + windowPos.lng() +
-            '<br>';
+        contentString = '<b>Marker: ' + shapeId + '</b>' + '<br>' +
+        'Marker location: <br>' + windowPos.lat() + ',' + windowPos.lng() +
+        '<br>';
     }
 
     infoWindow = new google.maps.InfoWindow;
@@ -266,7 +266,7 @@ function setAreaButtonClick() {
 function ClearSelectedShapeButtonClick() {
     deleteSelectedShape();
 }
-function resetMapAndSpatialText(){
+function resetMapAndSpatialText() {
     allShapes.splice(0, allShapes.length)
     initMap();
     var searchAreaWkt = document.getElementById("SearchAreaWkt");
@@ -317,7 +317,7 @@ function applyBufferToFeatures(buffer) {
     //    var buffered = jstsGeom.buffer(buffer);
 
     //});
-        return buffered;
+    return buffered;
 }
 
 function ApplyBufferToShapesButtonClick() {
@@ -363,7 +363,7 @@ function initMapReadOnly() {
     try {
         var geoJson = getGeoJsonFromWkt(innerText);
         var features = map.data.addGeoJson(geoJson);
-        
+
         //map.getBoundsZoomLevel(shape.getBounds());
         //map.setZoom();
         var bounds = new google.maps.LatLngBounds();
@@ -372,9 +372,9 @@ function initMapReadOnly() {
             geom.forEachLatLng(latlong => {
                 bounds.extend(latlong);
             })
-            
+
         })
-        
+
         map.fitBounds(bounds);
     }
     catch (e) {
