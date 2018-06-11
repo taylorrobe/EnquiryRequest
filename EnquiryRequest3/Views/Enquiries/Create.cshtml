@@ -46,23 +46,9 @@
             </div>
         </div>
         @{
-            Html.RenderPartial("_PartialMap");
+        Html.RenderPartial("_PartialMap");
         }
-        
-        <div class="form-group">
-            @Html.LabelFor(model => model.SearchAreaWkt, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.SearchAreaWkt, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
-                @Html.ValidationMessageFor(model => model.SearchAreaWkt, "", new { @class = "text-danger" })
 
-            </div>
-            <label for="SearchAreaJson" class="control-label col-md-2">SearchAreaJson</label>
-            <div class="col-md-10">
-                <input id="SearchAreaJson" type="text" value="" class="form-control" readonly />
-
-            </div>
-
-        </div>
         <div class="form-group">
             @Html.LabelFor(model => model.SearchTypeId, "Search Type", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
@@ -70,7 +56,45 @@
                 @Html.ValidationMessageFor(model => model.SearchTypeId, "", new { @class = "text-danger" })
             </div>
         </div>
+        <div class="form-group row">
+            <label for="SetArea" class="control-label col-md-2">Set area ----></label>
+            <div class="col-md-10">
+                <input id="SetArea" type="button" value="Set Area" class="btn btn-default col-md-2" onclick="setAreaButtonClick()" />
+            </div>
 
+        </div>
+
+
+        <div class="form-group">
+            <label for="Area" class="control-label col-md-2">Area (hectares)</label>
+            <div class="col-md-10">
+                <input id="Area" type="text" value="" class="form-control" disabled />
+            </div>
+
+            @Html.LabelFor(model => model.EstimatedCost, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.EstimatedCost, new { htmlAttributes = new { @class = "form-control", @id = "Cost", @readonly = "readonly" } })
+                @Html.ValidationMessageFor(model => model.EstimatedCost, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        @if (ViewContext.HttpContext.User.IsInRole("EnquiryManager") || ViewContext.HttpContext.User.IsInRole("Admin"))
+    {
+        <div class="form-group">
+            @Html.LabelFor(model => model.SearchAreaWkt, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.SearchAreaWkt, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                @Html.ValidationMessageFor(model => model.SearchAreaWkt, "", new { @class = "text-danger" })
+                <input id="SearchAreaJson" type="text" value="" class="form-control" readonly />
+            </div>
+        </div>
+}
+else
+{
+    <div>
+        @Html.HiddenFor(model => model.SearchAreaWkt)
+        <input id="SearchAreaJson" type="text" value="" class="form-control" hidden readonly />
+    </div>
+}
         <div class="form-group">
             @Html.LabelFor(model => model.NoOfYears, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">

@@ -1,172 +1,245 @@
-﻿@model IEnumerable<EnquiryRequest3.Models.Enquiry>
+﻿@model EnquiryRequest3.Models.EnquiryIndexData
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Enquiries";
 }
 
-<h2>Index</h2>
+<h2>Enquiries</h2>
 @section scripts {
-    @*<script async defer
-            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD9ieUIp9TK9KVQeoGIbs27lCoGwE_q6Yc&libraries=drawing,geometry&callback=initMapReadOnly">*@
-
-    @*</script>*@
 }
 <p>
     @Html.ActionLink("Create New", "Create")
 </p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.Invoice.Code)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Code)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Name)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.InvoiceEmail)
-        </th>
-        @*<th>
-            Search area
-            </th>*@
-        <th>
-            @Html.DisplayNameFor(model => model.NoOfYears)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.JobNumber)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Agency)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.AgencyContact)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.DataUsedFor)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Citations)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.GisKml)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Express)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.EnquiryDate)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Comment)
-        </th>
-        @if (ViewContext.HttpContext.User.IsInRole("EnquiryManager") || ViewContext.HttpContext.User.IsInRole("Admin"))
+@using (Html.BeginForm("Index", "Enquiries", new { searchString = ViewBag.filter }, FormMethod.Get))
+{
+    <p>
+    Find by name or code: @Html.TextBox("SearchString")
+    <input type = "submit" value = "Search" />
+    </p>
+}
+
+<div class="col-md-12">
+
+
+    <table class="table">
+        <tr>
+            <th>
+                Actions
+            </th>
+            <th>
+                Invoice Code
+            </th>
+            <th>
+                Enquiry Code
+            </th>
+            <th>
+                Enquiry Name
+            </th>
+            <th>
+                Invoice Email
+            </th>
+            @*<th>
+                Search area
+                </th>*@
+            <th>
+                Years to search
+            </th>
+            <th>
+                Estimated Cost
+            </th>
+
+            <th>
+                Job Number
+            </th>
+            <th>
+                Agency
+            </th>
+            <th>
+                Agency Contact
+            </th>
+            <th>
+                Data Used For
+            </th>
+            <th>
+                Citations wanted
+            </th>
+            <th>
+                Gis / Kml wanted
+            </th>
+            <th>
+                Express delivery wanted
+            </th>
+            <th>
+                Enquiry Date
+            </th>
+            <th>
+                Comment
+            </th>
+            @if (ViewContext.HttpContext.User.IsInRole("EnquiryManager") || ViewContext.HttpContext.User.IsInRole("Admin"))
+            {
+                <th>
+                    Added To Rers Date
+                </th>
+                <th>
+                    Data Cleaned Date
+                </th>
+                <th>
+                    Report Complete Date
+                </th>
+                <th>
+                    Documents Cleaned Date
+                </th>
+                <th>
+                    Enquiry Delivered Date
+                </th>
+                <th>
+                    Admin Comment
+                </th>
+            }
+
+            <th>Action</th>
+        </tr>
+
+        @foreach (var item in Model.Enquiries)
         {
-            <th>
-                @Html.DisplayNameFor(model => model.AddedToRersDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DataCleanedDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ReportCompleteDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DocumentsCleanedDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.EnquiryDeliveredDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.AdminComment)
-            </th>
+
+            var wktName = "wkt" + item.EnquiryId;
+            string selectedRow = "";
+            if (item.EnquiryId == ViewBag.EnquiryId)
+            {
+                selectedRow = "success";
+            }
+            <tr class="@selectedRow">
+                <td>
+                    @Html.ActionLink("Select", "Index", new { id = item.EnquiryId, searchString = ViewBag.filter }) |
+                    @Html.ActionLink("Edit", "Edit", new { id = item.EnquiryId }) |
+                    @Html.ActionLink("Details", "Details", new { id = item.EnquiryId }) |
+                    @Html.ActionLink("Delete", "Delete", new { id = item.EnquiryId }) |
+                    @Html.ActionLink("Create Quote", "Create", "Quotes", new { EnquiryId = item.EnquiryId }, null)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Invoice.Code)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Code)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.InvoiceEmail)
+                </td>
+                @*<td>
+                        <div id=@wktName>
+                            @Html.HiddenFor(modelItem => item.SearchArea.WellKnownValue.WellKnownText)
+                        </div>
+                        <div id="map" style="width: 150px; height: 150px;"></div>
+                    </td>*@
+                <td>
+                    @Html.DisplayFor(modelItem => item.NoOfYears)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.EstimatedCost)
+                </td>
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.JobNumber)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Agency)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.AgencyContact)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DataUsedFor)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Citations)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.GisKml)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Express)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.EnquiryDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Comment)
+                </td>
+                @if (ViewContext.HttpContext.User.IsInRole("EnquiryManager") || ViewContext.HttpContext.User.IsInRole("Admin"))
+                {
+                    <td>
+                        @Html.DisplayFor(modelItem => item.AddedToRersDate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DataCleanedDate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ReportCompleteDate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DocumentsCleanedDate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.EnquiryDeliveredDate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.AdminComment)
+                    </td>
+                }
+                <td>
+                    @Html.ActionLink("Select", "Index", new { id = item.EnquiryId }) |
+                    @Html.ActionLink("Edit", "Edit", new { id = item.EnquiryId }) |
+                    @Html.ActionLink("Details", "Details", new { id = item.EnquiryId }) |
+                    @Html.ActionLink("Delete", "Delete", new { id = item.EnquiryId }) |
+                    @Html.ActionLink("Create Quote", "Create", "Quote", new { id = item.EnquiryId })
+                </td>
+            </tr>
+
         }
 
-        <th></th>
-    </tr>
+    </table>
+    @if (Model.Quotes != null)
+    {
+        <h3>Quotes for selected Enquiry</h3>
+        <table class="table">
+            <tr>
+                <th>Action</th>
+                <th>Quote id</th>
+                <th>Quoted Date</th>
+                <th>Amount</th>
+                <th>Accepted Date</th>
+            </tr>
 
-    @foreach (var item in Model)
-    {
-        
-        var wktName = "wkt" + item.EnquiryId;
-                
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.Invoice.Code)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Code)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Name)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.InvoiceEmail)
-        </td>
-        @*<td>
-            <div id=@wktName>
-                @Html.HiddenFor(modelItem => item.SearchArea.WellKnownValue.WellKnownText)
-            </div>
-            <div id="map" style="width: 150px; height: 150px;"></div>
-        </td>*@
-        <td>
-            @Html.DisplayFor(modelItem => item.NoOfYears)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.JobNumber)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Agency)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.AgencyContact)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.DataUsedFor)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Citations)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.GisKml)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Express)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.EnquiryDate)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Comment)
-        </td>
-        @if (ViewContext.HttpContext.User.IsInRole("EnquiryManager") || ViewContext.HttpContext.User.IsInRole("Admin"))
-    {
-        <td>
-            @Html.DisplayFor(modelItem => item.AddedToRersDate)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.DataCleanedDate)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.ReportCompleteDate)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.DocumentsCleanedDate)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.EnquiryDeliveredDate)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.AdminComment)
-        </td>
-}
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id = item.EnquiryId }) |
-            @Html.ActionLink("Details", "Details", new { id = item.EnquiryId }) |
-            @Html.ActionLink("Delete", "Delete", new { id = item.EnquiryId })
-        </td>
-    </tr>
+            @foreach (var item in Model.Quotes)
+            {
+                string selectedRow = "";
+                if (item.QuoteId == ViewBag.QuoteId)
+                {
+                    selectedRow = "success";
+                }
+                <tr class="@selectedRow">
+                    <td>
+                        @Html.ActionLink("Select", "Index", new { quoteId = item.QuoteId })
+                    </td>
+                    <td>
+                        @item.QuoteId
+                    </td>
+                    <td>
+                        @item.QuotedDate
+                    </td>
+                    <td>
+                        @item.Amount
+                    </td>
+                    <td>
+                        @item.AcceptedDate
+                    </td>
+                </tr>
+            }
+
+        </table>
     }
-
-</table>
+</div>

@@ -637,11 +637,20 @@ function ExtendToLayerFeatures(layerSource) {
 function getCostFromArea(area) {
     var cost;
     var roundedCost;
+    var searchType = document.getElementById("SearchTypeId").value;
+
     if (area === 0) {
         cost = 0;
     }
     else {
-        cost = ((area - 314) / 12.57) + 150;
+        if (searchType === "1")
+        {
+            cost = ((area - 314) / 12.57) + 150;
+        }
+        else
+        {
+            cost = ((area - 314) / 12.57) + 75;
+        }
     }
 
     roundedCost = Math.round(cost * 1) / 1;

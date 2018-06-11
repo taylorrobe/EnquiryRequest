@@ -43,8 +43,7 @@
                     <li>@Html.ActionLink("My Invoices", "Index", "Invoices")</li>
                     @if (ViewContext.HttpContext.User.IsInRole("EnquiryManager") || ViewContext.HttpContext.User.IsInRole("Admin"))
                     {
-                        <li>@Html.ActionLink("All Enquiries", "ManagerIndex", "Enquiries")</li>
-                        <li>@Html.ActionLink("All Invoices", "ManagerIndex", "Invoices")</li>
+                        //set navbar links for manager or admin only
                     }
                 </ul>
                 @Html.Partial("_LoginPartial")

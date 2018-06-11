@@ -1,20 +1,40 @@
-﻿using System.Data.Entity;
+﻿using EnquiryRequest3.Models;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
+using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Net;
 using System.Web.Mvc;
-using EnquiryRequest3.Models;
 
 namespace EnquiryRequest3.Controllers
 {
     public class QuotesController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
+        protected UserManager<ApplicationUser, int> userManager;
+    
+        public QuotesController()
+        {
+            userManager = new UserManager<ApplicationUser
+                , int>(new UserStore<ApplicationUser
+                , CustomRole
+                , int
+                , CustomUserLogin
+                , CustomUserRole
+                , CustomUserClaim>(this.db));
+        }
 
         // GET: Quotes
         public ActionResult Index()
         {
             var quotes = db.Quotes.Include(q => q.Enquiry);
+            var userId = User.Identity.GetUserId<int>();
+            if (!userManager.IsInRole(userId, "Admin") && !userManager.IsInRole(userId, "EnquiryManager"))
+            {
+                quotes = quotes
+                    .Where(a => a.Enquiry.ApplicationUserId == userId);
+            }
             return View(quotes.ToList());
         }
 
@@ -25,18 +45,37 @@ namespace EnquiryRequest3.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+            var userId = User.Identity.GetUserId<int>();
             Quote quote = db.Quotes.Find(id);
             if (quote == null)
             {
                 return HttpNotFound();
             }
-            return View(quote);
+            if (userId == quote.Enquiry.ApplicationUserId || userManager.IsInRole(userId, "Admin") || userManager.IsInRole(userId, "EnquiryManager"))
+            {            
+                //let user view the details
+                return View(quote);
+            }
+            else
+            {
+                // send user back to the index
+                return RedirectToAction("Index", "Quotes");
+            }
+
         }
 
         // GET: Quotes/Create
-        public ActionResult Create()
+        public ActionResult Create(int? enquiryId)
         {
-            ViewBag.EnquiryId = new SelectList(db.Enquiries, "EnquiryId", "Code");
+            if(enquiryId == null)
+            {
+                ViewBag.EnquiryList = new SelectList(db.Enquiries, "EnquiryId", "DisplayName");
+            }
+            else
+            {
+                Enquiry selectedEnquiry = db.Enquiries.SingleOrDefault(a => a.EnquiryId == enquiryId);
+                ViewBag.Enquiry = selectedEnquiry;
+            }
             return View();
         }
 
@@ -53,8 +92,14 @@ namespace EnquiryRequest3.Controllers
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
+            if(quote.EnquiryId > 0)
+            {
+                Enquiry selectedEnquiry = db.Enquiries.SingleOrDefault(a => a.EnquiryId == quote.EnquiryId);
+                ViewBag.Enquiry = selectedEnquiry;
+            }
+            
+            ViewBag.EnquiryList = new SelectList(db.Enquiries, "EnquiryId", "DisplayName", quote.EnquiryId);
 
-            ViewBag.EnquiryId = new SelectList(db.Enquiries, "EnquiryId", "Code", quote.EnquiryId);
             return View(quote);
         }
 
@@ -65,13 +110,22 @@ namespace EnquiryRequest3.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+            var userId = User.Identity.GetUserId<int>();
             Quote quote = db.Quotes.Find(id);
             if (quote == null)
             {
                 return HttpNotFound();
             }
-            ViewBag.EnquiryId = new SelectList(db.Enquiries, "EnquiryId", "Code", quote.EnquiryId);
-            return View(quote);
+            if (userId == quote.Enquiry.ApplicationUserId || userManager.IsInRole(userId, "Admin") || userManager.IsInRole(userId, "EnquiryManager"))
+            {
+                ViewBag.EnquiryId = new SelectList(db.Enquiries, "EnquiryId", "Code", quote.EnquiryId);
+                return View(quote);
+            }
+            else
+            {
+                // send user back to the index
+                return RedirectToAction("Index", "Quotes");
+            }
         }
 
         // POST: Quotes/Edit/5
@@ -105,12 +159,21 @@ namespace EnquiryRequest3.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+            var userId = User.Identity.GetUserId<int>();
             Quote quote = db.Quotes.Find(id);
             if (quote == null)
             {
                 return HttpNotFound();
             }
-            return View(quote);
+            if (userId == quote.Enquiry.ApplicationUserId || userManager.IsInRole(userId, "Admin") || userManager.IsInRole(userId, "EnquiryManager"))
+            {
+                return View(quote);
+            }
+            else
+            {
+                // send user back to the index
+                return RedirectToAction("Index", "Quotes");
+            }
         }
 
         // POST: Quotes/Delete/5

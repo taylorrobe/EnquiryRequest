@@ -9,8 +9,11 @@ namespace EnquiryRequest3.Models
     public class Enquiry
     {
         [Key]
+        [Column("EnquiryId")]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int EnquiryId { get; set; }
 
+        [Display(Name="Enquiry Code")]
         [StringLength(100, ErrorMessage = "The {0} cannot be more than {1} characters long.")]
         public string Code { get; set; }
 
@@ -18,9 +21,18 @@ namespace EnquiryRequest3.Models
         [StringLength(100, ErrorMessage = "The {0} cannot be more than {1} characters long.")]
         public string Name { get; set; }
 
+        [NotMapped]
+        public string DisplayName
+        {
+            get
+            {
+                return string.Format("{0} - {1} - id: {2}", Code, Name, EnquiryId);
+            }
+        }
+
         [Required]
         public int ApplicationUserId { get; set; }
-        public virtual  ApplicationUser ApplicationUser { get; set; }
+        public virtual ApplicationUser ApplicationUser { get; set; }
 
         [Required]
         [EmailAddress]
@@ -50,6 +62,10 @@ namespace EnquiryRequest3.Models
         [Display(Name = "Agency Contact", Prompt = "Enter agency contact name", Description = "If the enquiry is on behalf of an agency, please enter the agency contact here")]
         [StringLength(100, ErrorMessage = "The {0} cannot be more than {1} characters long.")]
         public string AgencyContact { get; set; }
+
+        [DataType(DataType.Currency)]
+        [Display(Name = "Estimated Cost", Description = "This is estimated from the area and type of enquiry")]
+        public decimal EstimatedCost { get; set; }
 
         [Required]
         [DataType(DataType.MultilineText)]

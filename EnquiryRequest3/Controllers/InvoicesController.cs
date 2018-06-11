@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
+using System.Data.Entity.Validation;
 using System.Linq;
 using System.Net;
 using System.Web;
@@ -36,6 +37,7 @@ namespace EnquiryRequest3.Controllers
         }
 
         // GET: Invoices/Create
+        [Authorize(Roles = "Admin, EnquiryManager")]
         public ActionResult Create()
         {
             return View();
@@ -46,19 +48,30 @@ namespace EnquiryRequest3.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin, EnquiryManager")]
         public ActionResult Create([Bind(Include = "InvoiceId,Code,Amount,PONumber,InvoiceDate,PaidDate,PaymentMethodId,PaymentMethod,ChequeNumber,InSlipNumber,RemittanceReference")] Invoice invoice)
         {
             if (ModelState.IsValid)
             {
                 db.Invoices.Add(invoice);
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                try
+                {
+                    db.SaveChanges();
+                    return RedirectToAction("Index");
+                }
+                catch (DbEntityValidationException ex)
+                {
+                    foreach (var result in ex.EntityValidationErrors)
+                        foreach (var error in result.ValidationErrors)
+                            ModelState.AddModelError(error.PropertyName, error.ErrorMessage);
+                    return View(invoice);
+                }
             }
-
             return View(invoice);
         }
 
         // GET: Invoices/Edit/5
+        [Authorize(Roles = "Admin, EnquiryManager")]
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -78,6 +91,7 @@ namespace EnquiryRequest3.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin, EnquiryManager")]
         public ActionResult Edit([Bind(Include = "InvoiceId,Code,Amount,PONumber,InvoiceDate,PaidDate,PaymentMethodId,PaymentMethod,ChequeNumber,InSlipNumber,RemittanceReference, RowVersion")] Invoice invoice)
         {
             if (!ModelState.IsValid) return View(invoice);
@@ -97,6 +111,7 @@ namespace EnquiryRequest3.Controllers
         }
 
         // GET: Invoices/Delete/5
+        [Authorize(Roles = "Admin, EnquiryManager")]
         public ActionResult Delete(int? id)
         {
             if (id == null)
@@ -114,6 +129,7 @@ namespace EnquiryRequest3.Controllers
         // POST: Invoices/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin, EnquiryManager")]
         public ActionResult DeleteConfirmed(int id)
         {
             try

@@ -27,7 +27,7 @@ namespace EnquiryRequest3.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public DateTime InvoiceDate { get; set; }
 
-        public DateTime PaidDate { get; set; }
+        public DateTime? PaidDate { get; set; }
 
         public PaymentMethod PaymentMethod { get; set; }
 
@@ -42,6 +42,10 @@ namespace EnquiryRequest3.Models
         [RequiredIf("PaymentMethod == PaymentMethod.BANK_TRANSFER", ErrorMessage = "Must enter a remittance reference")]
         [StringLength(100, ErrorMessage = "The {0} cannot be more than {1} characters long.")]
         public string RemittanceReference { get; set; }
+
+        [Required]
+        public int QuoteId { get; set; }
+        public virtual Quote Quote { get; set; }
 
         public virtual ICollection<InvoiceReminder> InvoiceReminders { get; set; }
 

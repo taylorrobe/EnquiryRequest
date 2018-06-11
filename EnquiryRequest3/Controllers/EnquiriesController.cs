@@ -8,9 +8,6 @@ using System.Net;
 using System.Web.Mvc;
 using EnquiryRequest3.Controllers.Utilities;
 using System.Data.Entity.Infrastructure;
-using System.Web.Security;
-using Microsoft.AspNet.Identity.Owin;
-using Microsoft.Owin.Security;
 using Microsoft.AspNet.Identity.EntityFramework;
 
 namespace EnquiryRequest3.Controllers
@@ -33,50 +30,51 @@ namespace EnquiryRequest3.Controllers
         }
 
         // GET: Enquiries
-        public ActionResult Index()
+        public ActionResult Index(int? id, string searchString)
         {
-            IQueryable<Enquiry> enquiries;
+            var viewModel = new EnquiryIndexData();
+            var enquiries = db.Enquiries.Include(e => e.Invoice)
+                    .Include(q => q.Quotes);
+
+            //filter by searchString
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                enquiries = enquiries.Where(a => a.Code == searchString || a.Name.Contains(searchString));
+            }
+
+            //filter enquiries by user if not admin or manager
             var userId = User.Identity.GetUserId<int>();
             var userName = User.Identity.Name;
-            if (userManager.IsInRole(userId, "Admin"))
+
+            if (!userManager.IsInRole(userId, "Admin") && !userManager.IsInRole(userId, "EnquiryManager"))
             {
-                enquiries = db.Enquiries.Include(e => e.Invoice).OrderByDescending(d => d.EnquiryDate);
-            }
-            else if (userManager.IsInRole(userId, "EnquiryManager"))
-            {
-                enquiries = db.Enquiries.Include(e => e.Invoice).OrderByDescending(d => d.EnquiryDate);
-            }
-            else
-            {
-                enquiries = db.Enquiries.Include(e => e.Invoice).Where(a => a.ApplicationUserId == userId);
+                enquiries = enquiries
+                    .Where(a => a.ApplicationUserId == userId);
             }
 
-            return View(enquiries.ToList());
-        }
+            //order the results by desc enquiry date
+            enquiries = enquiries.OrderByDescending(d => d.EnquiryDate);
 
-        // GET: Enquiries
-        public ActionResult ManagerIndex()
-        {
-            IQueryable<Enquiry> enquiries;
-            var userId = User.Identity.GetUserId<int>();
-            var userName = User.Identity.Name;
-            if (userManager.IsInRole(userId, "Admin"))
-            {
-                enquiries = db.Enquiries.Include(e => e.Invoice).OrderByDescending(d => d.EnquiryDate);
-            }
-            else if (userManager.IsInRole(userId, "EnquiryManager"))
-            {
-                enquiries = db.Enquiries.Include(e => e.Invoice).OrderByDescending(d => d.EnquiryDate);
-            }
-            else
-            {
-                enquiries = db.Enquiries.Include(e => e.Invoice).Where(a => a.ApplicationUserId == userId);
-            }
+            //attach to view model
+            viewModel.Enquiries = enquiries;
 
+            //attach quotes to selected enquiry
+            if (id!=null)
+            {
+                if(viewModel.Enquiries.Where(i => i.EnquiryId == id.Value).Count() > 0)
+                {
+                    var quotes = viewModel.Enquiries
+                        .Where(i => i.EnquiryId == id.Value).SingleOrDefault().Quotes;
+                    //set the view models quotes
+                    ViewBag.EnquiryId = id.Value;
+                    viewModel.Quotes = quotes;
+                }
+            }
             
-
-            return View(enquiries.ToList());
+            ViewBag.filter = searchString;
+            return View(viewModel);
         }
+
 
     // GET: Enquiries/Details/5
     public ActionResult Details(int? id)
@@ -127,7 +125,7 @@ namespace EnquiryRequest3.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "EnquiryId,Name,InvoiceEmail,SearchAreaWkt,SearchTypeId,NoOfYears,JobNumber,Agency,AgencyContact,DataUsedFor,Citations,GisKml,Express,EnquiryDate,Comment")] UserCreateEditEnquiryViewModel model)
+        public ActionResult Create([Bind(Include = "Code, EnquiryId,Name,InvoiceEmail,SearchAreaWkt,SearchTypeId,NoOfYears,EstimatedCost,JobNumber,Agency,AgencyContact,DataUsedFor,Citations,GisKml,Express,EnquiryDate,Comment")] UserCreateEditEnquiryViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -141,11 +139,13 @@ namespace EnquiryRequest3.Controllers
                 }
                 Enquiry enquiry = new Enquiry
                 {
+                    Code = model.Code,
                     ApplicationUserId = userId,
                     Name = model.Name,
                     InvoiceEmail = defaultInvoiceEmail,
                     SearchArea = geom,
                     SearchTypeId = model.SearchTypeId,
+                    EstimatedCost = model.EstimatedCost,
                     NoOfYears = model.NoOfYears,
                     JobNumber = model.JobNumber,
                     Agency = model.Agency,
@@ -161,6 +161,11 @@ namespace EnquiryRequest3.Controllers
 
                 try
                 {
+                    db.SaveChanges();
+                    FormatHelper formatHelper = new FormatHelper();
+                    var enquiryCode = formatHelper.GetEnquiryCodePrefix(enquiry.EnquiryId);
+                    enquiry.Code = enquiryCode;
+                    db.Entry(enquiry).State = EntityState.Modified;
                     db.SaveChanges();
                     return RedirectToAction("Index");
                 }
@@ -201,12 +206,14 @@ namespace EnquiryRequest3.Controllers
                 var wkt = enquiry.SearchArea.WellKnownValue.WellKnownText;
                 UserCreateEditEnquiryViewModel userCreateEditEnquiryViewModel = new UserCreateEditEnquiryViewModel
                 {
+                    Code = enquiry.Code,
                     EnquiryId = enquiry.EnquiryId,
                     Name = enquiry.Name,
                     InvoiceEmail = enquiry.InvoiceEmail,
                     SearchAreaWkt = wkt,
                     SearchTypeId = enquiry.SearchTypeId,
                     NoOfYears = enquiry.NoOfYears,
+                    EstimatedCost = enquiry.EstimatedCost,
                     JobNumber = enquiry.JobNumber,
                     Agency = enquiry.Agency,
                     AgencyContact = enquiry.AgencyContact,
@@ -242,8 +249,8 @@ namespace EnquiryRequest3.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "EnquiryId,Name,InvoiceEmail,SearchAreaWkt,SearchTypeId" +
-            ",NoOfYears,JobNumber,Agency,AgencyContact,DataUsedFor,Citations,GisKml,Express,EnquiryDate" +
+        public ActionResult Edit([Bind(Include = "Code, EnquiryId,Name,InvoiceEmail,SearchAreaWkt,SearchTypeId" +
+            ",NoOfYears,EstimatedCost,JobNumber,Agency,AgencyContact,DataUsedFor,Citations,GisKml,Express,EnquiryDate" +
             ",Comment,AddedToRersDate, DataCleanedDate, ReportCompleteDate, DocumentsCleanedDate, EnquiryDeliveredDate" +
             ", AdminComment, RowVersion")] UserCreateEditEnquiryViewModel model)
         {
@@ -260,6 +267,7 @@ namespace EnquiryRequest3.Controllers
                 var userId = User.Identity.GetIntUserId();
                 Enquiry enquiry = new Enquiry
                 {
+                    Code = model.Code,
                     EnquiryId = model.EnquiryId,
                     ApplicationUserId = userId,
                     Name = model.Name,
@@ -267,6 +275,7 @@ namespace EnquiryRequest3.Controllers
                     SearchArea = geom,
                     SearchTypeId = model.SearchTypeId,
                     NoOfYears = model.NoOfYears,
+                    EstimatedCost = model.EstimatedCost,
                     JobNumber = model.JobNumber,
                     Agency = model.Agency,
                     AgencyContact = model.AgencyContact,

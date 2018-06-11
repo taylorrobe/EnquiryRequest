@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EnquiryRequest3.Models
 {
@@ -10,6 +9,10 @@ namespace EnquiryRequest3.Models
     {
         [Key]
         public int EnquiryId { get; set; }
+
+        [Display(Name = "Enquiry Code")]
+        [StringLength(100, ErrorMessage = "The {0} cannot be more than {1} characters long.")]
+        public string Code { get; set; }
 
         [Required]
         [StringLength(100, ErrorMessage = "The {0} cannot be more than {1} characters long.")]
@@ -27,6 +30,10 @@ namespace EnquiryRequest3.Models
         [Required]
         public int SearchTypeId { get; set; }
         public virtual SearchType SearchType { get; set; }
+
+        [DataType(DataType.Currency)]
+        [Display(Name = "Estimated Cost", Description = "This is estimated from the area and type of enquiry")]
+        public decimal EstimatedCost { get; set; }
 
         [Required]
         [Display(Name = "Number of Years", Prompt = "Enter the number of years", Description = "The number of years to search data for")]
@@ -67,26 +74,31 @@ namespace EnquiryRequest3.Models
         //should be non createable, automatically timestamped on user click and show up in details
         [DisplayName("Added To Rers Date")]
         [DataType(DataType.DateTime)]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:yyyy-MM-ddTHH:mm:ss}")]
         public DateTime? AddedToRersDate { get; set; }
 
         //should be non createable, automatically timestamped on user click and show up in details
         [DisplayName("Data Cleaned Date")]
         [DataType(DataType.DateTime)]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:yyyy-MM-ddTHH:mm:ss}")]
         public DateTime? DataCleanedDate { get; set; }
 
         //should be non createable, automatically timestamped on user click and show up in details
         [DisplayName("Report Complete Date")]
         [DataType(DataType.DateTime)]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:yyyy-MM-ddTHH:mm:ss}")]
         public DateTime? ReportCompleteDate { get; set; }
 
         //should be non createable, automatically timestamped on user click and show up in details
         [DisplayName("Documents Cleaned Date")]
         [DataType(DataType.DateTime)]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:yyyy-MM-ddTHH:mm:ss}")]
         public DateTime? DocumentsCleanedDate { get; set; }
 
         //should be non createable, automatically timestamped on user click and show up in details
         [DisplayName("Enquiry Delivered Date")]
         [DataType(DataType.DateTime)]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:yyyy-MM-ddTHH:mm:ss}")]
         public DateTime? EnquiryDeliveredDate { get; set; }
 
         [DataType(DataType.MultilineText)]
@@ -99,5 +111,12 @@ namespace EnquiryRequest3.Models
 
         [Timestamp]
         public byte[] RowVersion { get; set; }
+    }
+
+    public class EnquiryIndexData
+    {
+        public IEnumerable<Enquiry> Enquiries { get; set; }
+        public IEnumerable<Quote> Quotes { get; set; }
+        public IEnumerable<Invoice> Invoices { get; set; }
     }
 }

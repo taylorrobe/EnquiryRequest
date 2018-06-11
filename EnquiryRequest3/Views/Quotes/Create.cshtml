@@ -1,54 +1,77 @@
 ﻿@model EnquiryRequest3.Models.Quote
 
 @{
-    ViewBag.Title = "Create";
+    ViewBag.Title = "Accept Quote";
 }
 
-<h2>Create</h2>
+<h2>Quote</h2>
 
-@using (Html.BeginForm()) 
+@using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
-    
+
     <div class="form-horizontal">
-        <h4>Quote</h4>
+        <h4>Accept Quote</h4>
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        <div class="form-group">
-            @Html.LabelFor(model => model.QuoteId, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.QuoteId, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.QuoteId, "", new { @class = "text-danger" })
-            </div>
-        </div>
+        @*<div class="form-group">
+                @Html.LabelFor(model => model.QuoteId, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.QuoteId, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.QuoteId, "", new { @class = "text-danger" })
+                </div>
+            </div>*@
 
         <div class="form-group">
             @Html.LabelFor(model => model.Amount, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.Amount, new { htmlAttributes = new { @class = "form-control" } })
+                @if (ViewBag.Enquiry == null)
+                {
+                    @Html.EditorFor(model => model.Amount, new { htmlAttributes = new { @class = "form-control" } })
+                }
+                else
+                {
+                    <input type="text" id="Amount" value="@ViewBag.Enquiry.EstimatedCost" class="form-control" readonly />
+                    @*@Html.HiddenFor(model => model.Amount, new { htmlAttributes = new { @class = "form-control", @value = "@ViewBag.Enquiry.EstimatedCost", @data = "@ViewBag.Enquiry.EstimatedCost" } })*@
+                }
                 @Html.ValidationMessageFor(model => model.Amount, "", new { @class = "text-danger" })
             </div>
         </div>
 
+
+
+
         <div class="form-group">
             @Html.LabelFor(model => model.AcceptedDate, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.AcceptedDate, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.EditorFor(model => model.AcceptedDate, new { htmlAttributes = new { @class = "form-control", @value = DateTime.Today.ToString("yyyy-MM-dd") } })
                 @Html.ValidationMessageFor(model => model.AcceptedDate, "", new { @class = "text-danger" })
             </div>
         </div>
 
         <div class="form-group">
-            @Html.LabelFor(model => model.EnquiryId, "EnquiryId", htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.LabelFor(model => model.EnquiryId, "Enquiry", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.DropDownList("EnquiryId", null, htmlAttributes: new { @class = "form-control" })
+                @if (ViewBag.Enquiry == null)
+                {
+                    if (ViewBag.EnquiryList != null)
+                    {
+                        @Html.DropDownList("EnquiryList", null, htmlAttributes: new { @class = "form-control" })
+                    }
+                }
+                else
+                {
+                    <input type="text" value="@ViewBag.Enquiry.DisplayName" class="form-control" readonly />
+                    @Html.HiddenFor(model => model.EnquiryId, new { htmlAttributes = new { @class = "form-control", @value = "@ViewBag.Enquiry.DisplayName", @data = "@ViewBag.Enquiry.EnquiryId"} })
+                }
+
                 @Html.ValidationMessageFor(model => model.EnquiryId, "", new { @class = "text-danger" })
             </div>
         </div>
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Create" class="btn btn-default" />
+                <input type="submit" value="Accept Quote" class="btn btn-default" />
             </div>
         </div>
     </div>

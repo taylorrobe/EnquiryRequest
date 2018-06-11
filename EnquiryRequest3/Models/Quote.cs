@@ -7,6 +7,8 @@ namespace EnquiryRequest3.Models
     public class Quote
     {
         [Key]
+        [Column("QuoteId")]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int QuoteId { get; set; }
 
         [Required]
@@ -19,6 +21,7 @@ namespace EnquiryRequest3.Models
         public DateTime QuotedDate { get; set; }
 
         //only one quote linked to an enquiry can have an accepted date
+        [DataType(DataType.Date)]
         public DateTime AcceptedDate { get; set; }
 
         [Required]

@@ -1,14 +1,17 @@
 ﻿@model IEnumerable<EnquiryRequest3.Models.Invoice>
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Invoices";
 }
 
-<h2>Index</h2>
+<h2>Invoices</h2>
 
 <p>
-    @Html.ActionLink("Create New", "Create")
-</p>
+    @if (ViewContext.HttpContext.User.IsInRole("EnquiryManager") || ViewContext.HttpContext.User.IsInRole("Admin"))
+    {
+        @Html.ActionLink("Create New", "Create")
+    }
+    </p>
 <table class="table">
     <tr>
         <th>
@@ -26,9 +29,9 @@
         <th>
             @Html.DisplayNameFor(model => model.PaidDate)
         </th>
-        <th>
+        @*<th>
             @Html.DisplayNameFor(model => model.PaymentMethodId)
-        </th>
+        </th>*@
         <th>
             @Html.DisplayNameFor(model => model.PaymentMethod)
         </th>
@@ -61,9 +64,9 @@
         <td>
             @Html.DisplayFor(modelItem => item.PaidDate)
         </td>
-        <td>
+        @*<td>
             @Html.DisplayFor(modelItem => item.PaymentMethodId)
-        </td>
+        </td>*@
         <td>
             @Html.DisplayFor(modelItem => item.PaymentMethod)
         </td>

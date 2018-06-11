@@ -9,7 +9,7 @@
 </div>
 
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-6">
         <h2>Enquiries</h2>
         <p>
             links to enquiries
@@ -18,7 +18,7 @@
             <ul>
                 @if (ViewContext.HttpContext.User.IsInRole("EnquiryManager") || ViewContext.HttpContext.User.IsInRole("Admin"))
                 {
-                    <li>@Html.ActionLink("All Enquiries", "ManagerIndex", "Enquiries")</li>
+                    //todo set links for manager only if required
                 }
                 <li>@Html.ActionLink("My Enquiries", "Index", "Enquiries")</li>
                 <li>@Html.ActionLink("New Enquiry", "Create", "Enquiries")</li>
@@ -26,7 +26,7 @@
             </ul>
         </p>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-6">
         <h2>Invoices</h2>
         <p>
             links to invoices

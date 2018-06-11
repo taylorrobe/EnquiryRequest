@@ -331,6 +331,26 @@
     <Compile Include="Migrations\201805291538107_reportdate spelling mistake.Designer.cs">
       <DependentUpon>201805291538107_reportdate spelling mistake.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201806051324476_estimated cost added to enquiry.cs" />
+    <Compile Include="Migrations\201806051324476_estimated cost added to enquiry.Designer.cs">
+      <DependentUpon>201806051324476_estimated cost added to enquiry.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201806080934213_changes to invoice and paymentMethod.cs" />
+    <Compile Include="Migrations\201806080934213_changes to invoice and paymentMethod.Designer.cs">
+      <DependentUpon>201806080934213_changes to invoice and paymentMethod.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201806080948175_link to quote from invoice.cs" />
+    <Compile Include="Migrations\201806080948175_link to quote from invoice.Designer.cs">
+      <DependentUpon>201806080948175_link to quote from invoice.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201806081035512_quote no key annotation.cs" />
+    <Compile Include="Migrations\201806081035512_quote no key annotation.Designer.cs">
+      <DependentUpon>201806081035512_quote no key annotation.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201806081203540_add identity annotation to quote and enquiry.cs" />
+    <Compile Include="Migrations\201806081203540_add identity annotation to quote and enquiry.Designer.cs">
+      <DependentUpon>201806081203540_add identity annotation to quote and enquiry.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Boundary.cs" />
@@ -778,7 +798,6 @@
     <Content Include="Views\Manage\EditContactInfo.cshtml" />
     <Content Include="Views\Account\ChangeEmail.cshtml" />
     <Content Include="Views\Enquiries\_PartialMap.cshtml" />
-    <Content Include="Views\Enquiries\ManagerIndex.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -850,6 +869,21 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201805291538107_reportdate spelling mistake.resx">
       <DependentUpon>201805291538107_reportdate spelling mistake.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201806051324476_estimated cost added to enquiry.resx">
+      <DependentUpon>201806051324476_estimated cost added to enquiry.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201806080934213_changes to invoice and paymentMethod.resx">
+      <DependentUpon>201806080934213_changes to invoice and paymentMethod.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201806080948175_link to quote from invoice.resx">
+      <DependentUpon>201806080948175_link to quote from invoice.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201806081035512_quote no key annotation.resx">
+      <DependentUpon>201806081035512_quote no key annotation.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201806081203540_add identity annotation to quote and enquiry.resx">
+      <DependentUpon>201806081203540_add identity annotation to quote and enquiry.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
