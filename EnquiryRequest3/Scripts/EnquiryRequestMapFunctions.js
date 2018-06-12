@@ -649,7 +649,7 @@ function getCostFromArea(area) {
         }
         else
         {
-            cost = ((area - 314) / 12.57) + 75;
+            cost = (((area - 314) / 12.57) + 150)/2;
         }
     }
 
