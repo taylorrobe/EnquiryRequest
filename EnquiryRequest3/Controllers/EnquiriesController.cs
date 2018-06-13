@@ -195,10 +195,17 @@ namespace EnquiryRequest3.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             var userId = User.Identity.GetUserId<int>();
-            Enquiry enquiry = db.Enquiries.Find(id);
+            Enquiry enquiry = db.Enquiries.Include(e => e.Invoice)
+                    .Include(q => q.Quotes).FirstOrDefault(e => e.EnquiryId == id);
             if (enquiry == null)
             {
                 return HttpNotFound();
+            }
+            if (enquiry.Quotes.Count > 0)
+            {
+                TempData["ErrorMessage"] = "Cannot edit an enquiry that has been quoted, please delete the quote and try again";
+                // send user back to the index
+                return RedirectToAction("Index", "Enquiries");
             }
             if (userId == enquiry.ApplicationUserId || userManager.IsInRole(userId, "Admin") || userManager.IsInRole(userId, "EnquiryManager"))
             {
@@ -331,6 +338,12 @@ namespace EnquiryRequest3.Controllers
             }
             if (userId == enquiry.ApplicationUserId || userManager.IsInRole(userId, "Admin") || userManager.IsInRole(userId, "EnquiryManager"))
             {
+
+                //let user view the details
+                //get all boundaries for displaying on map
+                SpatialHelper spatial = new SpatialHelper();
+                ViewBag.Boundaries = spatial.GetGeoJsonCollectionFromBoundaryCollection(db.Boundaries.ToList(), SpatialHelper.BoundaryType.DISPLAY);
+                ViewBag.Coverage = spatial.GetGeoJsonCollectionFromBoundaryCollection(db.Boundaries.ToList(), SpatialHelper.BoundaryType.COVERAGE);
 
                 return View(enquiry);
             }

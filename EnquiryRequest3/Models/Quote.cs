@@ -12,6 +12,7 @@ namespace EnquiryRequest3.Models
         public int QuoteId { get; set; }
 
         [Required]
+        [DataType(DataType.Currency)]
         [Column(TypeName = "Money")]
         public decimal Amount { get; set; }
 
@@ -22,7 +23,7 @@ namespace EnquiryRequest3.Models
 
         //only one quote linked to an enquiry can have an accepted date
         [DataType(DataType.Date)]
-        public DateTime AcceptedDate { get; set; }
+        public DateTime? AcceptedDate { get; set; }
 
         [Required]
         public int EnquiryId { get; set; }

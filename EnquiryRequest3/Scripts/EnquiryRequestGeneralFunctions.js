@@ -16,24 +16,28 @@
     textBox.value = year + "-" + month + "-" + date + "T" + hours + ":" + minutes + ":" + seconds;
 }
 
-    function SetNowAddedToRersDateClick(){
-        SetDateTime("AddedToRersDate");
-    }
+function SetNowToElement(element)
+{
+    SetDateTime(element);
+}
+    //function SetNowAddedToRersDateClick(){
+    //    SetDateTime("AddedToRersDate");
+    //}
 
-    function SetNowDataCleanedDateClick(){
-        SetDateTime("DataCleanedDate");
-    }
+    //function SetNowDataCleanedDateClick(){
+    //    SetDateTime("DataCleanedDate");
+    //}
 
-    function SetNowReportCompleteDateClick() {
-        SetDateTime("ReportCompleteDate");
-    }
+    //function SetNowReportCompleteDateClick() {
+    //    SetDateTime("ReportCompleteDate");
+    //}
 
-    function SetNowDocumentsCleanedDateClick() {
-        SetDateTime("DocumentsCleanedDate");
-    }
+    //function SetNowDocumentsCleanedDateClick() {
+    //    SetDateTime("DocumentsCleanedDate");
+    //}
 
-    function SetNowEnquiryDeliveredDateClick() {
-        SetDateTime("EnquiryDeliveredDate");
-    }
+    //function SetNowEnquiryDeliveredDateClick() {
+    //    SetDateTime("EnquiryDeliveredDate");
+    //}
     
     

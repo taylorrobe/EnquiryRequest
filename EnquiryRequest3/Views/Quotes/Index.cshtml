@@ -26,32 +26,37 @@
         <th>
             @Html.DisplayNameFor(model => model.AcceptedDate)
         </th>
-        <th></th>
+        <th>Actions</th>
     </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <th>
-            @Html.DisplayFor(model => item.QuoteId)
-        </th>
-        <td>
-            @Html.DisplayFor(modelItem => item.Enquiry.Code)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Amount)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.QuotedDate)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.AcceptedDate)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id = item.QuoteId }) |
-            @Html.ActionLink("Details", "Details", new { id = item.QuoteId }) |
-            @Html.ActionLink("Delete", "Delete", new { id = item.QuoteId })
-        </td>
-    </tr>
-}
+    @foreach (var item in Model)
+    {
+        <tr>
+            <th>
+                @Html.DisplayFor(model => item.QuoteId)
+            </th>
+            <td>
+                @Html.DisplayFor(modelItem => item.Enquiry.Code)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Amount)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.QuotedDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AcceptedDate)
+            </td>
+            <td>
+                @if (ViewContext.HttpContext.User.IsInRole("EnquiryManager") || ViewContext.HttpContext.User.IsInRole("Admin"))
+                {
+                    @Html.ActionLink("Edit", "Edit", new { id = item.QuoteId }) <br />
+                }
+                @*@Html.Action("Accept Quote", "Accept Quote", new { id = item.QuoteId })*@
+                @Html.ActionLink("Details", "Details", new { id = item.QuoteId }) <br />
+                @Html.ActionLink("Delete", "Delete", new { id = item.QuoteId })
+            </td>
+        </tr>
+    }
 
 </table>

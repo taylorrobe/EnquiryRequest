@@ -1,0 +1,72 @@
+﻿@model EnquiryRequest3.Models.Quote
+
+@{
+    ViewBag.Title = "AcceptQuote";
+}
+
+<h2>AcceptQuote</h2>
+
+@if (!string.IsNullOrEmpty(ViewBag.Message))
+{
+    <h3 style="color:red">@Html.Raw(ViewBag.Message)</h3>
+}
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div>
+        <h4>Quote</h4>
+        <hr />
+        <dl class="dl-horizontal">
+            <dt>
+                @Html.DisplayNameFor(model => model.QuoteId)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.QuoteId)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.Enquiry.Code)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Enquiry.Code)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Amount)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Amount)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.QuotedDate)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.QuotedDate)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.AcceptedDate)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.AcceptedDate)
+            </dd>
+
+        </dl>
+    </div>
+    @Html.HiddenFor(model => model.RowVersion)
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" value="Accept Quote" class="btn btn-default" />
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>

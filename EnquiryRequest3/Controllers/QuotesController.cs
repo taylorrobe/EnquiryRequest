@@ -1,6 +1,7 @@
 ﻿using EnquiryRequest3.Models;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
+using System;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Linq;
@@ -84,7 +85,7 @@ namespace EnquiryRequest3.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "QuoteId,Amount,QuotedDate,AcceptedDate,EnquiryId")] Quote quote)
+        public ActionResult Create([Bind(Include = "Amount,QuotedDate,AcceptedDate,EnquiryId")] Quote quote)
         {
             if (ModelState.IsValid)
             {
@@ -104,6 +105,7 @@ namespace EnquiryRequest3.Controllers
         }
 
         // GET: Quotes/Edit/5
+        [Authorize(Roles ="Admin")]
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -131,6 +133,7 @@ namespace EnquiryRequest3.Controllers
         // POST: Quotes/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = "Admin, EnquiryManager")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "QuoteId,Amount,QuotedDate,AcceptedDate,EnquiryId, RowVersion")] Quote quote)
@@ -150,6 +153,55 @@ namespace EnquiryRequest3.Controllers
             }
 
 
+        }
+
+        // GET: Quotes/AcceptQuote/5
+        public ActionResult AcceptQuote(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            var userId = User.Identity.GetUserId<int>();
+            Quote quote = db.Quotes.Find(id);
+            if (quote == null)
+            {
+                return HttpNotFound();
+            }
+            if (userId == quote.Enquiry.ApplicationUserId || userManager.IsInRole(userId, "Admin") || userManager.IsInRole(userId, "EnquiryManager"))
+            {
+                ViewBag.EnquiryId = new SelectList(db.Enquiries, "EnquiryId", "Code", quote.EnquiryId);
+                return View(quote);
+            }
+            else
+            {
+                // send user back to the index
+                return RedirectToAction("Index", "Quotes");
+            }
+        }
+
+        // POST: Quotes/AcceptQuote/5
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult AcceptQuote([Bind(Include = "QuoteId,Amount,QuotedDate,AcceptedDate,EnquiryId,RowVersion")] Quote quote)
+        {
+            ViewBag.EnquiryId = new SelectList(db.Enquiries, "EnquiryId", "Code", quote.EnquiryId);
+            if (!ModelState.IsValid) return View(quote);
+            try
+            {
+                var quoteDetails = db.Quotes.FirstOrDefault(q => q.QuoteId == quote.QuoteId);
+                quoteDetails.AcceptedDate = DateTime.Now;
+                db.Entry(quoteDetails).State = EntityState.Modified;
+                db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                ViewBag.Message = "Sorry, couldn't update due to a concurrency issue <br />Please try again";
+                return View(quote);
+            }
         }
 
         // GET: Quotes/Delete/5

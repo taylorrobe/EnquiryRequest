@@ -46,13 +46,13 @@
             </div>
         </div>
         @{
-        Html.RenderPartial("_PartialMap");
+            Html.RenderPartial("_PartialMap");
         }
 
         <div class="form-group">
             @Html.LabelFor(model => model.SearchTypeId, "Search Type", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.DropDownList("SearchTypeId", null, htmlAttributes: new { @class = "form-control", @onchange= "javascript:populateTextBoxes();" })
+                @Html.DropDownList("SearchTypeId", null, htmlAttributes: new { @class = "form-control", @onchange = "javascript:populateTextBoxes();" })
                 @Html.ValidationMessageFor(model => model.SearchTypeId, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -76,23 +76,23 @@
             </div>
         </div>
         @if (ViewContext.HttpContext.User.IsInRole("EnquiryManager") || ViewContext.HttpContext.User.IsInRole("Admin"))
-    {
-        <div class="form-group">
-            @Html.LabelFor(model => model.SearchAreaWkt, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.SearchAreaWkt, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
-                @Html.ValidationMessageFor(model => model.SearchAreaWkt, "", new { @class = "text-danger" })
-                <input id="SearchAreaJson" type="text" value="" class="form-control" readonly />
+        {
+            <div class="form-group">
+                @Html.LabelFor(model => model.SearchAreaWkt, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.SearchAreaWkt, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                    @Html.ValidationMessageFor(model => model.SearchAreaWkt, "", new { @class = "text-danger" })
+                    <input id="SearchAreaJson" type="text" value="" class="form-control" hidden="hidden" />
+                </div>
             </div>
-        </div>
-}
-else
-{
-    <div>
-        @Html.HiddenFor(model => model.SearchAreaWkt)
-        <input id="SearchAreaJson" type="text" value="" class="form-control" hidden readonly />
-    </div>
-}
+        }
+        else
+        {
+            <div>
+                @Html.HiddenFor(model => model.SearchAreaWkt)
+                <input id="SearchAreaJson" type="text" value="" class="form-control" hidden="hidden" />
+            </div>
+        }
         <div class="form-group">
             @Html.LabelFor(model => model.NoOfYears, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">

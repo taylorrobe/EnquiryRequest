@@ -351,6 +351,10 @@
     <Compile Include="Migrations\201806081203540_add identity annotation to quote and enquiry.Designer.cs">
       <DependentUpon>201806081203540_add identity annotation to quote and enquiry.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201806130930259_change to quote accept date.cs" />
+    <Compile Include="Migrations\201806130930259_change to quote accept date.Designer.cs">
+      <DependentUpon>201806130930259_change to quote accept date.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Boundary.cs" />
@@ -798,6 +802,7 @@
     <Content Include="Views\Manage\EditContactInfo.cshtml" />
     <Content Include="Views\Account\ChangeEmail.cshtml" />
     <Content Include="Views\Enquiries\_PartialMap.cshtml" />
+    <Content Include="Views\Quotes\AcceptQuote.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -884,6 +889,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201806081203540_add identity annotation to quote and enquiry.resx">
       <DependentUpon>201806081203540_add identity annotation to quote and enquiry.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201806130930259_change to quote accept date.resx">
+      <DependentUpon>201806130930259_change to quote accept date.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

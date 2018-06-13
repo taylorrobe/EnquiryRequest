@@ -52,6 +52,10 @@
     </dl>
 </div>
 <p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.QuoteId }) |
+    @if (ViewContext.HttpContext.User.IsInRole("EnquiryManager") || ViewContext.HttpContext.User.IsInRole("Admin"))
+    {
+        @Html.ActionLink("Edit", "Edit", new { id = Model.QuoteId })
+    }
+    @Html.ActionLink("Accept Quote", "AcceptQuote", new { id = Model.QuoteId })
     @Html.ActionLink("Back to List", "Index")
 </p>
