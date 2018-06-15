@@ -355,6 +355,10 @@
     <Compile Include="Migrations\201806130930259_change to quote accept date.Designer.cs">
       <DependentUpon>201806130930259_change to quote accept date.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201806151124541_change to auto timestamp quote.cs" />
+    <Compile Include="Migrations\201806151124541_change to auto timestamp quote.Designer.cs">
+      <DependentUpon>201806151124541_change to auto timestamp quote.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Boundary.cs" />
@@ -892,6 +896,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201806130930259_change to quote accept date.resx">
       <DependentUpon>201806130930259_change to quote accept date.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201806151124541_change to auto timestamp quote.resx">
+      <DependentUpon>201806151124541_change to auto timestamp quote.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

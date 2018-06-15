@@ -27,10 +27,16 @@ namespace EnquiryRequest3.Controllers
         }
 
         // GET: Quotes
-        public ActionResult Index()
+        public ActionResult Index(string searchString)
         {
             var quotes = db.Quotes.Include(q => q.Enquiry);
             var userId = User.Identity.GetUserId<int>();
+            //filter by searchString
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                quotes = quotes.Where(a => a.Enquiry.Code == searchString);
+            }
+            //filter by user if not manager or admin
             if (!userManager.IsInRole(userId, "Admin") && !userManager.IsInRole(userId, "EnquiryManager"))
             {
                 quotes = quotes
@@ -68,9 +74,20 @@ namespace EnquiryRequest3.Controllers
         // GET: Quotes/Create
         public ActionResult Create(int? enquiryId)
         {
-            if(enquiryId == null)
+            var userId = User.Identity.GetUserId<int>();
+            Enquiry enquiry = db.Enquiries.Find(enquiryId);
+            if (enquiryId == null)
             {
-                ViewBag.EnquiryList = new SelectList(db.Enquiries, "EnquiryId", "DisplayName");
+                if (userManager.IsInRole(userId, "Admin") || userManager.IsInRole(userId, "EnquiryManager"))
+                {
+                    ViewBag.EnquiryList = new SelectList(db.Enquiries, "EnquiryId", "DisplayName");
+                }
+                else
+                {
+                    // send user back to the index
+                    TempData["ErrorMessage"] = "Please select an enquiry and click the link to create a quote";
+                    return RedirectToAction("Index", "Quotes");
+                }
             }
             else
             {
@@ -91,7 +108,9 @@ namespace EnquiryRequest3.Controllers
             {
                 db.Quotes.Add(quote);
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                var enquiryCode = db.Quotes.Include(e=>e.Enquiry)
+                    .FirstOrDefault(q => q.QuoteId == quote.QuoteId).Enquiry.Code;
+                return RedirectToAction("Index", new { searchString = enquiryCode });
             }
             if(quote.EnquiryId > 0)
             {
@@ -144,7 +163,9 @@ namespace EnquiryRequest3.Controllers
             {
                 db.Entry(quote).State = EntityState.Modified;
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                var enquiryCode = db.Quotes.Include(e => e.Enquiry)
+                    .FirstOrDefault(q => q.QuoteId == quote.QuoteId).Enquiry.Code;
+                return RedirectToAction("Index", new { searchString = enquiryCode });
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -163,21 +184,33 @@ namespace EnquiryRequest3.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             var userId = User.Identity.GetUserId<int>();
-            Quote quote = db.Quotes.Find(id);
+            Quote quote = db.Quotes.Include(q => q.Enquiry)
+                .FirstOrDefault(q=>q.QuoteId == id);
             if (quote == null)
             {
                 return HttpNotFound();
             }
             if (userId == quote.Enquiry.ApplicationUserId || userManager.IsInRole(userId, "Admin") || userManager.IsInRole(userId, "EnquiryManager"))
             {
-                ViewBag.EnquiryId = new SelectList(db.Enquiries, "EnquiryId", "Code", quote.EnquiryId);
-                return View(quote);
+                if(quote.Enquiry.Quotes.Where(q=>q.AcceptedDate !=null).Count() < 1)
+                {
+                    ViewBag.EnquiryId = new SelectList(db.Enquiries, "EnquiryId", "Code", quote.EnquiryId);
+                    return View(quote);
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "Sorry there can be only one accepted quote for an enquiry, please contact us if there is a problem with the accepted quote";
+                }
+
             }
             else
             {
-                // send user back to the index
-                return RedirectToAction("Index", "Quotes");
+                TempData["ErrorMessage"] = "Sorry you are not authorised to accept this quote";
             }
+            //if none of the above apply send back to 
+            // send user back to the index with ViewBag.ErrorMessage
+            return RedirectToAction("Index", "Quotes");
+
         }
 
         // POST: Quotes/AcceptQuote/5
@@ -195,7 +228,9 @@ namespace EnquiryRequest3.Controllers
                 quoteDetails.AcceptedDate = DateTime.Now;
                 db.Entry(quoteDetails).State = EntityState.Modified;
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                var enquiryCode = db.Quotes.Include(e => e.Enquiry)
+                    .FirstOrDefault(q => q.QuoteId == quote.QuoteId).Enquiry.Code;
+                return RedirectToAction("Index", new { searchString = enquiryCode });
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -219,6 +254,13 @@ namespace EnquiryRequest3.Controllers
             }
             if (userId == quote.Enquiry.ApplicationUserId || userManager.IsInRole(userId, "Admin") || userManager.IsInRole(userId, "EnquiryManager"))
             {
+                //do not allow user deleting of quote if it is an accepted quote, but allow manager and admin
+                if (quote.AcceptedDate != null && !userManager.IsInRole(userId, "Admin") && !userManager.IsInRole(userId, "EnquiryManager"))
+                {
+                    TempData["ErrorMessage"] = "Cannot delete a quote that has been accepted, please contact us if there is an issue";
+                    // send user back to the index
+                    return RedirectToAction("Index", "Quotes");
+                }
                 return View(quote);
             }
             else

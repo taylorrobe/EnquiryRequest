@@ -30,7 +30,7 @@
         <div class="form-group">
             @Html.LabelFor(model => model.QuotedDate, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.QuotedDate, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.EditorFor(model => model.QuotedDate, new { htmlAttributes = new { @class = "form-control", type = "datetime-local" } })
                 @Html.ValidationMessageFor(model => model.QuotedDate, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -38,8 +38,9 @@
         <div class="form-group">
             @Html.LabelFor(model => model.AcceptedDate, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.AcceptedDate, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.EditorFor(model => model.AcceptedDate, new { htmlAttributes = new { @class = "form-control", type = "datetime-local" } })
                 @Html.ValidationMessageFor(model => model.AcceptedDate, "", new { @class = "text-danger" })
+                <input id="btnSetNowAcceptedDate" type="button" value="Set Now" class="btn btn-default " onclick="SetNowToElement('AcceptedDate')" />
             </div>
         </div>
 

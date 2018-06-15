@@ -62,13 +62,16 @@
 
         <dd>
             <div class="row">
-                <div class="col-md-2">
-                    <div id="map" style="width: 150px; height: 150px;"></div>
+                <div class="col-md-12">
+                    <div id="map" style="width: 100%; height: auto;"></div>
                 </div>
-                <div class="col-md-10">
-                    <textarea rows="7" cols="50" id="SearchAreaWkt" readonly>@Model.SearchArea.WellKnownValue.WellKnownText</textarea>
-                    <textarea rows="7" cols="50" id="SearchAreaJson" readonly></textarea>
-                </div>
+            </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <textarea rows="7" cols="50" id="SearchAreaWkt" readOnly="readonly">@Model.SearchArea.WellKnownValue.WellKnownText</textarea>
+                        <textarea rows="7" cols="50" id="SearchAreaJson" readOnly="readonly"></textarea>
+                    </div>
+                
             </div>
 
 
@@ -165,55 +168,55 @@
             @Html.DisplayFor(model => model.Comment)
         </dd>
         @if (ViewContext.HttpContext.User.IsInRole("EnquiryManager") || ViewContext.HttpContext.User.IsInRole("Admin"))
-    {
-        <dt>
-            @Html.DisplayNameFor(model => model.AddedToRersDate)
-        </dt>
+        {
+            <dt>
+                @Html.DisplayNameFor(model => model.AddedToRersDate)
+            </dt>
 
-        <dd>
-            @Html.DisplayFor(model => model.AddedToRersDate)
-        </dd>
+            <dd>
+                @Html.DisplayFor(model => model.AddedToRersDate)
+            </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.DataCleanedDate)
-        </dt>
+            <dt>
+                @Html.DisplayNameFor(model => model.DataCleanedDate)
+            </dt>
 
-        <dd>
-            @Html.DisplayFor(model => model.DataCleanedDate)
-        </dd>
+            <dd>
+                @Html.DisplayFor(model => model.DataCleanedDate)
+            </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.ReportCompleteDate)
-        </dt>
+            <dt>
+                @Html.DisplayNameFor(model => model.ReportCompleteDate)
+            </dt>
 
-        <dd>
-            @Html.DisplayFor(model => model.ReportCompleteDate)
-        </dd>
+            <dd>
+                @Html.DisplayFor(model => model.ReportCompleteDate)
+            </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.DocumentsCleanedDate)
-        </dt>
+            <dt>
+                @Html.DisplayNameFor(model => model.DocumentsCleanedDate)
+            </dt>
 
-        <dd>
-            @Html.DisplayFor(model => model.DocumentsCleanedDate)
-        </dd>
+            <dd>
+                @Html.DisplayFor(model => model.DocumentsCleanedDate)
+            </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.EnquiryDeliveredDate)
-        </dt>
+            <dt>
+                @Html.DisplayNameFor(model => model.EnquiryDeliveredDate)
+            </dt>
 
-        <dd>
-            @Html.DisplayFor(model => model.EnquiryDeliveredDate)
-        </dd>
+            <dd>
+                @Html.DisplayFor(model => model.EnquiryDeliveredDate)
+            </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.AdminComment)
-        </dt>
+            <dt>
+                @Html.DisplayNameFor(model => model.AdminComment)
+            </dt>
 
-        <dd>
-            @Html.DisplayFor(model => model.AdminComment)
-        </dd>
-}
+            <dd>
+                @Html.DisplayFor(model => model.AdminComment)
+            </dd>
+        }
 
     </dl>
 </div>

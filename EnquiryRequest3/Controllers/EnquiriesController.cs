@@ -59,9 +59,9 @@ namespace EnquiryRequest3.Controllers
             viewModel.Enquiries = enquiries;
 
             //attach quotes to selected enquiry
-            if (id!=null)
+            if (id != null)
             {
-                if(viewModel.Enquiries.Where(i => i.EnquiryId == id.Value).Count() > 0)
+                if (viewModel.Enquiries.Where(i => i.EnquiryId == id.Value).Count() > 0)
                 {
                     var quotes = viewModel.Enquiries
                         .Where(i => i.EnquiryId == id.Value).SingleOrDefault().Quotes;
@@ -70,14 +70,14 @@ namespace EnquiryRequest3.Controllers
                     viewModel.Quotes = quotes;
                 }
             }
-            
+
             ViewBag.filter = searchString;
             return View(viewModel);
         }
 
 
-    // GET: Enquiries/Details/5
-    public ActionResult Details(int? id)
+        // GET: Enquiries/Details/5
+        public ActionResult Details(int? id)
         {
             if (id == null)
             {
@@ -201,14 +201,24 @@ namespace EnquiryRequest3.Controllers
             {
                 return HttpNotFound();
             }
-            if (enquiry.Quotes.Count > 0)
-            {
-                TempData["ErrorMessage"] = "Cannot edit an enquiry that has been quoted, please delete the quote and try again";
-                // send user back to the index
-                return RedirectToAction("Index", "Enquiries");
-            }
+
             if (userId == enquiry.ApplicationUserId || userManager.IsInRole(userId, "Admin") || userManager.IsInRole(userId, "EnquiryManager"))
             {
+                //do not allow editing of enquiry if there are quotes
+                if (enquiry.Quotes.Count > 0)
+                {
+                    if (enquiry.Quotes.Where(q => q.AcceptedDate != null).Count() > 0)
+                    {
+                        TempData["ErrorMessage"] = "Cannot edit an enquiry that has an accepted quote, please contact us if there is an issue";
+                    }
+                    else
+                    {
+                        TempData["ErrorMessage"] = "Cannot edit an enquiry that has been quoted, please delete all quotes for this enquiry and try again";
+                    }
+
+                    // send user back to the index
+                    return RedirectToAction("Index", "Enquiries");
+                }
                 FormatHelper formatHelper = new FormatHelper();
                 var wkt = enquiry.SearchArea.WellKnownValue.WellKnownText;
                 UserCreateEditEnquiryViewModel userCreateEditEnquiryViewModel = new UserCreateEditEnquiryViewModel
@@ -338,6 +348,13 @@ namespace EnquiryRequest3.Controllers
             }
             if (userId == enquiry.ApplicationUserId || userManager.IsInRole(userId, "Admin") || userManager.IsInRole(userId, "EnquiryManager"))
             {
+                //do not allow deleting of enquiry if there is an accepted quote
+                if (enquiry.Quotes.Where(q => q.AcceptedDate != null).Count() > 0)
+                {
+                    TempData["ErrorMessage"] = "Cannot delete an enquiry that has an accepted quote, please contact us if there is an issue";
+                    // send user back to the index
+                    return RedirectToAction("Index", "Enquiries");
+                }
 
                 //let user view the details
                 //get all boundaries for displaying on map

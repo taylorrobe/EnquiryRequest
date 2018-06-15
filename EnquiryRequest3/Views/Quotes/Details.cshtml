@@ -54,8 +54,11 @@
 <p>
     @if (ViewContext.HttpContext.User.IsInRole("EnquiryManager") || ViewContext.HttpContext.User.IsInRole("Admin"))
     {
-        @Html.ActionLink("Edit", "Edit", new { id = Model.QuoteId })
+        @Html.ActionLink("Edit", "Edit", new { id = Model.QuoteId })<br />
     }
-    @Html.ActionLink("Accept Quote", "AcceptQuote", new { id = Model.QuoteId })
-    @Html.ActionLink("Back to List", "Index")
+    @if (Model.Enquiry.Quotes.Where(q => q.AcceptedDate != null).Count() < 1)
+    {
+        @Html.ActionLink("Accept Quote", "AcceptQuote", "Quotes", new { Id = Model.QuoteId }, null)<br />
+    }
+    @Html.ActionLink("Full list of quotes", "Index")
 </p>

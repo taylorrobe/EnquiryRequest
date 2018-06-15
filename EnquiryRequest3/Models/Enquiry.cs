@@ -83,7 +83,7 @@ namespace EnquiryRequest3.Models
         public Boolean Express { get; set; }
 
         //should be non editable, automatically timestamped and show up in details
-        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public DateTime EnquiryDate { get; set; }
 
         [DataType(DataType.MultilineText)]

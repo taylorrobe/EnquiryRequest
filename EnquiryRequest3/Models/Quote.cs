@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -19,10 +20,15 @@ namespace EnquiryRequest3.Models
         //auto generate quote date
         [Required]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [DisplayName("Quoted Date")]
+        [DataType(DataType.DateTime)]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:yyyy-MM-ddTHH:mm:ss}")]
         public DateTime QuotedDate { get; set; }
 
         //only one quote linked to an enquiry can have an accepted date
-        [DataType(DataType.Date)]
+        [DisplayName("Accepted Date")]
+        [DataType(DataType.DateTime)]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:yyyy-MM-ddTHH:mm:ss}")]
         public DateTime? AcceptedDate { get; set; }
 
         [Required]

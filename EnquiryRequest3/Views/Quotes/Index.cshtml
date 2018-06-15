@@ -6,57 +6,87 @@
 
 <h2>Index</h2>
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.QuoteId)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Enquiry.Code)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Amount)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.QuotedDate)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.AcceptedDate)
-        </th>
-        <th>Actions</th>
-    </tr>
-
-    @foreach (var item in Model)
+@if (ViewContext.HttpContext.User.IsInRole("EnquiryManager") || ViewContext.HttpContext.User.IsInRole("Admin"))
+{
+    <p>
+        @Html.ActionLink("Create New", "Create")
+    </p>
+}
+    @if (TempData["ErrorMessage"] != null)
     {
+        <div class="text-danger">
+            @TempData["ErrorMessage"]
+        </div>
+    }
+    @if (ViewBag.ErrorMessage != null)
+    {
+        <div class="text-danger">
+            @ViewBag.ErrorMessage
+        </div>
+    }
+    @using (Html.BeginForm("Index", "Quotes", new { searchString = ViewBag.filter }, FormMethod.Get))
+    {
+        <p>
+            Find by enquiry code: @Html.TextBox("SearchString")
+            <input type="submit" value="Search" />
+
+        </p>
+    }
+    <table class="table">
         <tr>
             <th>
-                @Html.DisplayFor(model => item.QuoteId)
+                @Html.DisplayNameFor(model => model.QuoteId)
             </th>
-            <td>
-                @Html.DisplayFor(modelItem => item.Enquiry.Code)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Amount)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.QuotedDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.AcceptedDate)
-            </td>
-            <td>
-                @if (ViewContext.HttpContext.User.IsInRole("EnquiryManager") || ViewContext.HttpContext.User.IsInRole("Admin"))
-                {
-                    @Html.ActionLink("Edit", "Edit", new { id = item.QuoteId }) <br />
-                }
-                @*@Html.Action("Accept Quote", "Accept Quote", new { id = item.QuoteId })*@
-                @Html.ActionLink("Details", "Details", new { id = item.QuoteId }) <br />
-                @Html.ActionLink("Delete", "Delete", new { id = item.QuoteId })
-            </td>
+            <th>
+                @Html.DisplayNameFor(model => model.Enquiry.Code)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Amount)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.QuotedDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.AcceptedDate)
+            </th>
+            <th>Actions</th>
         </tr>
-    }
 
-</table>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <th>
+                    @Html.DisplayFor(model => item.QuoteId)
+                </th>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Enquiry.Code)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Amount)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.QuotedDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.AcceptedDate)
+                </td>
+                <td>
+                    @Html.ActionLink("Details", "Details", new { id = item.QuoteId })
+                    @if (ViewContext.HttpContext.User.IsInRole("EnquiryManager") || ViewContext.HttpContext.User.IsInRole("Admin"))
+                    {
+                        <br />
+                        @Html.ActionLink("Edit", "Edit", new { id = item.QuoteId })
+                        <br />
+                        @Html.ActionLink("Delete", "Delete", new { id = item.QuoteId })
+                    }
+                    else if (item.AcceptedDate == null)
+                    {
+                        <br />
+                        @Html.ActionLink("Delete", "Delete", new { id = item.QuoteId })
+                    }
+
+                </td>
+            </tr>
+        }
+
+    </table>

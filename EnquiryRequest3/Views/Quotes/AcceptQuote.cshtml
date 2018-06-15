@@ -24,6 +24,7 @@
 
             <dd>
                 @Html.DisplayFor(model => model.QuoteId)
+                @Html.HiddenFor(Model => Model.QuoteId)
             </dd>
             <dt>
                 @Html.DisplayNameFor(model => model.Enquiry.Code)
