@@ -1,4 +1,13 @@
-﻿function SetDateTime(textBoxId){
+﻿window.onload = function(){
+    var stageFilter = document.getElementById('stageFilter');
+    if (stageFilter !== null) {
+        stageFilter.onchange = function () {
+            document.getElementById("myForm").submit();
+        }
+    }
+}
+
+function SetDateTime(textBoxId) {
     var d = new Date();
     var textBox = document.getElementById(textBoxId);
     var year = '' + d.getFullYear();

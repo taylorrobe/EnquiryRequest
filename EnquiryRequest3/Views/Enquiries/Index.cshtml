@@ -22,48 +22,54 @@
         @ViewBag.ErrorMessage
     </div>
 }
-@using (Html.BeginForm("Index", "Enquiries", new { searchString = ViewBag.filter }, FormMethod.Get))
+@using (Html.BeginForm("Index", "Enquiries", new { searchString = ViewBag.filter, stageFilter = ViewBag.stageFilter }, FormMethod.Get, new { id = "myForm" }))
 {
-    <div class="col-md-12">
-        <p>
+    <div>
+        <p class="col-md-12" style="text-align:left">
             Find by name or code:
             @Html.TextBox("SearchString")
             <input type="submit" value="Search" />
+            <span style="float:right;">
+                <select class="form-control" id="stageFilter" name="stageFilter">
+                    <optgroup label="Active">
+                        <option value="All active" @(ViewBag.stageFilter == "All active" ? "selected" : "")>
+                            All active
+                        </option>
+                        <option value="Unquoted" @(ViewBag.stageFilter == "Unquoted" ? "selected" : "")>
+                            Unquoted
+                        </option>
+                        <option value="Quoted" @(ViewBag.stageFilter == "Quoted" ? "selected" : "")>
+                            Quoted
+                        </option>
+                        <option value="Quote accepted" @(ViewBag.stageFilter == "Quote accepted" ? "selected" : "")>
+                            Quote accepted
+                        </option>
+                    </optgroup>
+                    <optgroup label="Report Complete">
+                        <option value="All complete" @(ViewBag.stageFilter == "All complete" ? "selected" : "")>
+                            All complete
+                        </option>
+                        <option value="Report complete" @(ViewBag.stageFilter == "Report complete" ? "selected" : "")>
+                            Report complete
+                        </option>
+                        <option value="Invoiced" @(ViewBag.stageFilter == "Invoiced" ? "selected" : "")>
+                            Invoiced
+                        </option>
+                        <option value="Paid" @(ViewBag.stageFilter == "Paid" ? "selected" : "")>
+                            Paid
+                        </option>
+                    </optgroup>
+                    <option value="All" @(ViewBag.stageFilter == "All" ? "selected" : "")>
+                        All
+                    </option>
+                </select>
+            </span>
+
         </p>
     </div>
-
 }
 <div class="col-md-12">
-    <select class="form-control">
-        <optgroup label="Active">
-            <option>
-                All active
-            </option>
-            <option>
-                Unquoted
-            </option>
-            <option>
-                Quoted
-            </option>
-            <option>
-                Quote accepted
-            </option>
-        </optgroup>
-        <optgroup label="Report Complete">
-            <option>
-                All complete
-            </option>
-            <option>
-                Report complete
-            </option>
-            <option>
-                Invoiced
-            </option>
-        </optgroup>
-        <option>
-            All
-        </option>
-    </select>
+
 </div>
 <div class="col-md-12">
 
@@ -74,7 +80,7 @@
                 Actions
             </th>
             <th>
-                Invoice Code
+                User
             </th>
             <th>
                 Enquiry Code
@@ -139,7 +145,6 @@
 
         @foreach (var item in Model.Enquiries)
         {
-
             var wktName = "wkt" + item.EnquiryId;
             string selectedRow = "";
             if (item.EnquiryId == ViewBag.EnquiryId)
@@ -151,7 +156,8 @@
                     @Html.ActionLink("Select", "Index", new
                     {
                         id = item.EnquiryId,
-                        searchString = ViewBag.filter
+                        searchString = ViewBag.filter,
+                        stageFilter = ViewBag.stageFilter
                     })<br />
                     @Html.ActionLink("Edit", "Edit", new { id = item.EnquiryId })<br />
                     @Html.ActionLink("Details", "Details", new { id = item.EnquiryId })<br />
@@ -159,7 +165,7 @@
                     @Html.ActionLink("Create Quote", "Create", "Quotes", new { EnquiryId = item.EnquiryId }, null)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Invoice.Code)
+                    @Html.DisplayFor(modelItem => item.ApplicationUser.DisplayName)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Code)
@@ -221,7 +227,12 @@
                     </td>
                 }
                 <td>
-                    @Html.ActionLink("Select", "Index", new { id = item.EnquiryId })<br />
+                    @Html.ActionLink("Select", "Index", new
+                    {
+                        id = item.EnquiryId,
+                        searchString = ViewBag.filter,
+                        stageFilter = ViewBag.stageFilter
+                    })<br />
                     @Html.ActionLink("Edit", "Edit", new { id = item.EnquiryId })<br />
                     @Html.ActionLink("Details", "Details", new { id = item.EnquiryId })<br />
                     @Html.ActionLink("Delete", "Delete", new { id = item.EnquiryId })<br />

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -16,6 +17,15 @@ namespace EnquiryRequest3.Models
         public string Forename { get; set; }
 
         public string Surname { get; set; }
+
+        [NotMapped]
+        public string DisplayName
+        {
+            get
+            {
+                return string.Format("{0} {1} - {2}", Forename, Surname, Organisation.Name);
+            }
+        }
 
         public string Address1 { get; set; }
 

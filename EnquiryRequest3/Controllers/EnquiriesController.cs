@@ -9,6 +9,7 @@ using System.Web.Mvc;
 using EnquiryRequest3.Controllers.Utilities;
 using System.Data.Entity.Infrastructure;
 using Microsoft.AspNet.Identity.EntityFramework;
+using System.Diagnostics;
 
 namespace EnquiryRequest3.Controllers
 {
@@ -30,18 +31,88 @@ namespace EnquiryRequest3.Controllers
         }
 
         // GET: Enquiries
-        public ActionResult Index(int? id, string searchString)
+        public ActionResult Index(int? id, string searchString, string stageFilter)
         {
             var viewModel = new EnquiryIndexData();
             var enquiries = db.Enquiries.Include(e => e.Invoice)
                     .Include(q => q.Quotes);
+            var SelectedEnquiryQuotes = db.Quotes.Include(q => q.Enquiry).Where(e => e.EnquiryId == id.Value);
 
             //filter by searchString
             if (!string.IsNullOrEmpty(searchString))
             {
                 enquiries = enquiries.Where(a => a.Code == searchString || a.Name.Contains(searchString));
             }
-
+            //filter by stageFilter
+            if (!string.IsNullOrEmpty(stageFilter))
+            {
+                switch (stageFilter)
+                {
+                    case "All active":
+                        enquiries = enquiries.Where(a => a.InvoiceId == null 
+                            && a.AddedToRersDate == null
+                            && a.DataCleanedDate == null
+                            && a.DocumentsCleanedDate == null
+                            && a.EnquiryDeliveredDate == null
+                            && a.ReportCompleteDate == null
+                            );
+                        break;
+                    case "Unquoted":
+                        enquiries = enquiries.Where(a => a.InvoiceId == null
+                            && a.AddedToRersDate == null
+                            && a.DataCleanedDate == null
+                            && a.DocumentsCleanedDate == null
+                            && a.EnquiryDeliveredDate == null
+                            && a.ReportCompleteDate == null
+                            && a.Quotes.Count() < 1
+                            );
+                        break;
+                    case "Quoted":
+                        enquiries = enquiries.Where(a => a.InvoiceId == null
+                            && a.AddedToRersDate == null
+                            && a.DataCleanedDate == null
+                            && a.DocumentsCleanedDate == null
+                            && a.EnquiryDeliveredDate == null
+                            && a.ReportCompleteDate == null
+                            && a.Quotes.Count() > 0
+                            && a.Quotes.Where(q=>q.AcceptedDate != null).Count() < 1
+                            );
+                        break;
+                    case "Quote accepted":
+                        enquiries = enquiries.Where(a => a.InvoiceId == null
+                            && a.AddedToRersDate == null
+                            && a.DataCleanedDate == null
+                            && a.DocumentsCleanedDate == null
+                            && a.EnquiryDeliveredDate == null
+                            && a.ReportCompleteDate == null
+                            && a.Quotes.Count() > 0
+                            && a.Quotes.Where(q => q.AcceptedDate != null).Count() > 0
+                            );
+                        break;
+                    case "All complete":
+                        enquiries = enquiries.Where(a=>a.ReportCompleteDate != null
+                            );
+                        break;
+                    case "Report complete":
+                        enquiries = enquiries.Where(a => a.ReportCompleteDate != null
+                            && a.InvoiceId == null
+                            );
+                        break;
+                    case "Invoiced":
+                        enquiries = enquiries.Where(a => a.ReportCompleteDate != null
+                            && a.InvoiceId != null
+                            );
+                        break;
+                    case "Paid":
+                        enquiries = enquiries.Where(a => a.ReportCompleteDate != null
+                            && a.InvoiceId != null
+                            && a.Invoice.PaidDate != null
+                            );
+                        break;
+                    default:
+                        break;
+                }
+            }
             //filter enquiries by user if not admin or manager
             var userId = User.Identity.GetUserId<int>();
             var userName = User.Identity.Name;
@@ -58,7 +129,7 @@ namespace EnquiryRequest3.Controllers
             //attach to view model
             viewModel.Enquiries = enquiries;
 
-            //attach quotes to selected enquiry
+            //attach quotes for selected enquiry
             if (id != null)
             {
                 if (viewModel.Enquiries.Where(i => i.EnquiryId == id.Value).Count() > 0)
@@ -66,11 +137,14 @@ namespace EnquiryRequest3.Controllers
                     var quotes = viewModel.Enquiries
                         .Where(i => i.EnquiryId == id.Value).SingleOrDefault().Quotes;
                     //set the view models quotes
-                    ViewBag.EnquiryId = id.Value;
+                    
                     viewModel.Quotes = quotes;
+
                 }
+                ViewBag.EnquiryId = id;
             }
 
+            ViewBag.stageFilter = stageFilter;
             ViewBag.filter = searchString;
             return View(viewModel);
         }
@@ -111,13 +185,16 @@ namespace EnquiryRequest3.Controllers
         // GET: Enquiries/Create
         public ActionResult Create()
         {
-            ViewBag.DefaultInvoiceEmail = User.Identity.GetUserDefaultInvoicingEmail();
+            UserCreateEditEnquiryViewModel newEnquiry = new UserCreateEditEnquiryViewModel();
+            newEnquiry.InvoiceEmail = User.Identity.GetUserDefaultInvoicingEmail();
+            newEnquiry.NoOfYears = 10;
+            newEnquiry.DataUsedFor = "Ecological report";
             ViewBag.SearchTypeId = new SelectList(db.SearchTypes, "SearchTypeId", "Name");
             //get all boundaries for displaying on map
             SpatialHelper spatial = new SpatialHelper();
             ViewBag.Boundaries = spatial.GetGeoJsonCollectionFromBoundaryCollection(db.Boundaries.ToList(), SpatialHelper.BoundaryType.DISPLAY);
             ViewBag.Coverage = spatial.GetGeoJsonCollectionFromBoundaryCollection(db.Boundaries.ToList(), SpatialHelper.BoundaryType.COVERAGE);
-            return View();
+            return View(newEnquiry);
         }
 
         // POST: Enquiries/Create
