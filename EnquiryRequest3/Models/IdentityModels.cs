@@ -23,7 +23,11 @@ namespace EnquiryRequest3.Models
         {
             get
             {
-                return string.Format("{0} {1} - {2}", Forename, Surname, Organisation.Name);
+                if(Organisation != null)
+                {
+                    return string.Format("{0} {1} - {2}", Forename, Surname, Organisation.Name);
+                }
+                return string.Format("{0} {1}", Forename, Surname);
             }
         }
 
