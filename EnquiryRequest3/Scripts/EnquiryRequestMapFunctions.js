@@ -654,7 +654,7 @@ function getCostFromArea(area) {
         }
     }
 
-    roundedCost = Math.round(cost * 1) / 1;
+    roundedCost = Math.round(cost/5) *5;
     return roundedCost;
 }
 
