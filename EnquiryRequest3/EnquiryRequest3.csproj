@@ -717,7 +717,7 @@
     <Content Include="Scripts\jsts.js" />
     <Content Include="Scripts\latlon.js" />
     <Content Include="Scripts\latlon2bng.js" />
-    <Content Include="Scripts\modernizr-2.6.2.js" />
+    <Content Include="Scripts\modernizr-2.8.3.js" />
     <Content Include="Scripts\ol-debug.js" />
     <Content Include="Scripts\ol.css" />
     <Content Include="Scripts\ol.js" />

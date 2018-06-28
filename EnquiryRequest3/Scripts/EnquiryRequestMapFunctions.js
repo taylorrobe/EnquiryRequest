@@ -1,89 +1,90 @@
-﻿//get references from DOM
-var searchAreaWkt = document.getElementById("SearchAreaWkt");
-var searchAreaJson = document.getElementById("SearchAreaJson");
-var areaText = document.getElementById("Area");
-var costText = document.getElementById("Cost");
+﻿
+    //get references from DOM
+    var searchAreaWkt = document.getElementById("SearchAreaWkt");
+    var searchAreaJson = document.getElementById("SearchAreaJson");
+    var areaText = document.getElementById("Area");
+    var costText = document.getElementById("Cost");
 
-var typeSelect = document.getElementById('type');
-//file accessible references
-//var geocoder;
-var map;
-// refs to currently selected interaction
-var select = null;
-var selectClick;
-//array to hold saved features for undo action
-var savedFeatures = [];
+    var typeSelect = document.getElementById('type');
+    //file accessible references
+    //var geocoder;
+    var map;
+    // refs to currently selected interaction
+    var select = null;
+    var selectClick;
+    //array to hold saved features for undo action
+    var savedFeatures = [];
 
-//create projection for map
-proj4.defs('EPSG:27700', '+proj=tmerc +lat_0=49 +lon_0=-2 +k=0.9996012717 ' +
-    '+x_0=400000 +y_0=-100000 +ellps=airy ' +
-    '+towgs84=446.448,-125.157,542.06,0.15,0.247,0.842,-20.489 ' +
-    '+units=m +no_defs');
-var proj27700 = ol.proj.get('EPSG:27700');
-proj27700.setExtent([0, 0, 700000, 1300000]);
+    //create projection for map
+    proj4.defs('EPSG:27700', '+proj=tmerc +lat_0=49 +lon_0=-2 +k=0.9996012717 ' +
+        '+x_0=400000 +y_0=-100000 +ellps=airy ' +
+        '+towgs84=446.448,-125.157,542.06,0.15,0.247,0.842,-20.489 ' +
+        '+units=m +no_defs');
+    var proj27700 = ol.proj.get('EPSG:27700');
+    proj27700.setExtent([0, 0, 700000, 1300000]);
 
-//set boundary style
-var boundaryStyle = new ol.style.Style({
-    fill: new ol.style.Fill({
-        color: 'rgba(255, 255, 255, 0)'
-    }),
-    stroke: new ol.style.Stroke({
-        color: '#319FD3',
-        width: 1
-    }),
-    text: new ol.style.Text({
-        font: '12px Calibri,sans-serif',
+    //set boundary style
+    var boundaryStyle = new ol.style.Style({
         fill: new ol.style.Fill({
-            color: '#000'
+            color: 'rgba(255, 255, 255, 0)'
         }),
         stroke: new ol.style.Stroke({
-            color: '#fff',
-            width: 3
+            color: '#319FD3',
+            width: 1
+        }),
+        text: new ol.style.Text({
+            font: '12px Calibri,sans-serif',
+            fill: new ol.style.Fill({
+                color: '#000'
+            }),
+            stroke: new ol.style.Stroke({
+                color: '#fff',
+                width: 3
+            })
         })
-    })
-});
+    });
 
-//set coverage style
-var coverageStyle = new ol.style.Style({
-    fill: new ol.style.Fill({
-        color: 'rgba(255, 0, 0, 0.05)'
-    }),
-    stroke: new ol.style.Stroke({
-        color: 'red',
-        width: 5
-    }),
-    text: new ol.style.Text({
-        font: '12px Calibri,sans-serif',
+    //set coverage style
+    var coverageStyle = new ol.style.Style({
         fill: new ol.style.Fill({
-            color: '#000'
+            color: 'rgba(255, 0, 0, 0.05)'
         }),
         stroke: new ol.style.Stroke({
-            color: '#fff',
-            width: 3
+            color: 'red',
+            width: 5
+        }),
+        text: new ol.style.Text({
+            font: '12px Calibri,sans-serif',
+            fill: new ol.style.Fill({
+                color: '#000'
+            }),
+            stroke: new ol.style.Stroke({
+                color: '#fff',
+                width: 3
+            })
         })
-    })
-});
+    });
 
-//set grid ref style
-var gridRefStyle = new ol.style.Style({
-    fill: new ol.style.Fill({
-        color: 'rgba(255, 0, 0, 0)'
-    }),
-    stroke: new ol.style.Stroke({
-        color: 'red',
-        width: 5
-    }),
-    text: new ol.style.Text({
-        font: '12px Calibri,sans-serif',
+    //set grid ref style
+    var gridRefStyle = new ol.style.Style({
         fill: new ol.style.Fill({
-            color: '#000'
+            color: 'rgba(255, 0, 0, 0)'
         }),
         stroke: new ol.style.Stroke({
-            color: '#fff',
-            width: 3
+            color: 'red',
+            width: 5
+        }),
+        text: new ol.style.Text({
+            font: '12px Calibri,sans-serif',
+            fill: new ol.style.Fill({
+                color: '#000'
+            }),
+            stroke: new ol.style.Stroke({
+                color: '#fff',
+                width: 3
+            })
         })
-    })
-});
+    });
 
 //helper to display exceptions
 function UserException(message) {
