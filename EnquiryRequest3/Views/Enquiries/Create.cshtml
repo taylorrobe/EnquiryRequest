@@ -16,7 +16,7 @@
         <link rel="stylesheet" href="https://openlayers.org/en/v4.6.5/css/ol.css" type="text/css">
         <style>
             .map {
-                height: 400px;
+                height: 100%;
                 width: 100%;
             }
         </style>
@@ -38,43 +38,95 @@
             </div>
         </div>
 
-        <div class="form-group row">
-            @Html.LabelFor(model => model.InvoiceEmail, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="form-group">
+            @Html.LabelFor(model => model.JobNumber, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.InvoiceEmail, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.InvoiceEmail, "", new { @class = "text-danger" })
+                @*@Html.EditorFor(model => model.JobNumber, new { htmlAttributes = new { @class = "form-control",
+                    @title = ViewData.ModelMetadata.Description,
+                    @placeholder = ViewData.ModelMetadata.Watermark} })*@
+                @Html.EditorFor(model => model.JobNumber, new
+                {
+                    htmlAttributes = new
+                    {
+                        @class = "form-control",
+                        @title = ModelMetadata.FromLambdaExpression<EnquiryRequest3.Models.UserCreateEditEnquiryViewModel, string>(model => model.JobNumber, ViewData),
+                        //@title = ViewData.ModelMetadata.Description,
+                        @placeholder = ViewData.ModelMetadata.Watermark
+                    }
+                })
+                @Html.ValidationMessageFor(model => model.JobNumber, "", new { @class = "text-danger" })
             </div>
         </div>
+
         @{
             Html.RenderPartial("_PartialMap");
         }
+        <div id="options" class="enquiry-options-container">
+            <div class="row">
+                <div class="col-md-6 enquiry-options">
+                    <div class="">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.SearchTypeId, "Search Type", htmlAttributes: new { @class = "control-label col-md-4" })
+                            <div class="col-md-8">
+                                @Html.DropDownList("SearchTypeId", null, htmlAttributes: new { @class = "form-control", @onchange = "javascript:populateTextBoxes();" })
+                                @Html.ValidationMessageFor(model => model.SearchTypeId, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.Citations, htmlAttributes: new { @class = "control-label col-md-4" })
+                            <div class="col-md-8">
+                                <div class="checkbox">
+                                    @Html.EditorFor(model => model.Citations)
+                                    @Html.ValidationMessageFor(model => model.Citations, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                        </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.SearchTypeId, "Search Type", htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DropDownList("SearchTypeId", null, htmlAttributes: new { @class = "form-control", @onchange = "javascript:populateTextBoxes();" })
-                @Html.ValidationMessageFor(model => model.SearchTypeId, "", new { @class = "text-danger" })
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.GisKml, htmlAttributes: new { @class = "control-label col-md-4" })
+                            <div class="col-md-8">
+                                <div class="checkbox">
+                                    @Html.EditorFor(model => model.GisKml)
+                                    @Html.ValidationMessageFor(model => model.GisKml, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.Express, htmlAttributes: new { @class = "control-label col-md-4" })
+                            <div class="col-md-8">
+                                <div class="checkbox">
+                                    @Html.EditorFor(model => model.Express)
+                                    @Html.ValidationMessageFor(model => model.Express, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group row">
+                        <label for="SetArea" class="control-label col-md-4">Set area ----></label>
+                        <div class="col-sm-8">
+                            <input id="SetArea" type="button" value="Set Area" class="btn btn-default" onclick="setAreaButtonClick()" />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="Area" class="control-label col-sm-4">Area (hectares)</label>
+                        <div class="col-sm-8">
+                            <input id="Area" type="text" value="" class="form-control" disabled />
+                        </div>
+
+                        @Html.LabelFor(model => model.EstimatedCost, htmlAttributes: new { @class = "control-label col-sm-4" })
+                        <div class="col-sm-8">
+                            @Html.EditorFor(model => model.EstimatedCost, new { htmlAttributes = new { @class = "form-control", @id = "Cost", @readonly = "readonly" } })
+                            @Html.ValidationMessageFor(model => model.EstimatedCost, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="form-group row">
-            <label for="SetArea" class="control-label col-md-2">Set area ----></label>
-            <div class="col-md-10">
-                <input id="SetArea" type="button" value="Set Area" class="btn btn-default col-md-2" onclick="setAreaButtonClick()" />
-            </div>
-        </div>
 
-        <div class="form-group">
-            <label for="Area" class="control-label col-md-2">Area (hectares)</label>
-            <div class="col-md-10">
-                <input id="Area" type="text" value="" class="form-control" disabled />
-            </div>
-
-            @Html.LabelFor(model => model.EstimatedCost, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.EstimatedCost, new { htmlAttributes = new { @class = "form-control", @id = "Cost", @readonly = "readonly" } })
-                @Html.ValidationMessageFor(model => model.EstimatedCost, "", new { @class = "text-danger" })
-            </div>
-        </div>
         @if (ViewContext.HttpContext.User.IsInRole("EnquiryManager") || ViewContext.HttpContext.User.IsInRole("Admin"))
         {
             <div class="form-group">
@@ -104,14 +156,6 @@
         </div>
 
         <div class="form-group">
-            @Html.LabelFor(model => model.JobNumber, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.JobNumber, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.JobNumber, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
             @Html.LabelFor(model => model.Agency, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
                 @Html.EditorFor(model => model.Agency, new { htmlAttributes = new { @class = "form-control" } })
@@ -135,33 +179,11 @@
             </div>
         </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.Citations, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="form-group row">
+            @Html.LabelFor(model => model.InvoiceEmail, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                <div class="checkbox">
-                    @Html.EditorFor(model => model.Citations)
-                    @Html.ValidationMessageFor(model => model.Citations, "", new { @class = "text-danger" })
-                </div>
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.GisKml, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                <div class="checkbox">
-                    @Html.EditorFor(model => model.GisKml)
-                    @Html.ValidationMessageFor(model => model.GisKml, "", new { @class = "text-danger" })
-                </div>
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.Express, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                <div class="checkbox">
-                    @Html.EditorFor(model => model.Express)
-                    @Html.ValidationMessageFor(model => model.Express, "", new { @class = "text-danger" })
-                </div>
+                @Html.EditorFor(model => model.InvoiceEmail, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.InvoiceEmail, "", new { @class = "text-danger" })
             </div>
         </div>
 

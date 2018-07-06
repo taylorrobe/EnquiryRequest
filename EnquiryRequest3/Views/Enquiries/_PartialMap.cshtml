@@ -1,66 +1,71 @@
 ﻿<input type="text" id="Boundaries" data-geoJson="@ViewBag.Boundaries" data-coverageGeoJson="@ViewBag.Coverage" hidden />
 
-<div class="form-group row">
-    <div class="col-md-9">
-        <div id="map" class="map" style="width: 100%; height: auto;">
-            <div id="popup"></div>
+<div class="form-group row map-container">
+    <div class="row">
+        <div class="col-md-8 map-cell">
+            <div id="map" class="map">
+                <div id="popup"></div>
+            </div>
         </div>
-    </div>
-    <div class="col-sm-3">
-        <div class="row">
-            <div class="col-md-12">
-                <label for="GridReferenceLookup" class="control-label">Grid Reference lookup</label>
+        <div class="col-md-4 table-cell">
+
+            <div class="row">
+                <div class="col-md-12 map-tools">
+                    <h4>Drawing Tools</h4>
+                    <label for="type" class="control-label">Drawing type</label>
+                    <select id="type" class="form-control">
+                        <option value="Point">Point</option>
+                        <option value="LineString">LineString</option>
+                        <option value="Polygon">Polygon</option>
+                        <option value="Select">Select</option>
+                        <option value="None">None</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12 map-tools">
+                    <h4>Buffer</h4>
+                    <label for="Buffer" class="control-label ">Size (m)</label>
+                    <input id="Buffer" type="text" value="1000" class="form-control " />
+                    <input id="ApplyBufferToSelected" type="button" value="Apply buffer" class="btn btn-default " onclick="ApplyBufferToShapesButtonClick()" />
+                    <input id="UndoApplyBufferToShapes" type="button" value="Undo Apply buffer" class="btn btn-default  " onclick="undoApplyBufferToShapesButtonClick()" />
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12 map-tools">
+                    <h4>Remove drawings</h4>
+                    <input id="ClearSelectedShape" type="button" value="Clear selected shape" class="btn btn-default " onclick="ClearSelectedShapeButtonClick()" />
+                    <input id="ResetMapAndWkt" type="button" value="Reset Map and WKT" class="btn btn-default " onclick="ResetMapAndWktClick()" />
+                </div>
+            </div>
+        </div>
+        </div>
+        <div class="row  ">
+            <div class="col-md-4 map-tools">
+                <h4>Grid Reference lookup</h4>
                 <input type="text" id="GridReferenceLookup" class="form-control" />
                 <input id="btnGridReferenceLookup" type="button" value="Look up" class="btn btn-default" onclick="GridReferenceLookupButtonClick()" />
             </div>
-        </div>
-        <div class="row">
-            <div class="col-md-12">
-                <label for="type" class="control-label">Drawing type</label>
-                <select id="type" class="form-control">
-                    <option value="Point">Point</option>
-                    <option value="LineString">LineString</option>
-                    <option value="Polygon">Polygon</option>
-                    <option value="Select">Select</option>
-                    <option value="None">None</option>
-                </select>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-12">
-                <label for="Buffer" class="control-label ">Buffer (m)</label>
-                <input id="Buffer" type="text" value="1000" class="form-control " />
-                <input id="ApplyBufferToSelected" type="button" value="Apply buffer" class="btn btn-default " onclick="ApplyBufferToShapesButtonClick()" />
-                <input id="UndoApplyBufferToShapes" type="button" value="Undo Apply buffer" class="btn btn-default  " onclick="undoApplyBufferToShapesButtonClick()" />
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-12">
-                <label for="ClearSelectedShape" class="control-label ">Remove drawings</label>
-                <input id="ClearSelectedShape" type="button" value="Clear selected shape" class="btn btn-default " onclick="ClearSelectedShapeButtonClick()" />
-                <input id="ResetMapAndWkt" type="button" value="Reset Map and WKT" class="btn btn-default " onclick="ResetMapAndWktClick()" />
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-12">
-                <label for="chkBoundaryLayer" class="control-label ">Boundaries</label>
-                <input id="chkBoundaryLayer" type="checkbox" checked="checked" onclick="UpdateLayersClick()" />
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-12">
-                <label for="chkGridRefLayer" class="control-label ">Grid squares</label>
-                <input id="chkGridRefLayer" type="checkbox" checked="checked" onclick="UpdateLayersClick()" />
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-12">
-                <label for="chkLabelLayer" class="control-label ">Area labels</label>
-                <input id="chkLabelLayer" type="checkbox" checked="checked" onclick="UpdateLayersClick()" />
+            <div class="col-md-4 map-tools">
+                <h4>Layers</h4>
+                <div class="row">
+                        <label for="chkBoundaryLayer" class="control-label ">Boundaries</label>
+                        <input id="chkBoundaryLayer" type="checkbox" checked="checked" onclick="UpdateLayersClick()" />
+                 
+                </div>
+                <div class="row">
+                        <label for="chkGridRefLayer" class="control-label ">Grid squares</label>
+                        <input id="chkGridRefLayer" type="checkbox" checked="checked" onclick="UpdateLayersClick()" />
+                  
+                </div>
+                <div class="row">
+                        <label for="chkLabelLayer" class="control-label ">Area labels</label>
+                        <input id="chkLabelLayer" type="checkbox" checked="checked" onclick="UpdateLayersClick()" />
+                    
+                </div>
             </div>
         </div>
     </div>
-</div>
 
 
 

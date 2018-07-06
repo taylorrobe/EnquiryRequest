@@ -15,6 +15,7 @@ namespace EnquiryRequest3.Models
         public string Code { get; set; }
 
         [Required]
+        [Display(Name = "Name of Site")]
         [StringLength(100, ErrorMessage = "The {0} cannot be more than {1} characters long.")]
         public string Name { get; set; }
 
@@ -40,7 +41,7 @@ namespace EnquiryRequest3.Models
         [Range(1, 20, ErrorMessage = "Please enter a whole number between 1-20 inclusive")]
         public int NoOfYears { get; set; }
 
-        [Display(Name = "Job Number", Prompt = "Enter optional job number")]
+        [Display(Name = "Your Job Reference Number", Prompt = "Enter optional job number", Description = "Record your job reference here")]
         [StringLength(100, ErrorMessage = "The {0} cannot be more than {1} characters long.")]
         public string JobNumber { get; set; }
 

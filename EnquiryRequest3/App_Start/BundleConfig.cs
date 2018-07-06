@@ -11,7 +11,7 @@ namespace EnquiryRequest3
             bundles.UseCdn = true;   //enable CDN support
 
             //add link to jquery on the CDN
-            var jqueryCdnPath = "http://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.3.1.min.js";
+            //var jqueryCdnPath = "http://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.3.1.min.js";
 
             //bundles.Add(new ScriptBundle("~/bundles/jquery",
             //            jqueryCdnPath).Include(
@@ -36,10 +36,10 @@ namespace EnquiryRequest3
             "~/Scripts/enquiryRequestMapFunctions.js"));
 
             //add link to openLayers on the CDN
-            var openLayersCdnPath = "https://openlayers.org/en/v4.6.4/build/ol.js";
+            //var openLayersCdnPath = "https://openlayers.org/en/v4.6.4/build/ol.js";
 
             //add link to proj4js on the CDN
-            var proj4jsCdnPath = "https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.4.4/proj4.js";
+            //var proj4jsCdnPath = "https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.4.4/proj4.js";
 
             //bundles.Add(new ScriptBundle("~/bundles/openLayers", openLayersCdnPath).Include(
             //    "~/Scripts/ol.js"));

@@ -5,8 +5,8 @@
 
 /* Set padding to keep content from hitting the edges */
 .body-content {
-    padding-left: 15px;
-    padding-right: 15px;
+    padding-left: 5px;
+    padding-right: 5px;
 }
 
 /* Override the default bootstrap behavior where horizontal description lists 
@@ -22,3 +22,49 @@ select,
 textarea {
     max-width: 280px;
 }
+
+.map {
+    width: auto;
+    height: auto;
+    margin-top:5px;
+}
+
+.map-cell {
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+.table-cell {
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+.map-container {
+    background-color: azure;
+    border: 1px solid black;
+    padding: 1px;
+}
+.map-tools {
+    background-color: bisque;
+    margin: 5px;
+    padding:1px;
+    border: 1px solid black;
+}
+.enquiry-options-container {
+    background-color: azure;
+    border: 1px solid black;
+    padding:1px;
+}
+.enquiry-options {
+    background-color: bisque;
+    margin: 5px;
+    padding: 1px;
+    border: 1px solid black;
+}
+.row{
+    margin-left:5px;
+    margin-right:5px;
+}
+
+
+

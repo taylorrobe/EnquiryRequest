@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
+using System.Web.ModelBinding;
 
 namespace EnquiryRequest3.Models
 {
@@ -69,6 +71,5 @@ namespace EnquiryRequest3.Models
         [Display(Name = "Default Invoicing Email Address")]
         public string DefaultInvoicingEmail;
     }
-
 
 }
