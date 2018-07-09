@@ -195,7 +195,6 @@ namespace EnquiryRequest3.Controllers
             ViewBag.Boundaries = spatial.GetGeoJsonCollectionFromBoundaryCollection(db.Boundaries.ToList(), SpatialHelper.BoundaryType.DISPLAY);
             ViewBag.Coverage = spatial.GetGeoJsonCollectionFromBoundaryCollection(db.Boundaries.ToList(), SpatialHelper.BoundaryType.COVERAGE);
             return View(newEnquiry);
-            //test comment
         }
 
         // POST: Enquiries/Create
