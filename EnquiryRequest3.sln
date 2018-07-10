@@ -4,6 +4,10 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 15.0.27130.2027
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EnquiryRequest3", "EnquiryRequest3\EnquiryRequest3.csproj", "{85C74621-7405-40B8-B2FE-74EA3D23672E}"
+	ProjectSection(ProjectDependencies) = postProject
+		{5B14B80F-4CAF-4A26-BEAA-2303B02BF4D6} = {5B14B80F-4CAF-4A26-BEAA-2303B02BF4D6}
+		{4644EC22-5764-422F-91D5-8108F26C1D35} = {4644EC22-5764-422F-91D5-8108F26C1D35}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EnquiryRequest3.Tests", "EnquiryRequest3.Tests\EnquiryRequest3.Tests.csproj", "{C2782458-37F7-4F19-90D5-5DF4D7B81F1C}"
 EndProject
