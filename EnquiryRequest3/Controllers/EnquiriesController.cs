@@ -28,6 +28,7 @@ namespace EnquiryRequest3.Controllers
                 , CustomUserLogin
                 , CustomUserRole
                 , CustomUserClaim>(this.db));
+            //test
         }
 
         // GET: Enquiries
